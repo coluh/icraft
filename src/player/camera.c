@@ -73,11 +73,12 @@ static void fps_get(Camera *camera, vec3 front, vec3 up, vec3 right) {
 	front[1] = 0;
 	front[2] = 0;
 	glm_quat_rotatev(camera->rotation, front, front);
+	front[1] = 0;
+	glm_vec3_normalize(front);
 	up[0] = 0;
 	up[1] = 1;
 	up[2] = 0;
 	glm_vec3_crossn(front, up, right);
-	glm_vec3_crossn(up, right, front);
 }
 
 static void fps_forward(Camera *camera) {
@@ -111,7 +112,6 @@ static void fps_down(Camera *camera) {
 static void fps_rotate(Camera *camera, int dx, int dy) {
 	vec3 front, up, right;
 	fps_get(camera, front, up, right);
-	camera_rotate(camera, up, -dx * camera->sensitivity);
 	camera_rotate(camera, right, -dy * camera->sensitivity);
 
 	vec3 fr = {1, 0, 0};
@@ -120,4 +120,7 @@ static void fps_rotate(Camera *camera, int dx, int dy) {
 		// back
 		camera_rotate(camera, right, dy * camera->sensitivity);
 	}
+
+	/* vertical first, then horizontal */
+	camera_rotate(camera, up, -dx * camera->sensitivity);
 }
