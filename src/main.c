@@ -8,7 +8,7 @@
 #include "render/render.h"
 #include "render/window.h"
 #include "player/player.h"
-#include "util/macros.h"
+#include "util/props.h"
 #include "world/world.h"
 
 #include <SDL2/SDL.h>
@@ -18,6 +18,7 @@ static void init() {
 	window_init(NULL);
 	render_init();
 	camera_init();
+	props_init();
 }
 
 static void game_loop();

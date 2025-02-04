@@ -1,16 +1,9 @@
 #include "world.h"
 #include <stdbool.h>
 #include "chunk.h"
-#include "../util/macros.h"
+#include "../util/props.h"
 #include "generation/generator.h"
 #include <stddef.h>
-
-static void world_loadChunk(int x, int y, int z) {
-	Chunk *newly = chunks_add(x, y, z);
-	if (!newly->generated) {
-		generator_default(newly);
-	}
-}
 
 // same order as in src/world/chunk.c
 static const int chunk_offsets[6][3] = {
@@ -18,6 +11,21 @@ static const int chunk_offsets[6][3] = {
 	{0, -CHUNK_SIZE, 0}, {0, CHUNK_SIZE, 0},
 	{-CHUNK_SIZE, 0, 0}, {CHUNK_SIZE, 0, 0},
 };
+
+static void world_loadChunk(int x, int y, int z) {
+	Chunk *newly = chunks_add(x, y, z);
+	if (!newly->generated) {
+		generator_default(newly);
+
+		for (int f = 0; f < 6; f++) {
+			Chunk *nearby = chunks_find(
+					x+chunk_offsets[f][0], y+chunk_offsets[f][1], z+chunk_offsets[f][2]);
+			if (nearby != NULL) {
+				nearby->dirty = true;
+			}
+		}
+	}
+}
 
 static void world_updateChunk(Chunk *chunk) {
 	if (!chunk->dirty) {

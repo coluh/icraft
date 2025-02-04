@@ -51,6 +51,7 @@ static void generate_face(int f, struct vertex face[], int x, int y, int z, int 
 		{0, 0}, {1, 1}, {0, 1},
 	};
 
+	int t = block_getIdFaceTexture(id, f);
 	// tow triangles
 	for (int i = 0; i < 6; i++) {
 		face[i].position[0] = x + indices[f][i][0];
@@ -59,8 +60,8 @@ static void generate_face(int f, struct vertex face[], int x, int y, int z, int 
 		face[i].normal[0] = norms[f][0];
 		face[i].normal[1] = norms[f][1];
 		face[i].normal[2] = norms[f][2];
-		face[i].uv[0] = (float)(uvs[i][0] + id % BLOCK_TEXTURE_ROW_COUNT) / BLOCK_TEXTURE_ROW_COUNT;
-		face[i].uv[1] = (float)(uvs[i][1] + (int)(id / BLOCK_TEXTURE_ROW_COUNT)) / BLOCK_TEXTURE_ROW_COUNT;
+		face[i].uv[0] = (float)(uvs[i][0] + t % BLOCK_TEXTURE_ROW_COUNT) / BLOCK_TEXTURE_ROW_COUNT;
+		face[i].uv[1] = (float)(uvs[i][1] + (int)(t / BLOCK_TEXTURE_ROW_COUNT)) / BLOCK_TEXTURE_ROW_COUNT;
 	}
 }
 
@@ -76,7 +77,7 @@ void chunk_generateVertex(Chunk *chunk, Chunk *nearbys[6]) {
 		for (int y = 0; y < CHUNK_SIZE; y++) {
 			for (int z = 0; z < CHUNK_SIZE; z++) {
 				Block block = chunk->blocks[x][y][z];
-				if (block_getId(block) == 0) { continue; }
+				if (block_getId(block) == ID_AIR) { continue; }
 
 				for (int f = 0; f < 6; f++) {
 

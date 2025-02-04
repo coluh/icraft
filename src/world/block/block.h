@@ -12,6 +12,9 @@
 typedef uint32_t Block;
 
 int block_getId(Block block);
+void block_getTexture(Block block, int texture[]);
+int block_getIdFaceTexture(int id, int face);
+
 void block_setId(Block *block, int id);
 
 int block_id_of(const char *name);

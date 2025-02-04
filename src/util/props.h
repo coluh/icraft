@@ -10,4 +10,9 @@
 
 #define UNPACK3(arr) (arr)[0],(arr)[1],(arr)[2]
 
+void props_init();
+
+// [min, max)
+int rand_int(int min, int max);
+
 #endif
