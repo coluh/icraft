@@ -8,6 +8,8 @@
 #include "render/render.h"
 #include "render/window.h"
 #include "player/player.h"
+#include "util/macros.h"
+#include "world/world.h"
 
 #include <SDL2/SDL.h>
 
@@ -29,20 +31,26 @@ int main(int argc, char *argv[]) {
 
 static void game_loop() {
 
-	Player *player = newPlayer(-10, 16, 0);
+	Player *player = newPlayer(-10, 34, 0);
 
 	bool running = true;
 	SDL_Event event;
 	int frame_time = 1000 / render_getFPS();
 	while (running) {
 		Uint32 begin_time = SDL_GetTicks();
+
+		/* handle input */
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT) { running = false; }
 			input_handle(&event, player_getCamera(player));
 		}
-
 		input_update(player_getCamera(player));
+
+		/* update world */
 		// step();
+		world_updateChunks(UNPACK3(player_getCamera(player)->position));
+
+		/* render */
 		render(player_getCamera(player));
 
 		Uint32 end_time = SDL_GetTicks();

@@ -1,8 +1,9 @@
 #include "chunk.h"
 #include <glad/glad.h>
 #include <string.h>
-#include "../../third_party/cglm/include/cglm/types.h"
+#include "../../third_party/cglm/include/cglm/cglm.h"
 #include "block/block.h"
+#include "../util/mem.h"
 
 #define CHUNK_MAX_VERTICE_COUNT (CHUNK_VOLUME*6*6)
 
@@ -14,7 +15,7 @@ struct vertex {
 
 // -z, z, -y, y, -x, x
 static void generate_face(int f, struct vertex face[], int x, int y, int z, int id) {
-	static int indices[6][6][3] = {
+	static const int indices[6][6][3] = {
 		{
 			{1, 0, 0}, {0, 0, 0}, {0, 1, 0},
 			{1, 0, 0}, {0, 1, 0}, {1, 1, 0},
@@ -40,12 +41,12 @@ static void generate_face(int f, struct vertex face[], int x, int y, int z, int 
 			{1, 0, 1}, {1, 1, 0}, {1, 1, 1},
 		},
 	};
-	static int norms[6][3] = {
+	static const int norms[6][3] = {
 		{0, 0, -1}, {0, 0, 1},
 		{0, -1, 0}, {0, 1, 0},
 		{-1, 0, 0}, {1, 0, 0},
 	};  // xyz, xzy, yxz, yzx, zxy, zyx
-	static int uvs[6][2] = {
+	static const int uvs[6][2] = {
 		{0, 0}, {1, 0}, {1, 1},
 		{0, 0}, {1, 1}, {0, 1},
 	};
@@ -63,20 +64,7 @@ static void generate_face(int f, struct vertex face[], int x, int y, int z, int 
 	}
 }
 
-void chunk_debugFill(Chunk *chunk) {
-	for (int dx = 0; dx < CHUNK_SIZE; dx++) {
-		for (int dz = 0; dz < CHUNK_SIZE; dz++) {
-			for (int dy = 0; dy < CHUNK_SIZE; dy++) {
-				int y = chunk->y + dy;
-				if (y < 64) {
-					int block_id = block_id_of("grass_block");
-					if (dy < CHUNK_SIZE-1) { block_id = block_id_of("dirt"); }
-					if (dy < CHUNK_SIZE-4) { block_id = block_id_of("stone"); }
-					block_setId(CHUNK_BLOCK(chunk->blocks, chunk->x+dx, y, chunk->z+dz), block_id);
-				}
-			}
-		}
-	}
+void chunk_generateVertex(Chunk *chunk, Chunk *nearbys[6]) {
 
 	glGenVertexArrays(1, &chunk->VAO);
 	glGenBuffers(1, &chunk->VBO);
@@ -87,19 +75,31 @@ void chunk_debugFill(Chunk *chunk) {
 	for (int x = 0; x < CHUNK_SIZE; x++) {
 		for (int y = 0; y < CHUNK_SIZE; y++) {
 			for (int z = 0; z < CHUNK_SIZE; z++) {
-				Block block = *CHUNK_BLOCK(chunk->blocks, x, y, z);
+				Block block = chunk->blocks[x][y][z];
 				if (block_getId(block) == 0) { continue; }
 
 				for (int f = 0; f < 6; f++) {
+
 					// Face Culling
-					if ((f == 0 && z > 0 && block_getId(*CHUNK_BLOCK(chunk->blocks, x, y, z-1)) != 0) ||
-					    (f == 1 && z < CHUNK_SIZE-1 && block_getId(*CHUNK_BLOCK(chunk->blocks, x, y, z+1)) != 0) ||
-					    (f == 2 && y > 0 && block_getId(*CHUNK_BLOCK(chunk->blocks, x, y-1, z)) != 0) ||
-					    (f == 3 && y < CHUNK_SIZE-1 && block_getId(*CHUNK_BLOCK(chunk->blocks, x, y+1, z)) != 0) ||
-					    (f == 4 && x > 0 && block_getId(*CHUNK_BLOCK(chunk->blocks, x-1, y, z)) != 0) ||
-					    (f == 5 && x < CHUNK_SIZE-1 && block_getId(*CHUNK_BLOCK(chunk->blocks, x+1, y, z)) != 0)) {
+					if ((f == 0 && z > 0 && block_getId(chunk->blocks[x][y][z-1]) != ID_AIR) ||
+					    (f == 1 && z < CHUNK_SIZE-1 && block_getId(chunk->blocks[x][y][z+1]) != ID_AIR) ||
+					    (f == 2 && y > 0 && block_getId(chunk->blocks[x][y-1][z]) != ID_AIR) ||
+					    (f == 3 && y < CHUNK_SIZE-1 && block_getId(chunk->blocks[x][y+1][z]) != ID_AIR) ||
+					    (f == 4 && x > 0 && block_getId(chunk->blocks[x-1][y][z]) != ID_AIR) ||
+					    (f == 5 && x < CHUNK_SIZE-1 && block_getId(chunk->blocks[x+1][y][z]) != ID_AIR)) {
 						continue;
 					}
+					if (nearbys[f]) {
+						if ((f == 0 && z == 0 && block_getId(nearbys[f]->blocks[x][y][CHUNK_SIZE-1]) != ID_AIR) ||
+						    (f == 1 && z == CHUNK_SIZE-1 && block_getId(nearbys[f]->blocks[x][y][0]) != ID_AIR) ||
+						    (f == 2 && y == 0 && block_getId(nearbys[f]->blocks[x][CHUNK_SIZE-1][z]) != ID_AIR) ||
+						    (f == 3 && y == CHUNK_SIZE-1 && block_getId(nearbys[f]->blocks[x][0][z]) != ID_AIR) ||
+						    (f == 4 && x == 0 && block_getId(nearbys[f]->blocks[CHUNK_SIZE-1][y][z]) != ID_AIR) ||
+						    (f == 5 && x == CHUNK_SIZE-1 && block_getId(nearbys[f]->blocks[0][y][z]) != ID_AIR)) {
+							continue;
+						}
+					}
+
 					struct vertex face[6];
 					generate_face(f, face, x, y, z, block_getId(block));
 					memcpy(vertices+vertex_idx, face, sizeof(face));
@@ -121,4 +121,42 @@ void chunk_debugFill(Chunk *chunk) {
 	glEnableVertexAttribArray(2);
 
 	chunk->vertex_count = vertex_idx;
+}
+
+ChunkNode *chunk_list;
+
+// x, y, z should be devisible by CHUNK_SIZE
+Chunk *chunks_add(int x, int y, int z) {
+	Assert((x%CHUNK_SIZE==0)&&(y%CHUNK_SIZE==0)&&(z%CHUNK_SIZE==0), "what can I say");
+	ChunkNode *node = zalloc(1, sizeof(ChunkNode));
+	node->chunk.x = x;
+	node->chunk.y = y;
+	node->chunk.z = z;
+	glm_mat4_identity(node->chunk.model);
+	glm_translate(node->chunk.model, (vec3){x, y, z});
+	node->chunk.generated = false;
+	node->chunk.dirty = true;
+
+	ChunkNode **p = &chunk_list;
+	while (*p != NULL) {
+		p = &(*p)->next;
+	}
+	*p = node;
+
+	return &node->chunk;
+}
+
+Chunk *chunks_find(int x, int y, int z) {
+	for (ChunkNode *p = chunk_list; p != NULL; p = p->next) {
+		if ((p->chunk.x == x) && (p->chunk.y == y) && (p->chunk.z == z)) {
+			return &p->chunk;
+		}
+	}
+	return NULL;
+}
+
+void chunks_foreach(void (*handler)(Chunk *chunk)) {
+	for (ChunkNode *p = chunk_list; p != NULL; p = p->next) {
+		handler(&p->chunk);
+	}
 }

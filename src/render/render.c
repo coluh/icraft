@@ -17,6 +17,7 @@ static struct {
 	SDL_Renderer *renderer;
 	int FPS;
 	int program;
+	int modelUniformLocation;
 	int viewUniformLocation;
 	int projUniformLocation;
 	unsigned int blocksTexture;
@@ -27,8 +28,6 @@ static struct {
 	unsigned int EBO2d;
 	SDL_Color color;
 } r;
-
-Chunk debug_chunk;
 
 static void render_setColor(int rr, int g, int b, int a);
 static void render_fill_rect(int x, int y, int w, int h);
@@ -57,6 +56,7 @@ void render_init() {
 	r.VBO2d = VBO;
 	r.EBO2d = EBO;
 	r.program = shader_get("assets/shaders/default.vs", "assets/shaders/default.fs");
+	r.modelUniformLocation = glGetUniformLocation(r.program, "model");
 	r.viewUniformLocation = glGetUniformLocation(r.program, "view");
 	r.projUniformLocation = glGetUniformLocation(r.program, "proj");
 	r.program2d = shader_get("assets/shaders/basic2d.vs", "assets/shaders/basic2d.fs");
@@ -64,8 +64,6 @@ void render_init() {
 	render_setColor(255, 255, 255, 255);
 
 	r.blocksTexture = texture_load("assets/textures/texture.png");
-
-	chunk_debugFill(&debug_chunk);
 }
 
 int render_getFPS() { return r.FPS; }
@@ -86,18 +84,22 @@ void render(Camera *camera) {
 	SDL_GL_SwapWindow(window_getWindow());
 }
 
+static void render_chunk(Chunk *chunk) {
+	glUniformMatrix4fv(r.modelUniformLocation, 1, GL_FALSE, (float*)chunk->model);
+	glBindVertexArray(chunk->VAO);
+	glDrawArrays(GL_TRIANGLES, 0, chunk->vertex_count);
+}
+
 static void render_chunks(Camera *camera) {
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	glUseProgram(r.program);
-
 	glUniformMatrix4fv(r.viewUniformLocation, 1, GL_FALSE, (float*)camera->view);
 	glUniformMatrix4fv(r.projUniformLocation, 1, GL_FALSE, (float*)camera->proj);
 
-	glActiveTexture(GL_TEXTURE0);  // no need, because it's default
+	glActiveTexture(GL_TEXTURE0);  // no need, because tex0 is activated by default
 	glBindTexture(GL_TEXTURE_2D, r.blocksTexture);
-	glBindVertexArray(debug_chunk.VAO);
-	glDrawArrays(GL_TRIANGLES, 0, debug_chunk.vertex_count);
+	chunks_foreach(render_chunk);
 }
 
 static void render_setColor(int rr, int g, int b, int a) {

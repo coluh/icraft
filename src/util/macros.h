@@ -5,4 +5,9 @@
 
 #define EQUAL 0
 
+#define POSITIVE_REMAINDER(a, b) (((a)%(b)>0)?((a)%(b)):((a)%(b)+(b)))
+#define ROUND_DOWN_BY(x, m) ((x)-POSITIVE_REMAINDER(x,m))
+
+#define UNPACK3(arr) (arr)[0],(arr)[1],(arr)[2]
+
 #endif

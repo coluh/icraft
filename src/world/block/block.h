@@ -6,6 +6,8 @@
 #define BLOCK_TEXTURE_SIZE 16
 #define BLOCK_TEXTURE_ROW_COUNT 16
 
+#define ID_AIR 0
+
 // id in lower 16 bits
 typedef uint32_t Block;
 
