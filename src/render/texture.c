@@ -1,5 +1,6 @@
 #include "texture.h"
 #include <glad/glad.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include "../util/log.h"
 
@@ -17,7 +18,7 @@ unsigned int texture_load(const char *texture_path) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	int width, height, n_channel;
-	stbi_set_flip_vertically_on_load(1);
+	stbi_set_flip_vertically_on_load(true);
 	uint8_t *data = stbi_load(texture_path, &width, &height, &n_channel, 0);
 	Assert(data != NULL, "fail to load texture: %s", texture_path);
 

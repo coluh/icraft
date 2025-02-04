@@ -16,12 +16,12 @@ struct vertex {
 static void generate_face(int f, struct vertex face[], int x, int y, int z, int id) {
 	static int indices[6][6][3] = {
 		{
-			{0, 0, 0}, {1, 0, 0}, {1, 1, 0},
-			{0, 0, 0}, {1, 1, 0}, {0, 1, 0},
+			{1, 0, 0}, {0, 0, 0}, {0, 1, 0},
+			{1, 0, 0}, {0, 1, 0}, {1, 1, 0},
 		},
 		{
-			{0, 0, 1}, {0, 1, 1}, {1, 1, 1},
-			{0, 0, 1}, {1, 1, 1}, {1, 0, 1},
+			{0, 0, 1}, {1, 0, 1}, {1, 1, 1},
+			{0, 0, 1}, {1, 1, 1}, {0, 1, 1},
 		},
 		{
 			{0, 0, 0}, {1, 0, 0}, {1, 0, 1},
@@ -32,12 +32,12 @@ static void generate_face(int f, struct vertex face[], int x, int y, int z, int 
 			{0, 1, 0}, {1, 1, 1}, {1, 1, 0},
 		},
 		{
-			{0, 0, 0}, {0, 1, 0}, {0, 1, 1},
-			{0, 0, 0}, {0, 1, 1}, {0, 0, 1},
+			{0, 0, 0}, {0, 0, 1}, {0, 1, 1},
+			{0, 0, 0}, {0, 1, 1}, {0, 1, 0},
 		},
 		{
-			{1, 0, 0}, {1, 0, 1}, {1, 1, 1},
-			{1, 0, 0}, {1, 1, 1}, {1, 1, 0},
+			{1, 0, 1}, {1, 0, 0}, {1, 1, 0},
+			{1, 0, 1}, {1, 1, 0}, {1, 1, 1},
 		},
 	};
 	static int norms[6][3] = {
@@ -69,7 +69,9 @@ void chunk_debugFill(Chunk *chunk) {
 			for (int dy = 0; dy < CHUNK_SIZE; dy++) {
 				int y = chunk->y + dy;
 				if (y < 64) {
-					int block_id = y == 63 ? block_id_of("grass_block") : block_id_of("dirt");
+					int block_id = block_id_of("grass_block");
+					if (dy < CHUNK_SIZE-1) { block_id = block_id_of("dirt"); }
+					if (dy < CHUNK_SIZE-4) { block_id = block_id_of("stone"); }
 					block_setId(CHUNK_BLOCK(chunk->blocks, chunk->x+dx, y, chunk->z+dz), block_id);
 				}
 			}
