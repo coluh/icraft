@@ -25,29 +25,52 @@ void input_handle(SDL_Event *event, Camera *camera) {
 	case SDL_MOUSEMOTION:
 		dx = event->motion.xrel;
 		dy = event->motion.yrel;
-		FPSCamera.rotate(camera, dx, dy);
+		if (camera->type == CameraType_FPS) {
+			FPSCamera.rotate(camera, dx, dy);
+		}
 	}
 }
 
 void input_update(Camera *camera) {
 
+	struct {
+		const char *key;
+		void (*handler)(Camera *camera);
+	} fps[6] = {
+		{"W", FPSCamera.forward},
+		{"S", FPSCamera.backward},
+		{"A", FPSCamera.left},
+		{"D", FPSCamera.right},
+		{"Space", FPSCamera.up},
+		{"Left Shift", FPSCamera.down},
+	};
+	struct {
+		const char *key;
+		void (*handler)(Camera *camera, float ratio);
+	} rd[8] = {
+		{"W", RDCamera.throttle_high},
+		{"S", RDCamera.throttle_low},
+		{"A", RDCamera.yaw_left},
+		{"D", RDCamera.yaw_right},
+		{"J", RDCamera.pitch_backward},
+		{"K", RDCamera.pitch_forward},
+		{"H", RDCamera.roll_left},
+		{"L", RDCamera.roll_right},
+	};
+
 	const Uint8 *state = SDL_GetKeyboardState(NULL);
-	if (state[SDL_GetScancodeFromName("W")]) {
-		FPSCamera.forward(camera);
+	if (camera->type == CameraType_FPS) {
+		for (int i = 0; i < 6; i++) {
+			if (state[SDL_GetScancodeFromName(fps[i].key)]) {
+				fps[i].handler(camera);
+			}
+		}
+	} else if (camera->type == CameraType_RD) {
+		for (int i = 0; i < 8; i++) {
+			if (state[SDL_GetScancodeFromName(rd[i].key)]) {
+				rd[i].handler(camera, 0.2f);
+			}
+		}
 	}
-	if (state[SDL_GetScancodeFromName("S")]) {
-		FPSCamera.backward(camera);
-	}
-	if (state[SDL_GetScancodeFromName("A")]) {
-		FPSCamera.left(camera);
-	}
-	if (state[SDL_GetScancodeFromName("D")]) {
-		FPSCamera.right(camera);
-	}
-	if (state[SDL_GetScancodeFromName("Space")]) {
-		FPSCamera.up(camera);
-	}
-	if (state[SDL_GetScancodeFromName("Left Shift")]) {
-		FPSCamera.down(camera);
-	}
+
 }

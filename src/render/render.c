@@ -70,7 +70,7 @@ int render_getFPS() { return r.FPS; }
 
 static void render_chunks(Camera *camera);
 void render(Camera *camera) {
-	glClearColor(0.0f, 0.0f, 0.1f, 1.0f);
+	glClearColor(0.4f, 0.8f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// 3D content

@@ -9,7 +9,7 @@ struct Player {
 
 Player *newPlayer(float x, float y, float z) {
 	Player *p = zalloc(1, sizeof(Player));
-	p->camera = newCamera((vec3){x, y, z}, (float)window_getWidth()/window_getHeight());
+	p->camera = newCamera((vec3){x, y, z}, (float)window_getWidth()/window_getHeight(), CameraType_RD);
 	return p;
 }
 

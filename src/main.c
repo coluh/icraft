@@ -49,6 +49,9 @@ static void game_loop() {
 
 		/* update world */
 		// step();
+		if (player_getCamera(player)->type == CameraType_RD) {
+			RDCamera.step(player_getCamera(player));
+		}
 		world_updateChunks(UNPACK3(player_getCamera(player)->position));
 
 		/* render */
