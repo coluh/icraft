@@ -1,5 +1,6 @@
 #include "input.h"
 #include "../render/window.h"
+#include "server.h"
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_keycode.h>
@@ -68,9 +69,17 @@ void input_update(Camera *camera) {
 	} else if (camera->type == CameraType_RD) {
 		for (int i = 0; i < 8; i++) {
 			if (state[SDL_GetScancodeFromName(rd[i].key)]) {
-				rd[i].handler(camera, 0.2f);
+				rd[i].handler(camera, 0.6f);
 			}
 		}
 	}
 
+	if (camera->type == CameraType_RD) {
+		const float *wsadjkhl = server_receive();
+		for (int i = 0; i < 8; i++) {
+			if (wsadjkhl[i] != 0.0f) {
+				rd[i].handler(camera, wsadjkhl[i] * wsadjkhl[i]); // reduce effect of minor operation
+			}
+		}
+	}
 }

@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "./util/log.h"
 #include "input/input.h"
+#include "input/server.h"
 #include "player/camera.h"
 #include "render/render.h"
 #include "render/window.h"
@@ -19,6 +20,7 @@ static void init() {
 	render_init();
 	camera_init();
 	props_init();
+	server_init();
 }
 
 static void game_loop();

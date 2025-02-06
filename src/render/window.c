@@ -41,6 +41,8 @@ void window_init(const char *window_name) {
 
 	SDL_SetWindowGrab(w.window, true);
 	SDL_SetRelativeMouseMode(true);
+
+	SDL_SetWindowFullscreen(w.window, SDL_WINDOW_FULLSCREEN);
 }
 
 SDL_Window *window_getWindow() { return w.window; }

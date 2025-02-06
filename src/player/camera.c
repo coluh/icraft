@@ -26,7 +26,7 @@ static void rd_roll_left(Camera *camera, float ratio);
 static void rd_roll_right(Camera *camera, float ratio);
 static void rd_step(Camera *camera);
 
-#define RD_SPEED_HALF_MAX 0.2f
+#define RD_SPEED_HALF_MAX 0.3f
 
 void camera_init() {
 	FPSCamera.forward = fps_forward;
@@ -62,7 +62,7 @@ Camera *newCamera(vec3 position, float aspect, CameraType type) {
 		camera->speed = 0.05f;
 	} else if (type == CameraType_RD) {
 		// now this mean max sensitivity
-		camera->sensitivity = 0.1f;
+		camera->sensitivity = 0.05f;
 		camera->speed = 0;
 	}
 
