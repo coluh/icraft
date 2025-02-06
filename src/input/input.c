@@ -78,7 +78,9 @@ void input_update(Camera *camera) {
 		const float *wsadjkhl = server_receive();
 		for (int i = 0; i < 8; i++) {
 			if (wsadjkhl[i] != 0.0f) {
-				rd[i].handler(camera, wsadjkhl[i] * wsadjkhl[i]); // reduce effect of minor operation
+				float ratio = wsadjkhl[i];
+				if (i >= 2) { ratio = ratio * ratio; }
+				rd[i].handler(camera, ratio); // reduce effect of minor operation
 			}
 		}
 	}

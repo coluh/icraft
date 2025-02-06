@@ -26,7 +26,8 @@ static void rd_roll_left(Camera *camera, float ratio);
 static void rd_roll_right(Camera *camera, float ratio);
 static void rd_step(Camera *camera);
 
-#define RD_SPEED_HALF_MAX 0.3f
+#define RD_G_POWER 2.0f
+#define RD_POWER_HALF_MAX (1.5*RD_G_POWER)
 
 void camera_init() {
 	FPSCamera.forward = fps_forward;
@@ -63,7 +64,9 @@ Camera *newCamera(vec3 position, float aspect, CameraType type) {
 	} else if (type == CameraType_RD) {
 		// now this mean max sensitivity
 		camera->sensitivity = 0.05f;
+		// now this mean power
 		camera->speed = 0;
+		glm_vec3_zero(camera->v);
 	}
 
 	return camera;
@@ -167,10 +170,10 @@ static void rd_get(Camera *camera, vec3 front, vec3 up, vec3 right) {
 }
 
 static void rd_throttle_high(Camera *camera, float ratio) {
-	camera->speed = RD_SPEED_HALF_MAX + ratio * RD_SPEED_HALF_MAX;
+	camera->speed = RD_POWER_HALF_MAX + ratio * RD_POWER_HALF_MAX;
 }
 static void rd_throttle_low(Camera *camera, float ratio) {
-	camera->speed = RD_SPEED_HALF_MAX - ratio * RD_SPEED_HALF_MAX;
+	camera->speed = RD_POWER_HALF_MAX - ratio * RD_POWER_HALF_MAX;
 }
 static void rd_yaw_left(Camera *camera, float ratio) {
 	vec3 front, up, right;
@@ -205,9 +208,22 @@ static void rd_roll_right(Camera *camera, float ratio) {
 static void rd_step(Camera *camera) {
 	vec3 front, up, right;
 	rd_get(camera, front, up, right);
+	// lift power
 	glm_vec3_scale(up, camera->speed, up);
-	vec3 g = {0, -0.4 * RD_SPEED_HALF_MAX, 0};
-	vec3 v;
-	glm_vec3_add(up, g, v);
-	camera_move(camera, v, 1.0f);
+
+	// get a
+	vec3 g = {0, -RD_G_POWER, 0};
+	vec3 f;
+	glm_vec3_normalize_to(camera->v, f);
+	float ff = -0.05f * glm_vec3_norm2(camera->v);
+	glm_vec3_scale(f, ff, f);
+	vec3 a;
+	glm_vec3_add(up, g, a);
+
+	// v += a * dt
+	glm_vec3_scale(a, 1.0f/60, a);
+	glm_vec3_add(camera->v, a, camera->v);
+
+	// x += v * dt
+	camera_move(camera, camera->v, 1.0f/60);
 }

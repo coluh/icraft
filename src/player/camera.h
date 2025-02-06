@@ -18,6 +18,7 @@ typedef struct {
 	float sensitivity;
 	float speed;
 	CameraType type;
+	vec3 v; // for RD Camera
 
 	// used in computation
 	mat4 view;
