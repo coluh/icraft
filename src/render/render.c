@@ -5,6 +5,7 @@
 #include "../world/chunk.h"
 
 #include <glad/glad.h>
+#include "../../third_party/cglm/include/cglm/cam.h"
 #include <SDL2/SDL_blendmode.h>
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_rect.h>
@@ -23,6 +24,7 @@ static struct {
 	unsigned int blocksTexture;
 
 	int program2d;
+	mat4 proj2d;
 	unsigned int VAO2d;
 	unsigned int VBO2d;
 	unsigned int EBO2d;
@@ -60,6 +62,7 @@ void render_init() {
 	r.viewUniformLocation = glGetUniformLocation(r.program, "view");
 	r.projUniformLocation = glGetUniformLocation(r.program, "proj");
 	r.program2d = shader_get("assets/shaders/basic2d.vs", "assets/shaders/basic2d.fs");
+	glm_ortho(0.0f, window_getWidth(), window_getHeight(), 0.0f, -1.0f, 1.0f, r.proj2d);
 
 	render_setColor(255, 255, 255, 255);
 
@@ -110,31 +113,28 @@ static void render_setColor(int rr, int g, int b, int a) {
 }
 
 static void render_fill_rect(int x, int y, int w, int h) {
-	static float vertices[3*4];
-	static unsigned int indices[] = { 0, 1, 3, 1, 2, 3 };
-	int wwd2 = window_getWidth();
-	int whd2 = window_getHeight();
-	float x1 = (float)x / wwd2 - 1.0f;
-	float y1 = (float)y / whd2 - 1.0f;
-	y1 = -y1;
-	float x2 = (float)(x+w) / wwd2 - 1.0f;
-	float y2 = (float)(y+h) / whd2 - 1.0f;
-	y2 = -y2;
-	vertices[0] = vertices[3] = x2;
-	vertices[6] = vertices[9] = x1;
-	vertices[1] = vertices[10] = y1;
-	vertices[4] = vertices[7] = y2;
+	static float vertices[2*4];
+	// x, y
+	// x+w, y
+	// x+w, y+h
+	// x, y+h
+
+	vertices[0] = vertices[6] = x;
+	vertices[1] = vertices[3] = y;
+	vertices[2] = vertices[4] = x + w;
+	vertices[5] = vertices[7] = y + h;
 	glBindVertexArray(r.VAO2d);
 	glBindBuffer(GL_ARRAY_BUFFER, r.VBO2d);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, r.EBO2d);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glUseProgram(r.program2d);
+	glUniformMatrix4fv(glGetUniformLocation(r.program2d, "proj"), 1, GL_FALSE, (float*)r.proj2d);
 	glUniform4f(glGetUniformLocation(r.program2d, "color"),
 			r.color.r/256.0f, r.color.g/256.0f, r.color.b/256.0f, r.color.a/256.0f);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+	glBindVertexArray(0);
 }

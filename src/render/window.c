@@ -25,8 +25,8 @@ void window_init(const char *window_name) {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
 	w.name = window_name ? window_name : "Icraft";
-	w.width = 2000;
-	w.height = 1000;
+	w.width = 1400;
+	w.height = 700;
 	w.window = SDL_CreateWindow(w.name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 			w.width, w.height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	if (w.window == NULL) {

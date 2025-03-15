@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 
 static void game_loop() {
 
-	Player *player = newPlayer(-10, 34, 0);
+	Player *player = newPlayer(-10, 24, 0);
 
 	bool running = true;
 	SDL_Event event;
