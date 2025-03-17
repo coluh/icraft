@@ -9,6 +9,8 @@
 #define ROUND_DOWN_BY(x, m) ((x)-POSITIVE_REMAINDER(x,m))
 
 #define UNPACK3(arr) (arr)[0],(arr)[1],(arr)[2]
+#define UNPACK_RGBA(c) (c).r,(c).g,(c).b,(c).a
+#define PACK_RGBA(c, rv, gv, bv, av) (c).r=(rv);(c).g=(gv);(c).b=(bv);(c).a=(av);
 
 void props_init();
 

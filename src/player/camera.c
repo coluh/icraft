@@ -82,7 +82,7 @@ void camera_move(Camera *camera, vec3 direction, float distance) {
 	glm_vec3_add(camera->position, offset, camera->position);
 }
 
-void camera_update(Camera *camera) {
+void camera_updateMatrix(Camera *camera) {
 	vec3 front = {1.0f, 0.0f, 0.0f};
 	vec3 up = {0.0f, 1.0f, 0.0f};
 	glm_quat_rotatev(camera->rotation, front, front);

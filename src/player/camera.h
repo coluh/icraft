@@ -30,8 +30,8 @@ Camera *newCamera(vec3 position, float aspect, CameraType type);
 void camera_rotate(Camera *camera, vec3 axis, float rad);
 void camera_move(Camera *camera, vec3 direction, float distance);
 
-// update view matrix, proj matrix
-void camera_update(Camera *camera);
+// re-compute view matrix, proj matrix
+void camera_updateMatrix(Camera *camera);
 
 /* FPS Camera */
 extern struct FPSCamera {
