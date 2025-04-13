@@ -2,6 +2,7 @@
 #include "gl.h"
 #include "render_2d.h"
 #include "render_3d.h"
+#include "ui/ui.h"
 #include "window.h"
 #include "../util/props.h"
 
@@ -14,14 +15,13 @@ static struct {
 			float r, g, b, a;
 		} clearColor;
 	} config;
-
-	// ...
 } m;
 
 void render_init() {
 	gl_init();
 	m.config.fps = 60;
 	PACK_RGBA(m.config.clearColor, 0.4f, 0.8f, 1.0f, 1.0f);
+	ui_init();
 }
 
 int render_getFPS() { return m.config.fps; }
@@ -34,9 +34,9 @@ void render(Camera *camera) {
 	threed_renderChunks(camera);
 
 	// 2D content
-	// ...
 	twod_setColor(0.0f, 0.0f, 0.0f, 0.5f);
 	twod_drawQuad(50, 50, 100, 100);
+	ui_render();
 
 	SDL_GL_SwapWindow(window_getWindow());
 }
