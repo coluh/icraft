@@ -20,8 +20,8 @@ uiElement *ui_newElementButton(const char *text, void (*callback)()) {
 	b->text = text;
 	b->callback = callback;
 	b->focused = false;
-	// debug
-	b->e.rect.w = 200;
+	// debug, should be min size here
+	b->e.rect.w = 400;
 	b->e.rect.h = 50;
 	return (uiElement*)b;
 }

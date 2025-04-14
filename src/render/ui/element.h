@@ -25,7 +25,7 @@ typedef struct uiElement {
 #define ELEMENT_BORDER_THICKNESS 5
 #define ELEMENT_PADDING 20
 
-#define ELEMENT_FONT_COLOR 0.0f,0.0f,0.0f
+#define ELEMENT_FONT_COLOR 1.0f,1.0f,1.0f
 
 #define ELEMENT_MAX_TEXT_SIZE 64
 

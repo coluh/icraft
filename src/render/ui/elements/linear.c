@@ -1,6 +1,7 @@
 #include "../element.h"
 #include "../../../util/mem.h"
 #include "../../../util/log.h"
+#include "../../../util/props.h"
 #include <SDL2/SDL_events.h>
 #include <stdbool.h>
 
@@ -17,15 +18,25 @@ uiElement *ui_newElementLinear(uiElement *children[], int count, bool horizontal
 	ui_assignElementId(&l->e);
 
 	l->e.type = Element_Linear;
-	l->horizontal = horizontal;
 	l->computed = false;
+	l->horizontal = horizontal;
 	l->count = count;
-	l->e.rect.w = ELEMENT_PADDING * (count - 1);
-	l->e.rect.h = ELEMENT_PADDING * (count - 1);
 	for (int i = 0; i < count; i++) {
 		l->children[i] = children[i];
-		l->e.rect.w += children[i]->rect.w;
-		l->e.rect.h += children[i]->rect.h;
+	}
+
+	// set w, h
+	if (l->horizontal) {
+		l->e.rect.w = SUM_FIELD_INT_P(l->children, uiElement, rect.w, count) + ELEMENT_PADDING * (count - 1);
+		l->e.rect.h = MAX_FIELD_INT_P(l->children, uiElement, rect.h, count);
+	} else {
+		l->e.rect.w = MAX_FIELD_INT_P(l->children, uiElement, rect.w, count);
+		l->e.rect.h = SUM_FIELD_INT_P(l->children, uiElement, rect.h, count) + ELEMENT_PADDING * (count - 1);
+
+		// stretch them
+		for (int i = 0; i < count; i++) {
+			l->children[i]->rect.w = l->e.rect.w;
+		}
 	}
 
 	return (uiElement*)l;
@@ -53,14 +64,18 @@ void ui_renderElementLinear(uiElement *m) {
 void ui_arrangeLinearLayout(uiElement *m) {
 	uiLinear *l = (uiLinear*)m;
 
+	int x = m->rect.x;
+	int y = m->rect.y;
 	for (int i = 0; i < l->count; i++) {
 		uiElement *e = l->children[i];
 		if (l->horizontal) {
-			e->rect.x = m->rect.x + 220 * i;
-			e->rect.y = m->rect.y;
+			e->rect.x = x;
+			e->rect.y = y;
+			x += e->rect.w + ELEMENT_PADDING;
 		} else {
-			e->rect.x = m->rect.x;
-			e->rect.y = m->rect.y + 70 * i;
+			e->rect.x = x;
+			e->rect.y = y;
+			y += e->rect.h + ELEMENT_PADDING;
 		}
 		if (e->type == Element_Linear) {
 			ui_arrangeLinearLayout(e);
