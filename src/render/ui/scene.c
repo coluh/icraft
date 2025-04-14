@@ -15,8 +15,8 @@ Scene *newScene(uiElement *root) {
 	s->y = 0;
 	s->w = window_getWidth();
 	s->h = window_getHeight();
-	root->rect.x = 0;
-	root->rect.y = 0;
+	root->rect.x = s->w/6;
+	root->rect.y = s->h/6;
 	root->rect.w = s->w*2/3;
 	root->rect.h = s->h*2/3;
 	ui_arrangeLinearLayout(root);

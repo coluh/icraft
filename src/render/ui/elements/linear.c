@@ -20,8 +20,12 @@ uiElement *ui_newElementLinear(uiElement *children[], int count, bool horizontal
 	l->horizontal = horizontal;
 	l->computed = false;
 	l->count = count;
+	l->e.rect.w = ELEMENT_PADDING * (count - 1);
+	l->e.rect.h = ELEMENT_PADDING * (count - 1);
 	for (int i = 0; i < count; i++) {
 		l->children[i] = children[i];
+		l->e.rect.w += children[i]->rect.w;
+		l->e.rect.h += children[i]->rect.h;
 	}
 
 	return (uiElement*)l;
@@ -49,25 +53,21 @@ void ui_renderElementLinear(uiElement *m) {
 void ui_arrangeLinearLayout(uiElement *m) {
 	uiLinear *l = (uiLinear*)m;
 
-	// debug
-	if (l->horizontal) {
-		for (int i = 0; i < l->count; i++) {
-			l->children[i]->rect.x = l->e.rect.x + 200 * i;
-			l->children[i]->rect.y = l->e.rect.y;
-		}
-	} else {
-		for (int i = 0; i < l->count; i++) {
-			l->children[i]->rect.x = l->e.rect.x;
-			l->children[i]->rect.y = l->e.rect.y + 50 * i;
-		}
-	}
-
 	for (int i = 0; i < l->count; i++) {
 		uiElement *e = l->children[i];
+		if (l->horizontal) {
+			e->rect.x = m->rect.x + 220 * i;
+			e->rect.y = m->rect.y;
+		} else {
+			e->rect.x = m->rect.x;
+			e->rect.y = m->rect.y + 70 * i;
+		}
 		if (e->type == Element_Linear) {
 			ui_arrangeLinearLayout(e);
 		}
 	}
+
+		// logd("{ %d, %d, %d, %d }", e->rect.x, e->rect.y, e->rect.w, e->rect.h);
 
 	l->computed = true;
 }

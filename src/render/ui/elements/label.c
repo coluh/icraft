@@ -27,5 +27,5 @@ void ui_renderElementLabel(uiElement *m) {
 	const uiLabel *l = (uiLabel*)m;
 
 	twod_setColor(ELEMENT_FONT_COLOR, 1.0f);
-	twod_drawQuad(UNPACK_RECT_EXPAND(l->e.rect, l->e.rect.h/2));
+	twod_drawQuad(UNPACK_RECT_SHRINK(l->e.rect, l->e.rect.h/2));
 }

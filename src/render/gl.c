@@ -81,20 +81,22 @@ void gl_clear(float r, float g, float b, float a) {
 
 void gl_setUniform4f(bool program2d, const char *name, float v0, float v1, float v2, float v3) {
 	int program = program2d ? renderer.program2d : renderer.program;
-	glUniform4f(glGetUniformLocation(program, "color"), v0, v1, v2, v3);
+	glUniform4f(glGetUniformLocation(program, name), v0, v1, v2, v3);
 }
 
 void gl_setUniformMatrix4fv(bool program2d, const char *name, mat4 matrix) {
 	int program = program2d ? renderer.program2d : renderer.program;
-	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_FALSE, (float*)matrix);
+	glUniformMatrix4fv(glGetUniformLocation(program, name), 1, GL_FALSE, (float*)matrix);
 }
 
 void gl_begin2d() {
 	glUseProgram(renderer.program2d);
+	glDisable(GL_DEPTH_TEST);
 }
 
 void gl_begin3d() {
 	glUseProgram(renderer.program);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void gl_bindBlocksTexture() {

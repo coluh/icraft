@@ -54,25 +54,31 @@ void ui_updateElementButton(uiElement *m, SDL_Event *e) {
 void ui_renderElementButton(uiElement *m) {
 	const uiButton *b = (uiButton*)m;
 
+	// outline
 	if (b->focused) {
 		twod_setColor(ELEMENT_BORDER_COLOR_FOCUSED, 1.0f);
 	} else {
-		twod_setColor(ELEMENT_BORDER_COLOR_UNFOCUS , 1.0f);
+		twod_setColor(ELEMENT_BORDER_COLOR_UNFOCUS, 1.0f);
 	}
 	twod_drawQuad(UNPACK_RECT(b->e.rect));
 
-	twod_setColor(ELEMENT_BORDER_COLOR_UPLEFT, 1.0f);
 	const int t = ELEMENT_BORDER_THICKNESS;
 	const int x = b->e.rect.x;
 	const int y = b->e.rect.y;
 	const int w = b->e.rect.w;
 	const int h = b->e.rect.h;
+
+	// background
+	twod_setColor(ELEMENT_BACKGROUND_COLOR, 1.0f);
+	twod_drawQuad(x+t, y+t, w-2*t, h-2*t);
+
+	// border
+	twod_setColor(ELEMENT_BORDER_COLOR_UPLEFT, 1.0f);
 	twod_drawQuad(x+t, y+t, w-2*t, t);
 	twod_drawQuad(x+t, y+t, t, h-2*t);
-	twod_setColor(ELEMENT_BORDER_COLOR_BOTTOMRIGHT, 1.0f);
+	twod_setColor(ELEMENT_BORDER_COLOR_BOTTOMRIGHT, 0.5f);
 	twod_drawQuad(x+t, y+h-3*t, w-2*t, 2*t);
 	twod_drawQuad(x+w-2*t, y+t, t, h-2*t);
 
-	twod_setColor(ELEMENT_BACKGROUND_COLOR, 1.0f);
-	twod_drawQuad(x+2*t, y+2*t, w-4*t, h-5*t);
+	// word
 }
