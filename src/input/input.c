@@ -1,6 +1,6 @@
 #include "input.h"
 #include "../render/window.h"
-#include "../render/ui/ui.h"
+#include "../render/ui/scenemanager.h"
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_keycode.h>
@@ -23,7 +23,7 @@ void input_handle(SDL_Event *event, Camera *camera) {
 		switch (event->key.keysym.sym) {
 		case SDLK_ESCAPE:
 			// debug...
-			ui_pushScene(gui_ofEscape());
+			sceneManager_pushScene(gui_ofEscape());
 			break;
 		default:
 			break;

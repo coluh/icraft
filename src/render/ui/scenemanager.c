@@ -1,30 +1,30 @@
-#include "ui.h"
+#include "scenemanager.h"
 #include "scene.h"
 #include "../../util/log.h"
 
-#define UI_MAX_SCENESTACK_DEPTH 32
+#define SCENEMANAGER_MAX_SCENESTACK_DEPTH 32
 
 static struct {
-	Scene *list[UI_MAX_SCENESTACK_DEPTH];
+	Scene *list[SCENEMANAGER_MAX_SCENESTACK_DEPTH];
 	int count;
 } sceneStack;
 
-void ui_init() {
+void sceneManager_init() {
 	sceneStack.count = 0;
 }
 
-void ui_handle(SDL_Event *event) {
+void sceneManager_handle(SDL_Event *event) {
 	if (sceneStack.count == 0) return;
 	scene_update(sceneStack.list[sceneStack.count-1], event);
 }
 
-void ui_render() {
+void sceneManager_render() {
 	if (sceneStack.count == 0) return;
 	scene_render(sceneStack.list[sceneStack.count-1]);
 }
 
-void ui_pushScene(Scene *scene) {
-	if (sceneStack.count >= UI_MAX_SCENESTACK_DEPTH) {
+void sceneManager_pushScene(Scene *scene) {
+	if (sceneStack.count >= SCENEMANAGER_MAX_SCENESTACK_DEPTH) {
 		loge("StackOverflow");
 	}
 
@@ -32,7 +32,7 @@ void ui_pushScene(Scene *scene) {
 	sceneStack.count++;
 }
 
-Scene *ui_popScene() {
+Scene *sceneManager_popScene() {
 	if (sceneStack.count == 0) return NULL;
 	Scene *r = sceneStack.list[sceneStack.count-1];
 	sceneStack.count--;

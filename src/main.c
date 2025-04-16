@@ -6,7 +6,7 @@
 #include "input/input.h"
 #include "player/camera.h"
 #include "render/render.h"
-#include "render/ui/ui.h"
+#include "render/ui/scenemanager.h"
 #include "render/window.h"
 #include "player/player.h"
 #include "util/props.h"
@@ -45,7 +45,7 @@ static void game_loop() {
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT) { running = false; }
 			input_handle(&event, player_getCamera(player));
-			ui_handle(&event);
+			sceneManager_handle(&event);
 		}
 		input_update(player_getCamera(player));
 
