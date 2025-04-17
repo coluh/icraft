@@ -6,7 +6,6 @@
 #include "input/input.h"
 #include "player/camera.h"
 #include "render/render.h"
-#include "render/ui/scenemanager.h"
 #include "render/window.h"
 #include "player/player.h"
 #include "util/props.h"
@@ -18,8 +17,8 @@ static void init() {
 	log_init();
 	window_init(NULL);
 	render_init();
-	camera_init();
 	props_init();
+	input_init();
 }
 
 static void game_loop();
@@ -33,7 +32,12 @@ int main(int argc, char *argv[]) {
 
 static void game_loop() {
 
-	Player *player = newPlayer(-10, 24, 0);
+	Camera *cam = newCamera((float[]){0, 0, 0}, (float)window_getWidth()/window_getHeight(), CameraType_FPS);
+	Player *player = newPlayer();
+	player_setPos(player, -10, 24, -5);
+	player_rotateHead(player, (float[]){0, 1, 0}, -0.1);
+	camera_attach(cam, player);
+	input_setCallbacks(player, DEFAULT_PLAYER_KEYMAPS, 7);
 
 	bool running = true;
 	SDL_Event event;
@@ -44,20 +48,17 @@ static void game_loop() {
 		/* handle input */
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT) { running = false; }
-			input_handle(&event, player_getCamera(player));
-			sceneManager_handle(&event);
+			input_handle(&event);
 		}
-		input_update(player_getCamera(player));
+		input_update();
 
 		/* update world */
+		camera_update(cam);
 		// step();
-		if (player_getCamera(player)->type == CameraType_RD) {
-			RDCamera.step(player_getCamera(player));
-		}
-		world_updateChunks(UNPACK3(player_getCamera(player)->position));
+		world_updateChunks(UNPACK3(player_getPos(player)));
 
 		/* render */
-		render(player_getCamera(player));
+		render(cam);
 
 		Uint32 end_time = SDL_GetTicks();
 		if (end_time - begin_time < frame_time) {

@@ -23,6 +23,8 @@
 // used for an array of struct pointer, to get sum of INT field of structs
 #define SUM_FIELD_INT_P(strp_arr, str_name, field, count) sum_field_int_p((void**)strp_arr, offsetof(str_name, field), count)
 
+#define FORR(n) for (int i = 0; i < n; i++)
+
 void props_init();
 
 // [min, max)

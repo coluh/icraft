@@ -7,7 +7,8 @@
 void sceneManager_init();
 void sceneManager_handle(SDL_Event *event);
 void sceneManager_render();
-void sceneManager_pushScene(Scene *scene);
-Scene *sceneManager_popScene();
+void sceneManager_push(Scene *scene);
+Scene *sceneManager_pop();
+const char *sceneManager_peekName();
 
 #endif

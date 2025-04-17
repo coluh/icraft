@@ -23,7 +23,7 @@ void sceneManager_render() {
 	scene_render(sceneStack.list[sceneStack.count-1]);
 }
 
-void sceneManager_pushScene(Scene *scene) {
+void sceneManager_push(Scene *scene) {
 	if (sceneStack.count >= SCENEMANAGER_MAX_SCENESTACK_DEPTH) {
 		loge("StackOverflow");
 	}
@@ -32,9 +32,15 @@ void sceneManager_pushScene(Scene *scene) {
 	sceneStack.count++;
 }
 
-Scene *sceneManager_popScene() {
+Scene *sceneManager_pop() {
 	if (sceneStack.count == 0) return NULL;
 	Scene *r = sceneStack.list[sceneStack.count-1];
 	sceneStack.count--;
 	return r;
 }
+
+const char *sceneManager_peekName() {
+	if (sceneStack.count == 0) return NULL;
+	return scene_getName(sceneStack.list[sceneStack.count-1]);
+}
+

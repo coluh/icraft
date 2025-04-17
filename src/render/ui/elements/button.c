@@ -42,7 +42,7 @@ void ui_updateElementButton(uiElement *m, SDL_Event *e) {
 		}
 		break;
 	case SDL_MOUSEBUTTONDOWN:
-		if (b->focused && e->button.button == 0) {
+		if (b->focused && e->button.button == 1) {
 			b->callback();
 		}
 		break;

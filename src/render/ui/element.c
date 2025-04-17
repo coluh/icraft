@@ -7,6 +7,10 @@ void ui_assignElementId(uiElement *e) {
 	elementId++;
 }
 
+uiElement *ui_findId(int id) {
+	return NULL;
+}
+
 void ui_updateElementLabel(uiElement *m, SDL_Event *e);
 void ui_updateElementButton(uiElement *m, SDL_Event *e);
 void ui_updateElementSlider(uiElement *m, SDL_Event *e);

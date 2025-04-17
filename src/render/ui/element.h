@@ -30,6 +30,7 @@ typedef struct uiElement {
 #define ELEMENT_MAX_TEXT_SIZE 64
 
 void ui_assignElementId(uiElement *e);
+uiElement *ui_findId(int id);
 
 void ui_updateElement(uiElement *m, SDL_Event *e);
 void ui_renderElement(uiElement *m);

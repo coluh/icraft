@@ -4,12 +4,14 @@
 #include "../../render/window.h"
 
 typedef struct Scene {
+	const char *name;
 	int x, y, w, h;
 	uiElement *root;
 } Scene;
 
-Scene *newScene(uiElement *root) {
+Scene *newScene(const char *name, uiElement *root) {
 	Scene *s = zalloc(1, sizeof(Scene));
+	s->name = name;
 	s->root = root;
 	s->x = 0;
 	s->y = 0;
@@ -22,6 +24,8 @@ Scene *newScene(uiElement *root) {
 	ui_arrangeLinearLayout(root);
 	return s;
 }
+
+const char *scene_getName(Scene *scene) { return scene->name; }
 
 void scene_free(Scene *scene) {}
 

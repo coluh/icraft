@@ -5,7 +5,8 @@
 #include "element.h"
 typedef struct Scene Scene;
 
-Scene *newScene(uiElement *root);
+Scene *newScene(const char *name, uiElement *root);
+const char *scene_getName(Scene *scene);
 void scene_free(Scene *scene);
 void scene_update(Scene *scene, SDL_Event *event);
 void scene_render(Scene *scene);

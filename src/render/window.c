@@ -1,5 +1,6 @@
 #include "window.h"
 #include "../util/log.h"
+#include <SDL2/SDL_events.h>
 #include <SDL2/SDL_mouse.h>
 #include <stdbool.h>
 
@@ -56,3 +57,18 @@ void window_setSize(int width, int height) {
 	}
 	glViewport(0, 0, w.width, w.height);
 }
+
+void window_focus(bool focus) {
+	if (focus) {
+		SDL_SetWindowGrab(w.window, true);
+		SDL_SetRelativeMouseMode(true);
+	} else {
+		SDL_SetWindowGrab(w.window, false);
+		SDL_SetRelativeMouseMode(false);
+		SDL_WarpMouseInWindow(w.window, w.width/2, w.height/2); // Wayland don't allow any mouse warp so not work
+		// int x, y;
+		// SDL_GetMouseState(&x, &y);
+		// logd("Mouse in %d %d", x, y);
+	}
+}
+
