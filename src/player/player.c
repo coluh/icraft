@@ -16,6 +16,16 @@ struct Player {
 	versor hrot; // head rotation
 };
 
+static Player *currentPlayer;
+
+void setPlayer(Player *p) {
+	currentPlayer = p;
+}
+
+Player *getPlayer() {
+	return currentPlayer;
+}
+
 Player *newPlayer() {
 	Player *p = zalloc(1, sizeof(Player));
 	glm_quat_identity(p->hrot);

@@ -10,6 +10,7 @@
 #include "player/player.h"
 #include "util/props.h"
 #include "world/world.h"
+#include "render/ui/scenemanager.h"
 
 #include <SDL2/SDL.h>
 
@@ -19,6 +20,7 @@ static void init() {
 	render_init();
 	props_init();
 	input_init();
+	sceneManager_init();
 }
 
 static void game_loop();
@@ -34,10 +36,13 @@ static void game_loop() {
 
 	Camera *cam = newCamera((float[]){0, 0, 0}, (float)window_getWidth()/window_getHeight(), CameraType_FPS);
 	Player *player = newPlayer();
+	setPlayer(player);
 	player_setPos(player, -10, 24, -5);
 	player_rotateHead(player, (float[]){0, 1, 0}, -0.1);
 	camera_attach(cam, player);
 	input_setCallbacks(player, DEFAULT_PLAYER_KEYMAPS, 7);
+
+	sceneManager_switchTo("InGame GUI");
 
 	bool running = true;
 	SDL_Event event;

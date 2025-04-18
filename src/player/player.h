@@ -6,6 +6,9 @@
 
 typedef struct Player Player;
 
+void setPlayer(Player *p);
+Player *getPlayer();
+
 Player *newPlayer();
 float *player_getPos(Player *p);
 void player_setPos(Player *p, float x, float y, float z);

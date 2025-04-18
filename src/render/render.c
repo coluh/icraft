@@ -1,6 +1,5 @@
 #include "render.h"
 #include "gl.h"
-#include "render_2d.h"
 #include "render_3d.h"
 #include "ui/scenemanager.h"
 #include "window.h"
@@ -34,8 +33,6 @@ void render(Camera *camera) {
 	threed_renderChunks(camera);
 
 	// 2D content
-	twod_setColor(0.0f, 0.0f, 0.0f, 0.5f);
-	twod_drawQuad(50, 50, 100, 100);
 	sceneManager_render();
 
 	SDL_GL_SwapWindow(window_getWindow());

@@ -7,7 +7,7 @@
 
 #define CHUNK_MAX_VERTICE_COUNT (CHUNK_VOLUME*6*6)
 
-struct vertex {
+static struct vertex {
 	vec3 position;
 	vec3 normal;
 	vec2 uv;
@@ -124,7 +124,7 @@ void chunk_generateVertex(Chunk *chunk, Chunk *nearbys[6]) {
 	chunk->vertex_count = vertex_idx;
 }
 
-ChunkNode *chunk_list;
+static ChunkNode *chunk_list;
 
 // x, y, z should be devisible by CHUNK_SIZE
 Chunk *chunks_add(int x, int y, int z) {

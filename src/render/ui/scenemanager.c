@@ -1,46 +1,59 @@
 #include "scenemanager.h"
+#include <string.h>
 #include "scene.h"
+#include "../../util/props.h"
 #include "../../util/log.h"
+#include "gui/gui.h"
 
-#define SCENEMANAGER_MAX_SCENESTACK_DEPTH 32
+#define MAX_SCENE_COUNT 32
 
 static struct {
-	Scene *list[SCENEMANAGER_MAX_SCENESTACK_DEPTH];
-	int count;
-} sceneStack;
+	Scene *current;
+	Scene *scenes[MAX_SCENE_COUNT];
+	int scenes_n;
+} sceneManager;
+
+static void sceneManager_register(Scene *scene) {
+	sceneManager.scenes[sceneManager.scenes_n] = scene;
+	sceneManager.scenes_n++;
+}
 
 void sceneManager_init() {
-	sceneStack.count = 0;
+	sceneManager_register(gui_ofInGame());
+	sceneManager_register(gui_ofEscape());
+}
+
+void sceneManager_switchTo(const char *sceneName) {
+	if (!sceneName) {
+		sceneManager.current = NULL;
+		return;
+	}
+	FORR(sceneManager.scenes_n) {
+		Scene *s = sceneManager.scenes[i];
+		if (strcmp(scene_getName(s), sceneName) == EQUAL) {
+			sceneManager.current = s;
+			return;
+		}
+	}
+	logd("Unknown GUI: %s", sceneName);
 }
 
 void sceneManager_handle(SDL_Event *event) {
-	if (sceneStack.count == 0) return;
-	scene_update(sceneStack.list[sceneStack.count-1], event);
+	if (sceneManager.current) {
+		scene_update(sceneManager.current, event);
+	}
 }
 
 void sceneManager_render() {
-	if (sceneStack.count == 0) return;
-	scene_render(sceneStack.list[sceneStack.count-1]);
-}
-
-void sceneManager_push(Scene *scene) {
-	if (sceneStack.count >= SCENEMANAGER_MAX_SCENESTACK_DEPTH) {
-		loge("StackOverflow");
+	if (sceneManager.current) {
+		scene_render(sceneManager.current);
 	}
-
-	sceneStack.list[sceneStack.count] = scene;
-	sceneStack.count++;
 }
 
-Scene *sceneManager_pop() {
-	if (sceneStack.count == 0) return NULL;
-	Scene *r = sceneStack.list[sceneStack.count-1];
-	sceneStack.count--;
-	return r;
+const char *sceneManager_getCurrent() {
+	if (!sceneManager.current) return NULL;
+	return scene_getName(sceneManager.current);
 }
 
-const char *sceneManager_peekName() {
-	if (sceneStack.count == 0) return NULL;
-	return scene_getName(sceneStack.list[sceneStack.count-1]);
-}
+
 

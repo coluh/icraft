@@ -25,19 +25,22 @@ uiElement *ui_newElementLinear(uiElement *children[], int count, bool horizontal
 		l->children[i] = children[i];
 	}
 
-	// set w, h
-	if (l->horizontal) {
-		l->e.rect.w = SUM_FIELD_INT_P(l->children, uiElement, rect.w, count) + ELEMENT_PADDING * (count - 1);
-		l->e.rect.h = MAX_FIELD_INT_P(l->children, uiElement, rect.h, count);
-	} else {
-		l->e.rect.w = MAX_FIELD_INT_P(l->children, uiElement, rect.w, count);
-		l->e.rect.h = SUM_FIELD_INT_P(l->children, uiElement, rect.h, count) + ELEMENT_PADDING * (count - 1);
+	if (l->count > 0) {
+		// set w, h
+		if (l->horizontal) {
+			l->e.rect.w = SUM_FIELD_INT_P(l->children, uiElement, rect.w, count) + ELEMENT_PADDING * (count - 1);
+			l->e.rect.h = MAX_FIELD_INT_P(l->children, uiElement, rect.h, count);
+		} else {
+			l->e.rect.w = MAX_FIELD_INT_P(l->children, uiElement, rect.w, count);
+			l->e.rect.h = SUM_FIELD_INT_P(l->children, uiElement, rect.h, count) + ELEMENT_PADDING * (count - 1);
 
-		// stretch them
-		for (int i = 0; i < count; i++) {
-			l->children[i]->rect.w = l->e.rect.w;
+			// stretch them
+			for (int i = 0; i < count; i++) {
+				l->children[i]->rect.w = l->e.rect.w;
+			}
 		}
 	}
+	
 
 	return (uiElement*)l;
 }
