@@ -40,7 +40,9 @@ uiElement *ui_newElementLabel(const char *text);
 uiElement *ui_newElementLinear(uiElement *children[], int count, bool horizontal);
 // uiElement *ui_newElementSlider(const char *format, int min, int max) {
 
-// you must set linear's xywh before calling this
-void ui_arrangeLinearLayout(uiElement *m);
+// you must set linear's xy before calling this
+// if strech, w and h should also be set
+// if w(/h) is 0, use sum width(/height) as that
+void ui_arrangeLinearLayout(uiElement *m, bool stretch);
 
 #endif

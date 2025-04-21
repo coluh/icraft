@@ -27,18 +27,8 @@ uiElement *ui_newElementLinear(uiElement *children[], int count, bool horizontal
 
 	if (l->count > 0) {
 		// set w, h
-		if (l->horizontal) {
-			l->e.rect.w = SUM_FIELD_INT_P(l->children, uiElement, rect.w, count) + ELEMENT_PADDING * (count - 1);
-			l->e.rect.h = MAX_FIELD_INT_P(l->children, uiElement, rect.h, count);
-		} else {
-			l->e.rect.w = MAX_FIELD_INT_P(l->children, uiElement, rect.w, count);
-			l->e.rect.h = SUM_FIELD_INT_P(l->children, uiElement, rect.h, count) + ELEMENT_PADDING * (count - 1);
-
-			// stretch them
-			for (int i = 0; i < count; i++) {
-				l->children[i]->rect.w = l->e.rect.w;
-			}
-		}
+		l->e.rect.w = 0;
+		l->e.rect.h = 0;
 	}
 	
 
@@ -64,28 +54,59 @@ void ui_renderElementLinear(uiElement *m) {
 	}
 }
 
-void ui_arrangeLinearLayout(uiElement *m) {
+void ui_arrangeLinearLayout(uiElement *m, bool stretch) {
 	uiLinear *l = (uiLinear*)m;
 
-	int x = m->rect.x;
-	int y = m->rect.y;
-	for (int i = 0; i < l->count; i++) {
-		uiElement *e = l->children[i];
+	int totalWidth = SUM_FIELD_INT_P(l->children, uiElement, rect.w, l->count);
+	int totalHeight = SUM_FIELD_INT_P(l->children, uiElement, rect.h, l->count);
+	if (m->rect.w == 0) {
 		if (l->horizontal) {
-			e->rect.x = x;
-			e->rect.y = y;
-			x += e->rect.w + ELEMENT_PADDING;
+			m->rect.w = totalWidth + ELEMENT_PADDING * (l->count - 1);
 		} else {
-			e->rect.x = x;
-			e->rect.y = y;
-			y += e->rect.h + ELEMENT_PADDING;
+			m->rect.w = MAX_FIELD_INT_P(l->children, uiElement, rect.w, l->count);
 		}
-		if (e->type == Element_Linear) {
-			ui_arrangeLinearLayout(e);
+	}
+	if (m->rect.h == 0) {
+		if (l->horizontal) {
+			m->rect.h = MAX_FIELD_INT_P(l->children, uiElement, rect.h, l->count);
+		} else {
+			m->rect.h = totalHeight + ELEMENT_PADDING * (l->count - 1);
 		}
 	}
 
-		// logd("{ %d, %d, %d, %d }", e->rect.x, e->rect.y, e->rect.w, e->rect.h);
+	if (!l->horizontal) {
+		// stretch them
+		for (int i = 0; i < l->count; i++) {
+			l->children[i]->rect.w = m->rect.w;
+		}
+	}
+
+	int x = m->rect.x;
+	int y = m->rect.y;
+	int paddingW = (m->rect.w - totalWidth) / (l->count - 1);
+	int paddingH = (m->rect.h - totalHeight) / (l->count - 1);
+	if (!stretch) {
+		paddingW = ELEMENT_PADDING;
+		paddingH = ELEMENT_PADDING;
+	}
+	FORR(l->count) {
+		uiElement *c = l->children[i];
+		if (l->horizontal) {
+			c->rect.x = x;
+			c->rect.y = y;
+		} else {
+			c->rect.x = x;
+			c->rect.y = y;
+		}
+		if (c->type == Element_Linear) {
+			ui_arrangeLinearLayout(c, stretch);
+		}
+		if (l->horizontal) {
+			x += c->rect.w + paddingW;
+		} else {
+			y += c->rect.h + paddingH;
+		}
+	}
 
 	l->computed = true;
 }

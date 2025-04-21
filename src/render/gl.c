@@ -58,6 +58,11 @@ void gl_init() {
 	PACK_RGBA(renderer.color2d, 1.0f, 1.0f, 1.0f, 1.0f);
 }
 
+void gl_setSize(int width, int height) {
+	glViewport(0, 0, width, height);
+	glm_ortho(0.0f, width, height, 0.0f, -1.0f, 1.0f, renderer.proj2d);
+}
+
 mat4 *gl_getProj2d() {
 	return &renderer.proj2d;
 }

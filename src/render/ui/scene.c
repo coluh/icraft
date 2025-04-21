@@ -1,6 +1,7 @@
 #include "scene.h"
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_keyboard.h>
+#include <SDL2/SDL_video.h>
 #include <string.h>
 #include "element.h"
 #include "../../util/mem.h"
@@ -17,19 +18,23 @@ typedef struct Scene {
 	Keymap keymaps[];
 } Scene;
 
+static void defaultLayout(Scene *s) {
+	s->w = window_getWidth();
+	s->h = window_getHeight();
+	s->root->rect.x = s->w/6;
+	s->root->rect.y = s->h/6;
+	s->root->rect.w = s->w*2/3;
+	s->root->rect.h = 0;
+}
+
 Scene *newScene(const char *name, uiElement *root, Keymap keymaps[], int count) {
 	Scene *s = zalloc(1, sizeof(Scene) + count * sizeof(Keymap));
 	s->name = name;
 	s->root = root;
 	s->x = 0;
 	s->y = 0;
-	s->w = window_getWidth();
-	s->h = window_getHeight();
-	root->rect.x = s->w/6;
-	root->rect.y = s->h/6;
-	root->rect.w = s->w*2/3;
-	root->rect.h = s->h*2/3;
-	ui_arrangeLinearLayout(root);
+	defaultLayout(s);
+	ui_arrangeLinearLayout(root, true);
 
 	s->keymaps_count = count;
 	FORR(count) s->keymaps[i] = keymaps[i];
@@ -42,10 +47,16 @@ const char *scene_getName(Scene *scene) { return scene->name; }
 
 void scene_free(Scene *scene) {}
 
-void scene_update(Scene *scene, SDL_Event *ev) {
-	ui_updateElement(scene->root, ev);
-	FORR(scene->keymaps_count) {
-		Keymap *km = &scene->keymaps[i];
+void scene_update(Scene *s, SDL_Event *ev) {
+
+	if (ev->type == SDL_WINDOWEVENT && ev->window.event == SDL_WINDOWEVENT_RESIZED) {
+		defaultLayout(s);
+		ui_arrangeLinearLayout(s->root, true);
+	}
+
+	ui_updateElement(s->root, ev);
+	FORR(s->keymaps_count) {
+		Keymap *km = &s->keymaps[i];
 		// UI Keymap can only handle event, not able to update now
 		switch (km->type) {
 		case Action_KEYDOWN:

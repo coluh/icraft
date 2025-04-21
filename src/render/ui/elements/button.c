@@ -3,6 +3,7 @@
 #include "../../../util/props.h"
 #include "../../../util/mem.h"
 #include <SDL2/SDL_events.h>
+#include <SDL2/SDL_mouse.h>
 #include <stdbool.h>
 
 typedef struct uiButton {
@@ -42,7 +43,7 @@ void ui_updateElementButton(uiElement *m, SDL_Event *e) {
 		}
 		break;
 	case SDL_MOUSEBUTTONDOWN:
-		if (b->focused && e->button.button == 1) {
+		if (b->focused && e->button.button == SDL_BUTTON_LEFT) {
 			b->callback();
 		}
 		break;

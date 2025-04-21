@@ -70,12 +70,12 @@ void input_handle(SDL_Event *ev) {
 		}
 	}
 
-	// contain code that moves cursor causing SDL_MOUSEMOTION
-	sceneManager_handle(ev);
-
 	if (ev->type == SDL_WINDOWEVENT && ev->window.event == SDL_WINDOWEVENT_RESIZED) {
 		window_setSize(ev->window.data1, ev->window.data2);
 	}
+
+	// contain code that moves cursor causing SDL_MOUSEMOTION
+	sceneManager_handle(ev);
 }
 
 void input_update(){

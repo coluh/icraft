@@ -1,5 +1,6 @@
 #include "window.h"
 #include "../util/log.h"
+#include "gl.h"
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_mouse.h>
 #include <stdbool.h>
@@ -55,7 +56,7 @@ void window_setSize(int width, int height) {
 	if (height != 0) {
 		w.height = height;
 	}
-	glViewport(0, 0, w.width, w.height);
+	gl_setSize(w.width, w.height);
 }
 
 void window_focus(bool focus) {

@@ -5,6 +5,7 @@
 #include "../../third_party/cglm/include/cglm/types.h"
 
 void gl_init();
+void gl_setSize(int width, int height);
 
 mat4 *gl_getProj2d();
 void gl_begin2d();
@@ -17,6 +18,7 @@ void gl_setModel(mat4 model);
 void gl_renderTriangles(int vao, int count);
 
 void gl_clear(float r, float g, float b, float a);
+
 void gl_setUniform4f(bool program2d, const char *name, float v0, float v1, float v2, float v3);
 void gl_setUniformMatrix4fv(bool program2d, const char *name, mat4 matrix);
 
