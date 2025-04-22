@@ -20,7 +20,6 @@ static struct {
 	mat4 proj2d;
 	unsigned int VAO2d;
 	unsigned int VBO2d;
-	// unsigned int EBO2d;
 	struct { float r, g, b, a; } color2d;
 } renderer;
 
@@ -39,7 +38,13 @@ void gl_init() {
 	renderer.program2d = shader_get("assets/shaders/basic2d.vs", "assets/shaders/basic2d.fs");
 	glm_ortho(0.0f, window_getWidth(), window_getHeight(), 0.0f, -1.0f, 1.0f, renderer.proj2d);
 
-	float vertices[] = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f };
+	float vertices[] = {
+		// pos      // tex
+		0.0f, 0.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 0.0f, 1.0f,
+	};
 	unsigned int VAO, VBO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -49,8 +54,11 @@ void gl_init() {
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), (void*)0);
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)sizeof(vec2));
+	glEnableVertexAttribArray(1);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -107,6 +115,17 @@ void gl_begin3d() {
 void gl_bindBlocksTexture() {
 	glActiveTexture(GL_TEXTURE0);  // no need, because tex0 is activated by default
 	glBindTexture(GL_TEXTURE_2D, renderer.blocksTexture);
+}
+
+void gl_bind2DTexture(GLuint texture) {
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glUniform1i(glGetUniformLocation(renderer.program2d, "useTexture"), true);
+}
+
+void gl_unbind2DTexture() {
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUniform1i(glGetUniformLocation(renderer.program2d, "useTexture"), false);
 }
 
 void gl_renderQuad() {

@@ -7,6 +7,7 @@
 #include "player/camera.h"
 #include "render/render.h"
 #include "render/window.h"
+#include "render/font.h"
 #include "player/player.h"
 #include "util/props.h"
 #include "world/world.h"
@@ -18,6 +19,7 @@ static void init() {
 	log_init();
 	window_init(NULL);
 	render_init();
+	font_init("assets/fonts/FandolHei-Regular.otf");
 	props_init();
 	input_init();
 	sceneManager_init();

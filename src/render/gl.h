@@ -2,6 +2,7 @@
 #define _ICRAFT_render_gl_h
 
 #include <stdbool.h>
+#include <glad/glad.h>
 #include "../../third_party/cglm/include/cglm/types.h"
 
 void gl_init();
@@ -23,5 +24,7 @@ void gl_setUniform4f(bool program2d, const char *name, float v0, float v1, float
 void gl_setUniformMatrix4fv(bool program2d, const char *name, mat4 matrix);
 
 void gl_bindBlocksTexture();
+void gl_bind2DTexture(GLuint texture);
+void gl_unbind2DTexture();
 
 #endif

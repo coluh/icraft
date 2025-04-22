@@ -21,7 +21,8 @@ Scene *gui_ofEscape() {
 		ui_newElementButton("Back to game", backtogame),
 		ui_newElementLinear((uiElement*[]){
 			ui_newElementButton("Options", NULL),
-			ui_newElementLabel("Statistics"),
+			// ui_newElementLabel("Statistics"),
+			ui_newElementLabel(u8"统计"),
 		}, 2, true),
 		ui_newElementButton("Exit", exitgame),
 	}, 3, false);
