@@ -10,6 +10,7 @@ typedef struct Scene Scene;
 Scene *newScene(const char *name, uiElement *root, Keymap keymaps[], int count);
 const char *scene_getName(Scene *scene);
 void scene_free(Scene *scene);
+void scene_updateLayout(Scene *scene);
 void scene_update(Scene *scene, SDL_Event *event);
 void scene_render(Scene *scene);
 

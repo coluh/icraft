@@ -16,9 +16,6 @@ uiElement *ui_newElementLabel(const char *text) {
 
 	l->e.type = Element_Label;
 	l->text = text;
-	// debug, should be min size here
-	l->e.rect.w = 400;
-	l->e.rect.h = 50;
 	return (uiElement*)l;
 }
 

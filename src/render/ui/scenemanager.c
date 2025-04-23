@@ -32,6 +32,7 @@ void sceneManager_switchTo(const char *sceneName) {
 		Scene *s = sceneManager.scenes[i];
 		if (strcmp(scene_getName(s), sceneName) == EQUAL) {
 			sceneManager.current = s;
+			scene_updateLayout(s);
 			return;
 		}
 	}

@@ -18,6 +18,7 @@ static struct {
 	const char *name;
 	int width;
 	int height;
+	bool fullscreen;
 } w;
 
 void window_init(const char *window_name) {
@@ -29,6 +30,7 @@ void window_init(const char *window_name) {
 	w.name = window_name ? window_name : "Icraft";
 	w.width = 1400;
 	w.height = 700;
+	w.fullscreen = false;
 	w.window = SDL_CreateWindow(w.name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 			w.width, w.height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	if (w.window == NULL) {
@@ -73,3 +75,12 @@ void window_focus(bool focus) {
 	}
 }
 
+void window_toggleFullscreen() {
+	if (!w.fullscreen) {
+		SDL_SetWindowFullscreen(w.window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		w.fullscreen = true;
+	} else {
+		SDL_SetWindowFullscreen(w.window, 0);
+		w.fullscreen = false;
+	}
+}

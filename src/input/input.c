@@ -1,4 +1,5 @@
 #include "input.h"
+#include "../util/log.h"
 #include "../util/props.h"
 #include "../render/window.h"
 #include "../render/ui/scenemanager.h"
@@ -72,6 +73,9 @@ void input_handle(SDL_Event *ev) {
 
 	if (ev->type == SDL_WINDOWEVENT && ev->window.event == SDL_WINDOWEVENT_RESIZED) {
 		window_setSize(ev->window.data1, ev->window.data2);
+	}
+	if (ev->type == SDL_KEYDOWN && ev->key.keysym.sym == SDLK_F11) {
+		window_toggleFullscreen();
 	}
 
 	// contain code that moves cursor causing SDL_MOUSEMOTION

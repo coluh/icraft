@@ -10,5 +10,6 @@ int window_getWidth();
 int window_getHeight();
 void window_setSize(int width, int height);
 void window_focus(bool focus);
+void window_toggleFullscreen();
 
 #endif

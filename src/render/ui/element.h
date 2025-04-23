@@ -23,7 +23,7 @@ typedef struct uiElement {
 #define ELEMENT_BORDER_COLOR_BOTTOMRIGHT 0.33f,0.33f,0.33f
 #define ELEMENT_BACKGROUND_COLOR 0.44f,0.44f,0.44f
 #define ELEMENT_BORDER_THICKNESS 5
-#define ELEMENT_PADDING 20
+#define ELEMENT_PADDING 10
 
 #define ELEMENT_FONT_COLOR 1.0f,1.0f,1.0f
 
@@ -40,9 +40,7 @@ uiElement *ui_newElementLabel(const char *text);
 uiElement *ui_newElementLinear(uiElement *children[], int count, bool horizontal);
 // uiElement *ui_newElementSlider(const char *format, int min, int max) {
 
-// you must set linear's xy before calling this
-// if strech, w and h should also be set
-// if w(/h) is 0, use sum width(/height) as that
+// you must set linear's xywh before calling this
 void ui_arrangeLinearLayout(uiElement *m, bool stretch);
 
 #endif

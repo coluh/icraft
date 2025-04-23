@@ -13,6 +13,8 @@ typedef struct uiLinear {
 	uiElement *children[];
 } uiLinear;
 
+static int padding = ELEMENT_PADDING;
+
 uiElement *ui_newElementLinear(uiElement *children[], int count, bool horizontal) {
 	uiLinear *l = zalloc(1, sizeof(uiLinear) + count * sizeof(uiElement*));
 	ui_assignElementId(&l->e);
@@ -24,13 +26,6 @@ uiElement *ui_newElementLinear(uiElement *children[], int count, bool horizontal
 	for (int i = 0; i < count; i++) {
 		l->children[i] = children[i];
 	}
-
-	if (l->count > 0) {
-		// set w, h
-		l->e.rect.w = 0;
-		l->e.rect.h = 0;
-	}
-	
 
 	return (uiElement*)l;
 }
@@ -57,38 +52,33 @@ void ui_renderElementLinear(uiElement *m) {
 void ui_arrangeLinearLayout(uiElement *m, bool stretch) {
 	uiLinear *l = (uiLinear*)m;
 
-	int totalWidth = SUM_FIELD_INT_P(l->children, uiElement, rect.w, l->count);
-	int totalHeight = SUM_FIELD_INT_P(l->children, uiElement, rect.h, l->count);
-	if (m->rect.w == 0) {
-		if (l->horizontal) {
-			m->rect.w = totalWidth + ELEMENT_PADDING * (l->count - 1);
-		} else {
-			m->rect.w = MAX_FIELD_INT_P(l->children, uiElement, rect.w, l->count);
-		}
-	}
-	if (m->rect.h == 0) {
-		if (l->horizontal) {
-			m->rect.h = MAX_FIELD_INT_P(l->children, uiElement, rect.h, l->count);
-		} else {
-			m->rect.h = totalHeight + ELEMENT_PADDING * (l->count - 1);
-		}
+	if (l->count == 0) {
+		l->computed = true;
+		return;
 	}
 
 	if (!l->horizontal) {
-		// stretch them
+		// let padding = avgh/4, which means nx + (n-1)x/4 = h, that avgh = x = 4h/(5n-1)
+		int avgh = m->rect.h * 4 / (5 * l->count - 1);
+		padding = avgh / 4;
+	}
+
+	int avgw = (m->rect.w - padding * (l->count - 1)) / l->count;
+	int avgh = (m->rect.h - padding * (l->count - 1)) / l->count;
+	if (l->horizontal) {
+		for (int i = 0; i < l->count; i++) {
+			l->children[i]->rect.w = avgw;
+			l->children[i]->rect.h = m->rect.h;
+		}
+	} else {
 		for (int i = 0; i < l->count; i++) {
 			l->children[i]->rect.w = m->rect.w;
+			l->children[i]->rect.h = avgh;
 		}
 	}
 
 	int x = m->rect.x;
 	int y = m->rect.y;
-	int paddingW = (m->rect.w - totalWidth) / (l->count - 1);
-	int paddingH = (m->rect.h - totalHeight) / (l->count - 1);
-	if (!stretch) {
-		paddingW = ELEMENT_PADDING;
-		paddingH = ELEMENT_PADDING;
-	}
 	FORR(l->count) {
 		uiElement *c = l->children[i];
 		if (l->horizontal) {
@@ -102,9 +92,9 @@ void ui_arrangeLinearLayout(uiElement *m, bool stretch) {
 			ui_arrangeLinearLayout(c, stretch);
 		}
 		if (l->horizontal) {
-			x += c->rect.w + paddingW;
+			x += c->rect.w + padding;
 		} else {
-			y += c->rect.h + paddingH;
+			y += c->rect.h + padding;
 		}
 	}
 

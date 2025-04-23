@@ -21,10 +21,17 @@ typedef struct Scene {
 static void defaultLayout(Scene *s) {
 	s->w = window_getWidth();
 	s->h = window_getHeight();
-	s->root->rect.x = s->w/6;
-	s->root->rect.y = s->h/6;
-	s->root->rect.w = s->w*2/3;
-	s->root->rect.h = 0;
+	s->root->rect.h = s->h*2/3;
+	s->root->rect.w = s->root->rect.h*4/3;
+	s->root->rect.h /= 4;
+	s->root->rect.x = (s->w - s->root->rect.w) / 2;
+	s->root->rect.y = (s->h - s->root->rect.h) / 2;
+	s->root->rect.y -= s->h/4;
+}
+
+void scene_updateLayout(Scene *s) {
+	defaultLayout(s);
+	ui_arrangeLinearLayout(s->root, true);
 }
 
 Scene *newScene(const char *name, uiElement *root, Keymap keymaps[], int count) {
@@ -33,8 +40,7 @@ Scene *newScene(const char *name, uiElement *root, Keymap keymaps[], int count) 
 	s->root = root;
 	s->x = 0;
 	s->y = 0;
-	defaultLayout(s);
-	ui_arrangeLinearLayout(root, true);
+	scene_updateLayout(s);
 
 	s->keymaps_count = count;
 	FORR(count) s->keymaps[i] = keymaps[i];
@@ -50,8 +56,7 @@ void scene_free(Scene *scene) {}
 void scene_update(Scene *s, SDL_Event *ev) {
 
 	if (ev->type == SDL_WINDOWEVENT && ev->window.event == SDL_WINDOWEVENT_RESIZED) {
-		defaultLayout(s);
-		ui_arrangeLinearLayout(s->root, true);
+		scene_updateLayout(s);
 	}
 
 	ui_updateElement(s->root, ev);
