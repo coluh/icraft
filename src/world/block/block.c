@@ -7,7 +7,7 @@ int block_getId(Block block) {
 	return block & 0x0000FFFF;
 }
 
-// to make life easy, follow order of 
+// follow order of
 // -z, z, -y, y, -x, x
 static const int id_textures_map[][6] = {
 	{0, 0, 0, 0, 0, 0},
