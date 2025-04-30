@@ -15,6 +15,8 @@
 
 #include <SDL2/SDL.h>
 
+#define GAME_UPDATE_DT 0.05f
+
 static void init() {
 	log_init();
 	window_init(NULL);
@@ -37,9 +39,10 @@ static void game_loop() {
 
 	Camera *cam = newCamera((float[]){0, 0, 0}, (float)window_getWidth()/window_getHeight(), CameraType_FPS);
 	Player *player = newPlayer();
-	setPlayer(player);
 	player_setPos(player, -10, 24, -5);
 	player_rotateHead(player, (float[]){0, 1, 0}, -0.1);
+
+	setPlayer(player);
 	camera_attach(cam, player);
 	input_setCallbacks(player, DEFAULT_PLAYER_KEYMAPS, 7);
 
@@ -47,28 +50,32 @@ static void game_loop() {
 
 	bool running = true;
 	SDL_Event event;
-	int frame_time = 1000 / render_getFPS();
+	Uint32 last_time = SDL_GetTicks();
+	float accumulator = 0.0f;
 	while (running) {
-		Uint32 begin_time = SDL_GetTicks();
+		Uint32 now = SDL_GetTicks();
+		float delta = (now - last_time) / 1000.0f;
+		last_time = now;
 
-		/* handle input */
-		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_QUIT) { running = false; }
-			input_handle(&event);
+		accumulator += delta;
+		while (accumulator >= GAME_UPDATE_DT) {
+
+			/* handle input */
+			while (SDL_PollEvent(&event)) {
+				if (event.type == SDL_QUIT) { running = false; }
+				input_handle(&event);
+			}
+			input_update();
+
+			/* update world */
+			camera_update(cam);
+			player_update(player);
+			world_updateChunks(UNPACK3(player_getPos(player)));
+
+			accumulator -= GAME_UPDATE_DT;
 		}
-		input_update();
-
-		/* update world */
-		camera_update(cam);
-		// step();
-		world_updateChunks(UNPACK3(player_getPos(player)));
 
 		/* render */
 		render(cam);
-
-		Uint32 end_time = SDL_GetTicks();
-		if (end_time - begin_time < frame_time) {
-			SDL_Delay(frame_time - (end_time - begin_time));
-		}
 	}
 }

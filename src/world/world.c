@@ -1,6 +1,9 @@
 #include "world.h"
+#include <math.h>
 #include <stdbool.h>
+#include "block/block.h"
 #include "chunk.h"
+#include "../util/log.h"
 #include "../util/props.h"
 #include "generation/generator.h"
 #include <stddef.h>
@@ -69,4 +72,35 @@ void world_updateChunks(int x, int y, int z) {
 	}
 
 	chunks_foreach(world_updateChunk);
+}
+
+Block world_block(int x, int y, int z) {
+	int cx = ROUND_DOWN_BY(x, CHUNK_SIZE);
+	int cy = ROUND_DOWN_BY(y, CHUNK_SIZE);
+	int cz = ROUND_DOWN_BY(z, CHUNK_SIZE);
+	Chunk *chunk = chunks_find(cx, cy, cz);
+	if (chunk == NULL) {
+		// debug
+		return 0; // air
+	}
+	return chunk->blocks[x-cx][y-cy][z-cz];
+}
+
+bool world_collide(float x, float y, float z, float w, float t, float h) {
+	for (int i = floorf(x); i < ceilf(x + w); i++) {
+		for (int j = floorf(y); j < ceilf(y + t); j++) {
+			for (int k = floorf(z); k < ceilf(z + h); k++) {
+				Block block = world_block(i, j, k);
+				if (block_getId(block) == block_id_of("air")) {
+					continue;
+				}
+				if (((x + w > i) && (x < i + 1)) &&
+					((y + t > j) && (y < j + 1)) &&
+					((z + h > k) && (z < k + 1))) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
 }

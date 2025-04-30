@@ -1,17 +1,28 @@
 #include "player.h"
 #include "../util/mem.h"
 #include "../util/props.h"
+#include "../world/world.h"
 
 #include "../../third_party/cglm/include/cglm/vec3.h"
 #include "../../third_party/cglm/include/cglm/quat.h"
 
-#define PLAYER_MOVE_SPEED 0.05f
-#define PLAYER_ROTATE_SENSI 0.01f
+#define PLAYER_ROTATE_SENSI	0.003f
+#define PLAYER_MOVE_SPEED	0.2f
+#define PLAYER_JUMP_SPEED	4.2f
+
+#define PLAYER_WIDTH	0.6
+#define PLAYER_HEIGHT	1.8
+
+#define GAME_UPDATE_DT 0.05f
 
 struct Player {
 	struct {
 		float x, y, z;
 	} pos;
+	struct {
+		float x, y, z;
+	} v;
+	bool on_ground;
 	versor brot; // body rotation
 	versor hrot; // head rotation
 };
@@ -41,6 +52,44 @@ void player_setPos(Player *p, float x, float y, float z) {
 	p->pos.x = x;
 	p->pos.y = y;
 	p->pos.z = z;
+}
+
+void player_update(Player *p) {
+
+	if (p->v.x != 0) {
+		float nx = p->pos.x + p->v.x * GAME_UPDATE_DT;
+		if (world_collide(nx-PLAYER_WIDTH/2, p->pos.y-PLAYER_HEIGHT/2, p->pos.z-PLAYER_WIDTH/2,
+					PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH)) {
+			p->v.x = 0;
+		} else {
+			p->pos.x = nx;
+		}
+	}
+
+	if (p->v.y != 0) {
+		float ny = p->pos.y + p->v.y * GAME_UPDATE_DT;
+		if (world_collide(p->pos.x-PLAYER_WIDTH/2, ny-PLAYER_HEIGHT/2, p->pos.z-PLAYER_WIDTH/2,
+					PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH)) {
+			p->v.y = 0;
+			p->on_ground = true;
+		} else {
+			p->pos.y = ny;
+		}
+	}
+
+	if (p->v.z != 0) {
+		float nz = p->pos.z + p->v.z * GAME_UPDATE_DT;
+		if (world_collide(p->pos.x-PLAYER_WIDTH/2, p->pos.y-PLAYER_HEIGHT/2, nz-PLAYER_WIDTH/2,
+					PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH)) {
+			p->v.z = 0;
+		} else {
+			p->pos.z = nz;
+		}
+	}
+
+	if (!p->on_ground) {
+		p->v.y += -9.8 * GAME_UPDATE_DT;
+	}
 }
 
 void player_copyTo(Player *p, vec3 pos, versor rot) {
@@ -115,9 +164,13 @@ void player_right(void *p, SDL_Event *ev) {
 	player_move(p, right, PLAYER_MOVE_SPEED);
 }
 void player_up(void *p, SDL_Event *ev) {
-	vec3 front, up, right;
-	getv_upright(p, front, up, right);
-	player_move(p, up, PLAYER_MOVE_SPEED);
+	// vec3 front, up, right;
+	// getv_upright(p, front, up, right);
+	// player_move(p, up, PLAYER_MOVE_SPEED);
+
+	// debug
+	((Player*)p)->v.y = PLAYER_JUMP_SPEED;
+	((Player*)p)->on_ground = false;
 }
 void player_down(void *p, SDL_Event *ev) {
 	vec3 front, up, right;
