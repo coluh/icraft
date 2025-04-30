@@ -4,6 +4,8 @@
 #include <stddef.h>
 
 #define ARRLEN(arr) (sizeof(arr)/sizeof((arr)[0]))
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+#define MAX(x, y) ((x) > (y) ? (x) : (y))
 
 #define EQUAL 0
 

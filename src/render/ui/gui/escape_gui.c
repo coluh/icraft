@@ -18,13 +18,12 @@ static void exitgame() {
 
 Scene *gui_ofEscape() {
 	uiElement *root = ui_newElementLinear((uiElement*[]){
-		ui_newElementButton("Back to game", backtogame),
+		ui_newElementButton("回到游戏", backtogame),
 		ui_newElementLinear((uiElement*[]){
-			ui_newElementButton("Options", NULL),
-			// ui_newElementLabel("Statistics"),
+			ui_newElementButton("选项", NULL),
 			ui_newElementLabel(u8"统计"),
 		}, 2, true),
-		ui_newElementButton("Exit", exitgame),
+		ui_newElementButton("退出游戏", exitgame),
 	}, 3, false);
 	return newScene("Escape GUI", root, (Keymap[]) {
 		{ Action_KEYDOWN, { "Escape" }, backtogame}

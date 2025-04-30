@@ -1,12 +1,11 @@
 #include "font.h"
 #include "../util/log.h"
+#include "../util/props.h"
 #include "render_2d.h"
 #include <glad/glad.h>
 
 #include <ft2build.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <wctype.h>
 #include FT_FREETYPE_H
 
 typedef struct Character {
@@ -91,7 +90,43 @@ static const char *utf8next(const char *s, uint32_t *out) {
 	}
 }
 
-void font_drawText(const char *utf8str, float x, float y, float scale) {
+void font_queryText(const char *utf8str, float scale, int *width, int *height) {
+
+	*width = 0;
+	*height = 0;
+
+	uint32_t ch;
+	int b;
+	int w;
+	int a;
+	int ymin = 999999;
+	int ymax = -1;
+	int first = 1;
+	while (*utf8str) {
+		utf8str = utf8next(utf8str, &ch);
+		if (characters[ch].textureID == 0) {
+			// logv("Load %c", ch);
+			font_loadCharacter(ch);
+		}
+
+		Character *c = &characters[ch];
+		if (first) {
+			*width -= c->bearingX * scale;
+			first = 0;
+		}
+		ymin = MIN(ymin, -c->bearingY * scale);
+		ymax = MAX(ymax, (c->height - c->bearingY) * scale);
+		b = c->bearingX * scale;
+		w = c->width * scale;
+		a = c->advance * scale;
+
+		*width += c->advance * scale;
+	}
+	*width += -a + b + w;
+	*height = ymax - ymin;
+}
+
+void font_drawTextFromOrigin(const char *utf8str, float x, float y, float scale) {
 	uint32_t ch;
 	while (*utf8str) {
 		utf8str = utf8next(utf8str, &ch);
@@ -101,6 +136,34 @@ void font_drawText(const char *utf8str, float x, float y, float scale) {
 		}
 
 		Character *c = &characters[ch];
+		int xpos = x + c->bearingX * scale;
+		int ypos = y - c->bearingY * scale;
+		int w = c->width * scale;
+		int h = c->height * scale;
+
+		// glBindTexture(GL_TEXTURE_2D, c->textureID);
+		twod_drawTexture(xpos, ypos, w, h, c->textureID);
+
+		x += c->advance * scale;
+	}
+}
+
+void font_drawText(const char *utf8str, float x, float y, float scale) {
+	uint32_t ch;
+	int first = 1;
+	while (*utf8str) {
+		utf8str = utf8next(utf8str, &ch);
+		if (characters[ch].textureID == 0) {
+			// logv("Load %c", ch);
+			font_loadCharacter(ch);
+		}
+
+		Character *c = &characters[ch];
+		if (first) {
+			x -= c->bearingX * scale;
+			y += c->bearingY * scale;
+			first = 0;
+		}
 		int xpos = x + c->bearingX * scale;
 		int ypos = y - c->bearingY * scale;
 		int w = c->width * scale;

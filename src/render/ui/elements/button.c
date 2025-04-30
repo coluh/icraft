@@ -1,5 +1,6 @@
 #include "../element.h"
 #include "../../render_2d.h"
+#include "../../font.h"
 #include "../../../util/props.h"
 #include "../../../util/mem.h"
 #include <SDL2/SDL_events.h>
@@ -11,6 +12,7 @@ typedef struct uiButton {
 	const char *text;
 	bool focused;
 	void (*callback)();
+	int text_width, text_height;
 } uiButton;
 
 uiElement *ui_newElementButton(const char *text, void (*callback)()) {
@@ -19,6 +21,7 @@ uiElement *ui_newElementButton(const char *text, void (*callback)()) {
 
 	b->e.type = Element_Button;
 	b->text = text;
+	font_queryText(b->text, 1, &b->text_width, &b->text_height);
 	b->callback = callback;
 	b->focused = false;
 	return (uiElement*)b;
@@ -79,4 +82,9 @@ void ui_renderElementButton(uiElement *m) {
 	twod_drawQuad(x+w-2*t, y+t, t, h-2*t);
 
 	// word
+	twod_setColor(ELEMENT_FONT_COLOR, 1.0f);
+	font_drawText(b->text,
+		x + (w - b->text_width) / 2.0f,
+		y + (h - b->text_height) / 2.0f,
+	1);
 }

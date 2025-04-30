@@ -18,11 +18,10 @@
 static void init() {
 	log_init();
 	window_init(NULL);
-	render_init();
 	font_init("assets/fonts/FandolHei-Regular.otf");
+	render_init();
 	props_init();
 	input_init();
-	sceneManager_init();
 }
 
 static void game_loop();
