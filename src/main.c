@@ -37,10 +37,9 @@ int main(int argc, char *argv[]) {
 
 static void game_loop() {
 
+	World *world = newWorld();
 	Camera *cam = newCamera((float[]){0, 0, 0}, (float)window_getWidth()/window_getHeight(), CameraType_FPS);
 	Player *player = newPlayer();
-	player_setPos(player, -10, 24, -5);
-	player_rotateHead(player, (float[]){0, 1, 0}, -0.1);
 
 	setPlayer(player);
 	camera_attach(cam, player);
@@ -50,14 +49,29 @@ static void game_loop() {
 
 	bool running = true;
 	SDL_Event event;
+
 	Uint32 last_time = SDL_GetTicks();
 	float accumulator = 0.0f;
+
+	float fps_timer = 0.0f;
+	int frame_count = 0;
+	int current_fps = 0;
+
 	while (running) {
 		Uint32 now = SDL_GetTicks();
-		float delta = (now - last_time) / 1000.0f;
+		float frame_time = (now - last_time) / 1000.0f;
 		last_time = now;
 
-		accumulator += delta;
+		fps_timer += frame_time;
+		frame_count += 1;
+		if (fps_timer >= 1.0f) {
+			current_fps = frame_count;
+			fps_timer = 0.0f;
+			frame_count = 0;
+			logi("FPS: %d", current_fps);
+		}
+
+		accumulator += frame_time;
 		while (accumulator >= GAME_UPDATE_DT) {
 
 			/* handle input */
@@ -67,15 +81,15 @@ static void game_loop() {
 			}
 			input_update();
 
-			/* update world */
+			/* update game */
 			camera_update(cam);
-			player_update(player);
-			world_updateChunks(UNPACK3(player_getPos(player)));
+			player_update(player, world);
+			world_updateChunks(world, UNPACK3(player_getPos(player)));
 
 			accumulator -= GAME_UPDATE_DT;
 		}
 
-		/* render */
-		render(cam);
+		/* render game */
+		render(cam, world);
 	}
 }

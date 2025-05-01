@@ -8,12 +8,14 @@ static void threed_renderChunk(Chunk *chunk) {
 	gl_renderTriangles(chunk->VAO, chunk->vertex_count);
 }
 
-void threed_renderChunks(Camera *camera) {
+void threed_renderChunks(Camera *camera, World *world) {
 
 	gl_begin3d();
 	gl_setView(camera->view);
 	gl_setProj(camera->proj);
 	gl_bindBlocksTexture();
 
-	chunks_foreach(threed_renderChunk);
+	for (ChunkNode *p = world->chunks; p != NULL; p = p->next) {
+		threed_renderChunk(p->chunk);
+	}
 }

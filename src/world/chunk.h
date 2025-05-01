@@ -10,28 +10,23 @@
 
 typedef struct Chunk {
 	int x, y, z;  // the min xyz in this block
-	mat4 model;   // model matrix, gened from xyz
-	bool generated;
+
 	Block blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+	mat4 model;   // model matrix, gened from xyz
 	unsigned VAO, VBO;
 	int vertex_count;
+
+	bool generated;
 	bool dirty;
 } Chunk;
 
-void chunk_generateVertex(Chunk *chunk, Chunk *nearbys[6]);
+Chunk *newChunk(int x, int y, int z);
 
-typedef struct ChunkNode {
-	Chunk chunk;
-	struct ChunkNode *next;
-} ChunkNode;
+// generate vertex data for the renderer
+void chunk_generateVertex(Chunk *chunk, Chunk *nearbys[6]);
 
 // x, y, z should be devisible by CHUNK_SIZE
 // btw return a pointer to the new chunk to you
-Chunk *chunks_add(int x, int y, int z);
 
-// returns NULL if list doesn't contain this chunk
-Chunk *chunks_find(int x, int y, int z);
-
-void chunks_foreach(void (*handler)(Chunk *chunk));
 
 #endif

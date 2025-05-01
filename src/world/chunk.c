@@ -124,40 +124,17 @@ void chunk_generateVertex(Chunk *chunk, Chunk *nearbys[6]) {
 	chunk->vertex_count = vertex_idx;
 }
 
-static ChunkNode *chunk_list;
+Chunk *newChunk(int x, int y, int z) {
+	Chunk *c = zalloc(1, sizeof(Chunk));
+	c->x = x;
+	c->y = y;
+	c->z = z;
 
-// x, y, z should be devisible by CHUNK_SIZE
-Chunk *chunks_add(int x, int y, int z) {
-	Assert((x%CHUNK_SIZE==0)&&(y%CHUNK_SIZE==0)&&(z%CHUNK_SIZE==0), "what can I say");
-	ChunkNode *node = zalloc(1, sizeof(ChunkNode));
-	node->chunk.x = x;
-	node->chunk.y = y;
-	node->chunk.z = z;
-	glm_mat4_identity(node->chunk.model);
-	glm_translate(node->chunk.model, (vec3){x, y, z});
-	node->chunk.generated = false;
-	node->chunk.dirty = true;
+	glm_mat4_identity(c->model);
+	glm_translate(c->model, (vec3){x, y, z});
 
-	ChunkNode **p = &chunk_list;
-	while (*p != NULL) {
-		p = &(*p)->next;
-	}
-	*p = node;
+	c->generated = false;
+	c->dirty = true;
 
-	return &node->chunk;
-}
-
-Chunk *chunks_find(int x, int y, int z) {
-	for (ChunkNode *p = chunk_list; p != NULL; p = p->next) {
-		if ((p->chunk.x == x) && (p->chunk.y == y) && (p->chunk.z == z)) {
-			return &p->chunk;
-		}
-	}
-	return NULL;
-}
-
-void chunks_foreach(void (*handler)(Chunk *chunk)) {
-	for (ChunkNode *p = chunk_list; p != NULL; p = p->next) {
-		handler(&p->chunk);
-	}
+	return c;
 }

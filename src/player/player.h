@@ -1,6 +1,7 @@
 #ifndef _ICRAFT_player_player_h
 #define _ICRAFT_player_player_h
 
+#include "../world/world.h"
 #include "../../third_party/cglm/include/cglm/types.h"
 #include <SDL2/SDL_events.h>
 
@@ -13,7 +14,7 @@ Player *newPlayer();
 float *player_getPos(Player *p);
 void player_setPos(Player *p, float x, float y, float z);
 
-void player_update(Player *p);
+void player_update(Player *p, World *w);
 
 // copy pos and head rot out
 void player_copyTo(Player *p, vec3 pos, versor rot);

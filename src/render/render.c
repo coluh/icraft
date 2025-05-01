@@ -25,12 +25,12 @@ void render_init() {
 
 int render_getFPS() { return m.config.fps; }
 
-void render(Camera *camera) {
+void render(Camera *camera, World *world) {
 	gl_clear(UNPACK_RGBA(m.config.clearColor));
 
 	// 3D content
 	camera_updateMatrix(camera);
-	threed_renderChunks(camera);
+	threed_renderChunks(camera, world);
 
 	// 2D content
 	sceneManager_render();

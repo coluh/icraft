@@ -2,7 +2,8 @@
 #define _ICRAFT_render_render3d_h
 
 #include "../player/camera.h"
+#include "../world/world.h"
 
-void threed_renderChunks(Camera *camera);
+void threed_renderChunks(Camera *camera, World *world);
 
 #endif

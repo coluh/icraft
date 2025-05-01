@@ -27,12 +27,14 @@ struct Player {
 	versor hrot; // head rotation
 };
 
+// this is for ?
 static Player *currentPlayer;
 
 void setPlayer(Player *p) {
 	currentPlayer = p;
 }
 
+// get current player
 Player *getPlayer() {
 	return currentPlayer;
 }
@@ -41,6 +43,9 @@ Player *newPlayer() {
 	Player *p = zalloc(1, sizeof(Player));
 	glm_quat_identity(p->hrot);
 	glm_quat_identity(p->brot);
+
+	player_setPos(p, -10, 24, -5);
+	player_rotateHead(p, (float[]){0, 1, 0}, -0.1);
 	return p;
 }
 
@@ -54,12 +59,12 @@ void player_setPos(Player *p, float x, float y, float z) {
 	p->pos.z = z;
 }
 
-void player_update(Player *p) {
+void player_update(Player *p, World *w) {
 
 	if (p->v.x != 0) {
 		float nx = p->pos.x + p->v.x * GAME_UPDATE_DT;
-		if (world_collide(nx-PLAYER_WIDTH/2, p->pos.y-PLAYER_HEIGHT/2, p->pos.z-PLAYER_WIDTH/2,
-					PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH)) {
+		if (world_collide(w, BODY(nx-PLAYER_WIDTH/2, p->pos.y-PLAYER_HEIGHT/2, p->pos.z-PLAYER_WIDTH/2,
+					PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH))) {
 			p->v.x = 0;
 		} else {
 			p->pos.x = nx;
@@ -68,8 +73,8 @@ void player_update(Player *p) {
 
 	if (p->v.y != 0) {
 		float ny = p->pos.y + p->v.y * GAME_UPDATE_DT;
-		if (world_collide(p->pos.x-PLAYER_WIDTH/2, ny-PLAYER_HEIGHT/2, p->pos.z-PLAYER_WIDTH/2,
-					PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH)) {
+		if (world_collide(w, BODY(p->pos.x-PLAYER_WIDTH/2, ny-PLAYER_HEIGHT/2, p->pos.z-PLAYER_WIDTH/2,
+					PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH))) {
 			p->v.y = 0;
 			p->on_ground = true;
 		} else {
@@ -79,8 +84,8 @@ void player_update(Player *p) {
 
 	if (p->v.z != 0) {
 		float nz = p->pos.z + p->v.z * GAME_UPDATE_DT;
-		if (world_collide(p->pos.x-PLAYER_WIDTH/2, p->pos.y-PLAYER_HEIGHT/2, nz-PLAYER_WIDTH/2,
-					PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH)) {
+		if (world_collide(w, BODY(p->pos.x-PLAYER_WIDTH/2, p->pos.y-PLAYER_HEIGHT/2, nz-PLAYER_WIDTH/2,
+					PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH))) {
 			p->v.z = 0;
 		} else {
 			p->pos.z = nz;
