@@ -45,7 +45,7 @@ static void game_loop() {
 	camera_attach(cam, player);
 	input_setCallbacks(player, DEFAULT_PLAYER_KEYMAPS, 7);
 
-	sceneManager_switchTo("InGame GUI");
+	sceneManager_push("InGame GUI");
 
 	bool running = true;
 	SDL_Event event;
@@ -82,6 +82,7 @@ static void game_loop() {
 			input_update();
 
 			/* update game */
+			sceneManager_update();
 			camera_update(cam);
 			player_update(player, world);
 			world_updateChunks(world, UNPACK3(player_getPos(player)));

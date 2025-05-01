@@ -12,6 +12,8 @@
 typedef struct Scene {
 	const char *name;
 	int x, y, w, h;
+
+
 	uiElement *root;
 
 	int keymaps_count;
@@ -53,7 +55,7 @@ const char *scene_getName(Scene *scene) { return scene->name; }
 
 void scene_free(Scene *scene) {}
 
-void scene_update(Scene *s, SDL_Event *ev) {
+void scene_handle(Scene *s, SDL_Event *ev) {
 
 	if (ev->type == SDL_WINDOWEVENT && ev->window.event == SDL_WINDOWEVENT_RESIZED) {
 		scene_updateLayout(s);
@@ -74,6 +76,8 @@ void scene_update(Scene *s, SDL_Event *ev) {
 		}
 	}
 }
+
+void scene_update(Scene *scene) {}
 
 void scene_render(Scene *scene) {
 	ui_renderElement(scene->root);
