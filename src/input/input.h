@@ -1,27 +1,10 @@
 #ifndef _ICRAFT_input_input_h
 #define _ICRAFT_input_input_h
 
+#include "keymap.h"
+
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_events.h>
 #include <stdbool.h>
-
-typedef enum ActionType {
-	Action_KEYDOWN, Action_KEYUP, Action_KEYPRESSED,
-	Action_MOUSEDOWN, Action_MOUSEUP, Action_MOUSEMOTION,
-} ActionType;
-
-typedef enum MouseName {
-	Mouse_LEFT, Mouse_MIDDLE, Mouse_RIGHT
-} MouseName;
-
-typedef struct Keymap {
-	ActionType type; // SDL_Event->type
-	union {
-		const char *key;
-		MouseName button;
-	};
-	void (*callback)(void *target, SDL_Event *ev);
-} Keymap;
 
 #define DEFAULT_PLAYER_KEYMAPS (Keymap[]) { \
 	{ Action_KEYPRESSED, { "W" }, player_forward }, \

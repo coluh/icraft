@@ -1,7 +1,7 @@
 #include "render.h"
 #include "gl.h"
 #include "render_3d.h"
-#include "ui/scenemanager.h"
+#include "../scene/scenemanager.h"
 #include "window.h"
 #include "../util/props.h"
 

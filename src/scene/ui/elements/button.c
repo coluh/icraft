@@ -1,6 +1,6 @@
 #include "../element.h"
-#include "../../render_2d.h"
-#include "../../font.h"
+#include "../../../render/render_2d.h"
+#include "../../../render/font.h"
 #include "../../../util/props.h"
 #include "../../../util/mem.h"
 #include <SDL2/SDL_events.h>

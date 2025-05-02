@@ -5,5 +5,6 @@
 
 Scene *gui_ofInGame();
 Scene *gui_ofEscape();
+void setDefaultLayout(Scene *self);
 
 #endif

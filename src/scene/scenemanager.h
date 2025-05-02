@@ -10,7 +10,7 @@ void sceneManager_pop();
 // pop and push
 void sceneManager_switchTo(const char *sceneName);
 // see top scene
-const char *sceneManager_peek();
+const char *sceneManager_peekName();
 
 void sceneManager_handle(SDL_Event *event);
 void sceneManager_update();

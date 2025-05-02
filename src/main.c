@@ -11,11 +11,15 @@
 #include "player/player.h"
 #include "util/props.h"
 #include "world/world.h"
-#include "render/ui/scenemanager.h"
+#include "scene/scenemanager.h"
 
 #include <SDL2/SDL.h>
 
 #define GAME_UPDATE_DT 0.05f
+
+struct Game {
+	int current_fps;
+} g;
 
 static void init() {
 	log_init();
@@ -55,7 +59,6 @@ static void game_loop() {
 
 	float fps_timer = 0.0f;
 	int frame_count = 0;
-	int current_fps = 0;
 
 	while (running) {
 		Uint32 now = SDL_GetTicks();
@@ -65,10 +68,9 @@ static void game_loop() {
 		fps_timer += frame_time;
 		frame_count += 1;
 		if (fps_timer >= 1.0f) {
-			current_fps = frame_count;
+			g.current_fps = frame_count;
 			fps_timer = 0.0f;
 			frame_count = 0;
-			logi("FPS: %d", current_fps);
 		}
 
 		accumulator += frame_time;
