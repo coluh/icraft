@@ -1,6 +1,7 @@
 #include "scene.h"
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_keyboard.h>
+#include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_video.h>
 #include <string.h>
 #include "ui/element.h"
@@ -44,20 +45,23 @@ void scene_handle(Scene *s, SDL_Event *ev) {
 
 	FORR(s->keymaps_count) {
 		Keymap *km = &s->keymaps[i];
-		// UI Keymap can only handle event, not able to update now
 		switch (km->type) {
 		case Action_KEYDOWN:
 			if (ev->type == SDL_KEYDOWN && strcmp(km->key, SDL_GetKeyName(ev->key.keysym.sym)) == EQUAL) {
-				km->callback(NULL, NULL);
+				km->callback(NULL);
 			}
 			break;
+		case Action_MOUSEMOTION:
+			if (ev->type == SDL_MOUSEMOTION) {
+				km->callback(ev);
+			}
 		default:
 			break;
 		}
 	}
 }
 
-void scene_update(Scene *s) {
+void scene_update(Scene *s, bool input) {
 	if (s->update != NULL) {
 		s->update(s);
 	}
@@ -69,6 +73,25 @@ void scene_update(Scene *s) {
 	case Scene_CUSTOM:
 	default:
 		break;
+	}
+
+	if (!input) {
+		return;
+	}
+
+	const Uint8 *state = SDL_GetKeyboardState(NULL);
+	FORR(s->keymaps_count) {
+		Keymap *km = &s->keymaps[i];
+		switch (km->type) {
+		case Action_KEYPRESSED:
+			if (state[SDL_GetScancodeFromName(km->key)]) {
+				km->callback(NULL);
+			}
+			break;
+		default:
+			// these are handled in handle()
+			break;
+		}
 	}
 }
 

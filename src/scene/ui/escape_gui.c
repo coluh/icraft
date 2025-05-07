@@ -1,15 +1,19 @@
 #include <stdlib.h>
+#include "../../game.h"
 #include "element.h"
 #include "../scene.h"
 #include "../scenemanager.h"
 #include "../../render/window.h"
 
+extern Game g;
+
 static void backtogame() {
-	sceneManager_switchTo("InGame GUI");
+	// sceneManager_switchTo("InGame GUI");
+	sceneManager_pop();
 }
 
 static void exitgame() {
-	exit(0);
+	g.running = false;
 }
 
 void setDefaultLayout(Scene *self) {
@@ -26,6 +30,15 @@ void setDefaultLayout(Scene *self) {
 	ui_arrangeLinearLayout(self->root, true);
 }
 
+static void on_scene_enter(Scene *self) {
+	window_focus(false);
+	setDefaultLayout(self);
+}
+
+static void on_scene_exit(Scene *self) {
+	window_focus(true);
+}
+
 Scene *gui_ofEscape() {
 	Scene *s = newScene("Escape GUI", Scene_GUI, (Keymap[]) {
 		{ Action_KEYDOWN, { "Escape" }, backtogame}
@@ -38,6 +51,8 @@ Scene *gui_ofEscape() {
 		}, 2, true),
 		ui_newElementButton("退出游戏", exitgame),
 	}, 3, false);
-	s->on_enter = setDefaultLayout;
+	s->block_event = true;
+	s->on_enter = on_scene_enter;
+	s->on_exit = on_scene_exit;
 	return s;
 }

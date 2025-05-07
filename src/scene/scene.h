@@ -2,6 +2,7 @@
 #define _ICRAFT_render_ui_scene_h
 
 #include <SDL2/SDL_events.h>
+#include <stdbool.h>
 #include "ui/element.h"
 #include "../input/keymap.h"
 
@@ -21,6 +22,12 @@ typedef struct Scene {
 		void *data;
 	};
 
+	// stop event from going down
+	bool block_event;
+	// stop update of bottom scenes
+	// bool block_update;
+
+	// called on enter
 	void (*on_enter)(struct Scene *self);
 	void (*on_size_changed)(struct Scene *self, int width, int height);
 	void (*update)(struct Scene *self);
@@ -38,7 +45,7 @@ const char *scene_getName(Scene *scene);
 void scene_updateLayout(Scene *scene);
 
 void scene_handle(Scene *scene, SDL_Event *event);
-void scene_update(Scene *scene);
+void scene_update(Scene *scene, bool input);
 void scene_render(Scene *scene);
 
 #endif

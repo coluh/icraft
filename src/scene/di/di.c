@@ -1,4 +1,5 @@
 #include "di.h"
+#include "../../game.h"
 #include <stdio.h>
 #include "../scene.h"
 #include "../../input/keymap.h"
@@ -6,7 +7,7 @@
 #include "../../render/font.h"
 // #include "../../util/log.h"
 
-extern struct Game g;
+extern Game g;
 
 static struct {
 	int x;
@@ -21,8 +22,8 @@ static void render(Scene *self) {
 	twod_drawQuad(0, 0, 100, 48);
 	twod_setColor(1, 1, 1, 1);
 	char buf[3];
-	snprintf(buf, 3, "%2d", *((int*)&g));
-	font_drawText(buf, 0, 0, 1);
+	snprintf(buf, 3, "%2d", g.fps);
+	font_drawText(buf, 0, 0, 2);
 }
 
 Scene *di_ofMain() {

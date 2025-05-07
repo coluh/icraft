@@ -86,14 +86,24 @@ void sceneManager_switchTo(const char *name) {
 }
 
 void sceneManager_handle(SDL_Event *event) {
-	FORR(sceneManager.scene_count) {
-		scene_handle(sceneManager.scenes[i], event);
+	for (int i = sceneManager.scene_count-1; i >= 0; i--) {
+		Scene *s = sceneManager.scenes[i];
+		scene_handle(s, event);
+		if (s->block_event) {
+			return;
+		}
 	}
 }
 
 void sceneManager_update() {
-	FORR(sceneManager.scene_count) {
-		scene_update(sceneManager.scenes[i]);
+	bool input = true;
+
+	for (int i = sceneManager.scene_count-1; i >= 0; i--) {
+		Scene *s = sceneManager.scenes[i];
+		scene_update(s, input);
+		if (s->block_event) {
+			input = false;
+		}
 	}
 }
 

@@ -4,8 +4,11 @@
 #include <SDL2/SDL_events.h>
 
 typedef enum ActionType {
-	Action_KEYDOWN, Action_KEYUP, Action_KEYPRESSED,
+	// handle
+	Action_KEYDOWN, Action_KEYUP, 
 	Action_MOUSEDOWN, Action_MOUSEUP, Action_MOUSEMOTION,
+	// update
+	Action_KEYPRESSED,
 } ActionType;
 
 typedef enum MouseName {
@@ -18,7 +21,7 @@ typedef struct Keymap {
 		const char *key;
 		MouseName button;
 	};
-	void (*callback)(void *target, SDL_Event *ev);
+	void (*callback)(SDL_Event *ev);
 } Keymap;
 
 
