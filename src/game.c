@@ -4,7 +4,6 @@
 #include "render/font.h"
 #include "render/render.h"
 #include "util/props.h"
-#include "input/input.h"
 
 #include "scene/scenemanager.h"
 #include "world/world.h"
@@ -66,20 +65,23 @@ void game_loop() {
 			}
 			sceneManager_handle(&event);
 		}
-		camera_update(g.camera);
-			sceneManager_update();
+		player_clearInput(g.player);
+		sceneManager_update();
+		camera_updateRot(g.camera);
 
 		accumulator += frame_time;
 		while (accumulator >= GAME_UPDATE_DT) {
 
 			/* update game */
 			player_update(g.player, g.world);
-			world_updateChunks(g.world, UNPACK3(player_getPos(g.player)));
+			camera_updatePos(g.camera);
+			world_updateChunks(g.world, UNPACK_XYZ(g.player->pos));
 
 			accumulator -= GAME_UPDATE_DT;
 		}
 
 		/* render game */
-		render(g.camera, g.world);
+		float alpha = accumulator / GAME_UPDATE_DT;
+		render(g.camera, g.world, alpha);
 	}
 }

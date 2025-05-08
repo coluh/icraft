@@ -5,21 +5,29 @@
 #include "../../third_party/cglm/include/cglm/types.h"
 #include <SDL2/SDL_events.h>
 
-typedef struct Player Player;
+typedef struct V3 {
+	float x;
+	float y;
+	float z;
+} V3;
 
-void setPlayer(Player *p);
-Player *getPlayer();
+typedef struct Player {
+	struct {
+		int forward, backward, left, right;
+		bool jump;
+	} input;
+	V3 pos;
+	V3 v;
+	bool on_ground;
+	versor brot; // body rotation
+	versor hrot; // head rotation
+} Player;
 
 Player *newPlayer();
-float *player_getPos(Player *p);
-void player_setPos(Player *p, float x, float y, float z);
 
+void player_clearInput(Player *p);
 void player_update(Player *p, World *w);
 
-// copy pos and head rot out
-void player_copyTo(Player *p, vec3 pos, versor rot);
-
-void player_move(Player *p, vec3 dir, float d);
 void player_rotateHead(Player *p, vec3 axis, float rad);
 // void player_rotateBody(Player *p, vec3 axis, float rad);
 

@@ -1,5 +1,6 @@
 #include "camera.h"
 #include "../util/mem.h"
+#include "../util/props.h"
 #include <math.h>
 
 #include "../../third_party/cglm/include/cglm/cam.h"
@@ -48,20 +49,33 @@ void camera_attach(Camera *camera, Player *player) {
 	camera->player = player;
 }
 
-void camera_update(Camera *camera) {
-	player_copyTo(camera->player, camera->position, camera->rotation);
+void camera_updatePos(Camera *camera) {
+	FORR(3) {
+		camera->prev_position[i] = camera->position[i];
+	}
+	camera->position[0] = camera->player->pos.x;
+	camera->position[1] = camera->player->pos.y;
+	camera->position[2] = camera->player->pos.z;
+}
+void camera_updateRot(Camera *camera) {
+	FORR(4) {
+		camera->rotation[i] = camera->player->hrot[i];
+	}
 }
 
-void camera_updateMatrix(Camera *camera) {
+void camera_updateMatrix(Camera *camera, float alpha) {
 	vec3 front = {1.0f, 0.0f, 0.0f};
 	vec3 up = {0.0f, 1.0f, 0.0f};
 	glm_quat_rotatev(camera->rotation, front, front);
 	glm_quat_rotatev(camera->rotation, up, up);
 
+	vec3 position;
+	glm_vec3_lerp(camera->prev_position, camera->position, alpha, position);
+
 	// view
 	vec3 target;
-	glm_vec3_add(camera->position, front, target);
-	glm_lookat(camera->position, target, up, camera->view);
+	glm_vec3_add(position, front, target);
+	glm_lookat(position, target, up, camera->view);
 
 	// proj
 	glm_perspective(camera->fov, camera->aspect, camera->near, camera->far, camera->proj);

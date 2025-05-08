@@ -10,7 +10,7 @@
 
 World *newWorld() {
 	World *w = zalloc(1, sizeof(World));
-	w->g = -9.8;
+	w->g = -19.8;
 	return w;
 }
 

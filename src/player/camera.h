@@ -9,6 +9,7 @@ typedef enum CameraType {
 } CameraType;
 
 typedef struct {
+	vec3 prev_position;
 	vec3 position;
 	versor rotation; // based on front=(1,0,0), up=(0,1,0)
 			 // in fact all rotations are based on these
@@ -32,11 +33,13 @@ Camera *newCamera(vec3 position, float aspect, CameraType type);
 void camera_rotate(Camera *camera, vec3 axis, float rad);
 void camera_move(Camera *camera, vec3 direction, float distance);
 void camera_attach(Camera *camera, Player *player);
+
 // when attached to something, you should update to get pos and rot
-void camera_update(Camera *camera);
+void camera_updatePos(Camera *camera);
+void camera_updateRot(Camera *camera);
 
 // re-compute view matrix, proj matrix
-void camera_updateMatrix(Camera *camera);
+void camera_updateMatrix(Camera *camera, float alpha);
 
 /* FPS Camera */
 void fpscam_forward(Camera *camera);

@@ -7,6 +7,6 @@
 void render_init();
 int render_getFPS();
 
-void render(Camera *camera, World *world);
+void render(Camera *camera, World *world, float alpha);
 
 #endif

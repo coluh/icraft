@@ -28,22 +28,21 @@ static void toggleDebugInfor() {
 }
 
 static void forward(SDL_Event *ev) {
-	player_forward(g.player, NULL);
+	g.player->input.forward = 1;
 }
 static void backward(SDL_Event *ev) {
-	player_backward(g.player, NULL);
+	g.player->input.backward = 1;
 }
 static void left(SDL_Event *ev) {
-	player_left(g.player, NULL);
+	g.player->input.left = 1;
 }
 static void right(SDL_Event *ev) {
-	player_right(g.player, NULL);
+	g.player->input.right = 1;
 }
 static void up(SDL_Event *ev) {
-	player_up(g.player, NULL);
+	g.player->input.jump = true;
 }
 static void down(SDL_Event *ev) {
-	player_down(g.player, NULL);
 }
 static void rotate(SDL_Event *ev) {
 	player_rotate(g.player, ev);

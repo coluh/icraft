@@ -15,6 +15,7 @@
 #define ROUND_DOWN_BY(x, m) ((x)-POSITIVE_REMAINDER(x,m))
 
 #define UNPACK3(arr) (arr)[0],(arr)[1],(arr)[2]
+#define UNPACK_XYZ(p) (p).x,(p).y,(p).z
 #define UNPACK_RGBA(c) (c).r,(c).g,(c).b,(c).a
 #define UNPACK_RECT(r) (r).x,(r).y,(r).w,(r).h
 #define UNPACK_RECT_SHRINK(r, a) (r).x+(a),(r).y+(a),(r).w-2*(a),(r).h-2*(a)
