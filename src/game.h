@@ -2,10 +2,10 @@
 #define _ICRAFT_game_h
 
 #include <stdbool.h>
-#include "player/camera.h"
-#include "player/player.h"
-#include "world/world.h"
 
+typedef struct World World;
+typedef struct Player Player;
+typedef struct Camera Camera;
 typedef struct Game {
 	bool running;
 	int fps;
