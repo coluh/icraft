@@ -4,10 +4,15 @@
 #include <SDL2/SDL_video.h>
 #include <stdbool.h>
 
+typedef struct Window {
+	SDL_Window *window;
+	const char *title;
+	int width;
+	int height;
+	bool fullscreen;
+} Window;
+
 void window_init(const char *window_name);
-SDL_Window *window_getWindow();
-int window_getWidth();
-int window_getHeight();
 void window_setSize(int width, int height);
 void window_focus(bool focus);
 void window_toggleFullscreen();

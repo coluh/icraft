@@ -17,9 +17,9 @@ typedef struct Character {
 	int advance;
 } Character;
 
-FT_Library ft;
-FT_Face face;
-Character characters[65536];
+static FT_Library ft;
+static FT_Face face;
+static Character characters[65536];
 
 void font_init(const char *font_path) {
 
@@ -45,7 +45,7 @@ static void font_loadCharacter(unsigned int ch) {
 		return;
 	}
 
-	FT_GlyphSlot g = face->glyph;
+	FT_GlyphSlot glygh = face->glyph;
 
 	GLuint tex;
 	glGenTextures(1, &tex);
@@ -53,8 +53,8 @@ static void font_loadCharacter(unsigned int ch) {
 	if (glGetError() != GL_NO_ERROR)
 		logw("Texture fail to generate");
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, g->bitmap.width, g->bitmap.rows,
-			0, GL_RED, GL_UNSIGNED_BYTE, g->bitmap.buffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, glygh->bitmap.width, glygh->bitmap.rows,
+			0, GL_RED, GL_UNSIGNED_BYTE, glygh->bitmap.buffer);
 	if (glGetError() != GL_NO_ERROR)
 		logw("Texture fail to upload");
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -63,11 +63,11 @@ static void font_loadCharacter(unsigned int ch) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	characters[ch].textureID = tex;
-	characters[ch].width = g->bitmap.width;
-	characters[ch].height = g->bitmap.rows;
-	characters[ch].bearingX = g->bitmap_left;
-	characters[ch].bearingY = g->bitmap_top;
-	characters[ch].advance = g->advance.x >> 6;
+	characters[ch].width = glygh->bitmap.width;
+	characters[ch].height = glygh->bitmap.rows;
+	characters[ch].bearingX = glygh->bitmap_left;
+	characters[ch].bearingY = glygh->bitmap_top;
+	characters[ch].advance = glygh->advance.x >> 6;
 }
 
 static const char *utf8next(const char *s, uint32_t *out) {

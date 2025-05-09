@@ -16,13 +16,13 @@ Game g;
 
 void game_init() {
 	log_init();
-	window_init(NULL);
+	window_init("Minecraft");
 	font_init("assets/fonts/FandolHei-Regular.otf");
 	render_init();
 	props_init();
 
 	g.world = newWorld();
-	g.camera = newCamera((float[]){0, 0, 0}, (float)window_getWidth()/window_getHeight(), CameraType_FPS);
+	g.camera = newCamera((float[]){0, 0, 0}, (float)g.window->width/g.window->height, CameraType_FPS);
 	g.player = newPlayer();
 }
 

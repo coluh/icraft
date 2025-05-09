@@ -1,13 +1,16 @@
 #include "gl.h"
-#include "window.h"
 #include "shader.h"
 #include "texture.h"
+#include "window.h"
 #include "../util/props.h"
+#include "../game.h"
 
 #include <glad/glad.h>
 #include "../../third_party/cglm/include/cglm/cam.h"
 #include "../../third_party/cglm/include/cglm/types.h"
 #include <SDL2/SDL.h>
+
+extern Game g;
 
 static struct {
 	int program;
@@ -36,7 +39,7 @@ void gl_init() {
 	renderer.blocksTexture = texture_load("assets/textures/texture.png");
 
 	renderer.program2d = shader_get("assets/shaders/basic2d.vs", "assets/shaders/basic2d.fs");
-	glm_ortho(0.0f, window_getWidth(), window_getHeight(), 0.0f, -1.0f, 1.0f, renderer.proj2d);
+	glm_ortho(0.0f, g.window->width, g.window->height, 0.0f, -1.0f, 1.0f, renderer.proj2d);
 
 	float vertices[] = {
 		// pos      // tex

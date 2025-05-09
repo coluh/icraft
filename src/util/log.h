@@ -2,16 +2,16 @@
 #define _ICRAFT_util_log_h
 
 #include "./date.h"
-#include <stdio.h>
 #include <stdlib.h>
+#include "../game.h"
 
-extern FILE *logfile;
+extern Game g;
 
 #define LOG(level, ...) do { \
-	fprintf(logfile, "[%s] [%s] %s: ", time_get(), level, __FUNCTION__); \
-	fprintf(logfile, __VA_ARGS__); \
-	fprintf(logfile, "\n"); \
-	if (logfile == stdout) fflush(stdout); \
+	fprintf(g.logfile, "[%s] [%s] %s: ", time_get(), level, __FUNCTION__); \
+	fprintf(g.logfile, __VA_ARGS__); \
+	fprintf(g.logfile, "\n"); \
+	if (g.logfile == stdout) fflush(stdout); \
 } while (0)
 
 #define logv(...) LOG("VERBOSE", __VA_ARGS__)

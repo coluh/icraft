@@ -1,13 +1,14 @@
 #include "log.h"
+#include "../game.h"
 #include <stdio.h>
 
-FILE *logfile;
+extern Game g;
 
 void log_init() {
-	logfile = stdout;
+	g.logfile = stdout;
 }
 
 void log_setfile(const char *path) {
 	FILE *fp = fopen(path, "a");
-	logfile = fp;
+	g.logfile = fp;
 }

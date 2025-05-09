@@ -19,8 +19,8 @@ static void exitgame() {
 void setDefaultLayout(Scene *self) {
 	self->x = 0;
 	self->y = 0;
-	self->w = window_getWidth();
-	self->h = window_getHeight();
+	self->w = g.window->width;
+	self->h = g.window->height;
 	self->root->rect.h = self->h*2/3;
 	self->root->rect.w = self->root->rect.h*4/3;
 	self->root->rect.h /= 4;

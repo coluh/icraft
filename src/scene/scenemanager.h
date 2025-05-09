@@ -2,12 +2,28 @@
 #define _ICRAFT_render_ui_scenemanager_h
 
 #include <SDL2/SDL_events.h>
+#include "scene.h"
+
+// how manys scenes can be shown in one time
+#define MAX_SCENES 10
+// how many scenes we prepared
+#define SCENES_LIB_VOLUME 32
+
+typedef struct SceneManager {
+	// current showing scenes, overlapped
+	Scene *scenes[MAX_SCENES];
+	int scene_count;
+
+	// scenes we have
+	Scene *library[SCENES_LIB_VOLUME];
+	int library_count;
+} SceneManager;
 
 void sceneManager_init();
 
 void sceneManager_push(const char *name);
 void sceneManager_pop();
-// pop and push
+// just pop and push
 void sceneManager_switchTo(const char *sceneName);
 // see top scene
 const char *sceneManager_peekName();

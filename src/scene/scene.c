@@ -8,7 +8,6 @@
 #include "../util/mem.h"
 #include "../util/props.h"
 
-
 Scene *newScene(const char *name, SceneType type, Keymap keymaps[], int count) {
 	Scene *s = zalloc(1, sizeof(Scene) + count * sizeof(Keymap));
 	s->name = name;

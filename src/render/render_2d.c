@@ -1,6 +1,6 @@
 #include "render_2d.h"
 #include "gl.h"
-#include "../util/log.h"
+// #include "../util/log.h"
 
 #include "../../third_party/cglm/include/cglm/affine.h"
 #include "../../third_party/cglm/include/cglm/mat4.h"

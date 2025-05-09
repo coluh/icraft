@@ -8,7 +8,7 @@ typedef enum CameraType {
 	CameraType_FPS, CameraType_RD,
 } CameraType;
 
-typedef struct {
+typedef struct Camera {
 	vec3 prev_position;
 	vec3 position;
 	versor rotation; // based on front=(1,0,0), up=(0,1,0)

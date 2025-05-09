@@ -2,31 +2,21 @@
 #include <string.h>
 #include "scene.h"
 #include "../util/props.h"
+#include "../util/mem.h"
 #include "../util/log.h"
 #include "ui/gui.h"
 #include "di/di.h"
+#include "../game.h"
 
-// how manys scenes can be shown in one time
-#define MAX_SCENES 10
-// how many scenes we prepared
-#define SCENES_LIB_VOLUME 32
-
-static struct {
-	// current showing scenes, overlapped
-	Scene *scenes[MAX_SCENES];
-	int scene_count;
-
-	// scenes we have
-	Scene *library[SCENES_LIB_VOLUME];
-	int library_count;
-} sceneManager;
+extern Game g;
 
 static void registerScene(Scene *scene) {
-	sceneManager.library[sceneManager.library_count] = scene;
-	sceneManager.library_count++;
+	g.scene_manager->library[g.scene_manager->library_count] = scene;
+	g.scene_manager->library_count++;
 }
 
 void sceneManager_init() {
+	g.scene_manager = zalloc(1, sizeof(SceneManager));
 	registerScene(gui_ofInGame());
 	registerScene(gui_ofEscape());
 	registerScene(di_ofMain());
@@ -36,8 +26,8 @@ static Scene *getScene(const char *name) {
 	if (name == NULL) {
 		loge("Scene name required");
 	}
-	FORR(sceneManager.library_count) {
-		Scene *s = sceneManager.library[i];
+	FORR(g.scene_manager->library_count) {
+		Scene *s = g.scene_manager->library[i];
 		if (strcmp(scene_getName(s), name) == EQUAL) {
 			return s;
 		}
@@ -47,20 +37,20 @@ static Scene *getScene(const char *name) {
 }
 
 Scene *sceneManager_peek() {
-	if (sceneManager.scene_count == 0) {
+	if (g.scene_manager->scene_count == 0) {
 		return NULL;
 	}
-	return sceneManager.scenes[sceneManager.scene_count-1];
+	return g.scene_manager->scenes[g.scene_manager->scene_count-1];
 }
 
 void sceneManager_push(const char *name) {
-	if (sceneManager.scene_count == MAX_SCENES) {
+	if (g.scene_manager->scene_count == MAX_SCENES) {
 		logw("Too many scenes");
 		return;
 	}
 
-	sceneManager.scenes[sceneManager.scene_count] = getScene(name);
-	sceneManager.scene_count++;
+	g.scene_manager->scenes[g.scene_manager->scene_count] = getScene(name);
+	g.scene_manager->scene_count++;
 	Scene *current = sceneManager_peek();
 	if (current->on_enter != NULL) {
 		current->on_enter(current);
@@ -68,7 +58,7 @@ void sceneManager_push(const char *name) {
 }
 
 void sceneManager_pop() {
-	if (sceneManager.scene_count == 0) {
+	if (g.scene_manager->scene_count == 0) {
 		logw("scene stack empty");
 		return;
 	}
@@ -77,7 +67,7 @@ void sceneManager_pop() {
 	if (current != NULL && current->on_exit != NULL) {
 		current->on_exit(current);
 	}
-	sceneManager.scene_count--;
+	g.scene_manager->scene_count--;
 }
 
 void sceneManager_switchTo(const char *name) {
@@ -86,8 +76,8 @@ void sceneManager_switchTo(const char *name) {
 }
 
 void sceneManager_handle(SDL_Event *event) {
-	for (int i = sceneManager.scene_count-1; i >= 0; i--) {
-		Scene *s = sceneManager.scenes[i];
+	for (int i = g.scene_manager->scene_count-1; i >= 0; i--) {
+		Scene *s = g.scene_manager->scenes[i];
 		scene_handle(s, event);
 		if (s->block_event) {
 			return;
@@ -98,8 +88,8 @@ void sceneManager_handle(SDL_Event *event) {
 void sceneManager_update() {
 	bool input = true;
 
-	for (int i = sceneManager.scene_count-1; i >= 0; i--) {
-		Scene *s = sceneManager.scenes[i];
+	for (int i = g.scene_manager->scene_count-1; i >= 0; i--) {
+		Scene *s = g.scene_manager->scenes[i];
 		scene_update(s, input);
 		if (s->block_event) {
 			input = false;
@@ -108,13 +98,13 @@ void sceneManager_update() {
 }
 
 void sceneManager_render() {
-	FORR(sceneManager.scene_count) {
-		scene_render(sceneManager.scenes[i]);
+	FORR(g.scene_manager->scene_count) {
+		scene_render(g.scene_manager->scenes[i]);
 	}
 }
 
 const char *sceneManager_peekName() {
-	Scene *s = sceneManager.scenes[sceneManager.scene_count-1];
+	Scene *s = g.scene_manager->scenes[g.scene_manager->scene_count-1];
 	if (s == NULL) {
 		return NULL;
 	} else {

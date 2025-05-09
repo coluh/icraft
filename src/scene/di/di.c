@@ -9,10 +9,6 @@
 
 extern Game g;
 
-static struct {
-	int x;
-} state;
-
 static void update(Scene *self) {
 	;
 }
@@ -30,7 +26,7 @@ Scene *di_ofMain() {
 	Scene *s = newScene("Main Debug Information", Scene_TEXTS, (Keymap[]) {
 			{ Action_KEYDOWN, {"H"}, NULL},
 			}, 1);
-	s->data = &state;  // seems that this is not needed
+	// s->data = zalloc(1, 114);
 	s->update = update;
 	s->render = render;
 	return s;
