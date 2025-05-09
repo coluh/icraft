@@ -1,4 +1,5 @@
 #include "player.h"
+#include <math.h>
 #include "../util/mem.h"
 #include "../world/world.h"
 
@@ -7,10 +8,7 @@
 
 #define PLAYER_ROTATE_SENSI	0.003f
 #define PLAYER_MOVE_SPEED	5.0f
-#define PLAYER_JUMP_SPEED	7.0f
-
-#define PLAYER_WIDTH	0.6
-#define PLAYER_HEIGHT	1.8
+#define PLAYER_JUMP_SPEED	10.0f
 
 #define GAME_UPDATE_DT 0.05f
 
@@ -54,6 +52,9 @@ static void getv_upright(Player *p, vec3 front, vec3 up, vec3 right) {
 	glm_vec3_crossn(front, up, right);
 }
 
+#define PLAYER_BODY(pos) BODY(pos.x-PLAYER_WIDTH/2,pos.y-PLAYER_HEIGHT/2,pos.z-PLAYER_WIDTH/2, \
+		PLAYER_WIDTH,PLAYER_HEIGHT,PLAYER_WIDTH)
+
 void player_update(Player *p, World *w) {
 
 	vec3 input_dir = {p->input.right - p->input.left, 0, p->input.forward - p->input.backward};
@@ -75,40 +76,50 @@ void player_update(Player *p, World *w) {
 		}
 	}
 
-	if (p->v.x != 0) {
-		float nx = p->pos.x + p->v.x * GAME_UPDATE_DT;
-		if (world_collide(w, BODY(nx-PLAYER_WIDTH/2, p->pos.y-PLAYER_HEIGHT/2, p->pos.z-PLAYER_WIDTH/2,
-					PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH))) {
-			p->v.x = 0;
-		} else {
-			p->pos.x = nx;
+	p->v.y += w->g * GAME_UPDATE_DT;
+
+	V3 new_pos = p->pos;
+
+	if (p->v.y != 0) {
+		new_pos.y += p->v.y * GAME_UPDATE_DT;
+		if (world_collide(w, PLAYER_BODY(new_pos))) {
+			if (p->v.y > 0) {
+				// this assumes that the border is at integer coord
+				new_pos.y = floorf(new_pos.y + PLAYER_HEIGHT/2) - PLAYER_HEIGHT/2;
+			} else {
+				new_pos.y = ceilf(new_pos.y - PLAYER_HEIGHT/2) + PLAYER_HEIGHT/2;
+				p->on_ground = true;
+				// if block_below.height is not integer...
+			}
+			p->v.y = 0;
 		}
 	}
 
-	if (p->v.y != 0) {
-		float ny = p->pos.y + p->v.y * GAME_UPDATE_DT;
-		if (world_collide(w, BODY(p->pos.x-PLAYER_WIDTH/2, ny-PLAYER_HEIGHT/2, p->pos.z-PLAYER_WIDTH/2,
-					PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH))) {
-			p->v.y = 0;
-			p->on_ground = true;
-		} else {
-			p->pos.y = ny;
+	if (p->v.x != 0) {
+		new_pos.x += p->v.x * GAME_UPDATE_DT;
+		if (world_collide(w, PLAYER_BODY(new_pos))) {
+			if (p->v.x > 0) {
+				new_pos.x = floorf(new_pos.x + PLAYER_WIDTH/2) - PLAYER_WIDTH/2;
+			} else {
+				new_pos.x = ceilf(new_pos.x - PLAYER_WIDTH/2) + PLAYER_WIDTH/2;
+			}
+			p->v.x = 0;
 		}
 	}
 
 	if (p->v.z != 0) {
-		float nz = p->pos.z + p->v.z * GAME_UPDATE_DT;
-		if (world_collide(w, BODY(p->pos.x-PLAYER_WIDTH/2, p->pos.y-PLAYER_HEIGHT/2, nz-PLAYER_WIDTH/2,
-					PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH))) {
+		new_pos.z += p->v.z * GAME_UPDATE_DT;
+		if (world_collide(w, PLAYER_BODY(new_pos))) {
+			if (p->v.z > 0) {
+				new_pos.z = floorf(new_pos.z + PLAYER_WIDTH/2) - PLAYER_WIDTH/2;
+			} else {
+				new_pos.z = ceilf(new_pos.z - PLAYER_WIDTH/2) + PLAYER_WIDTH/2;
+			}
 			p->v.z = 0;
-		} else {
-			p->pos.z = nz;
 		}
 	}
 
-	if (!p->on_ground) {
-		p->v.y += w->g * GAME_UPDATE_DT;
-	}
+	p->pos = new_pos;
 }
 
 void player_rotateHead(Player *p, vec3 axis, float rad) {

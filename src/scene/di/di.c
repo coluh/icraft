@@ -1,6 +1,8 @@
 #include "di.h"
 #include "../../game.h"
+#include "../../player/player.h"
 #include <stdio.h>
+#include <string.h>
 #include "../scene.h"
 #include "../../input/keymap.h"
 #include "../../render/render_2d.h"
@@ -17,9 +19,13 @@ static void render(Scene *self) {
 	twod_setColor(0, 0, 0, 0.5);
 	twod_drawQuad(0, 0, 100, 48);
 	twod_setColor(1, 1, 1, 1);
-	char buf[3];
+	char buf[32];
+	memset(buf, 0, 32);
 	snprintf(buf, 3, "%2d", g.fps);
 	font_drawText(buf, 0, 0, 2);
+	memset(buf, 0, 32);
+	snprintf(buf, 29, "%8.4f, %8.4f, %8.4f", g.player->pos.x, g.player->pos.y, g.player->pos.z);
+	font_drawText(buf, 10, 48, 2);
 }
 
 Scene *di_ofMain() {

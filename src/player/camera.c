@@ -54,7 +54,7 @@ void camera_updatePos(Camera *camera) {
 		camera->prev_position[i] = camera->position[i];
 	}
 	camera->position[0] = camera->player->pos.x;
-	camera->position[1] = camera->player->pos.y;
+	camera->position[1] = camera->player->pos.y - PLAYER_HEIGHT/2 + 1.5;
 	camera->position[2] = camera->player->pos.z;
 }
 void camera_updateRot(Camera *camera) {

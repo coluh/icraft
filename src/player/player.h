@@ -5,6 +5,9 @@
 #include "../../third_party/cglm/include/cglm/types.h"
 #include <SDL2/SDL_events.h>
 
+#define PLAYER_WIDTH	0.6f
+#define PLAYER_HEIGHT	1.8f
+
 typedef struct V3 {
 	float x;
 	float y;
