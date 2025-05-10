@@ -6,17 +6,27 @@
 #define BLOCK_TEXTURE_SIZE 16
 #define BLOCK_TEXTURE_ROW_COUNT 16
 
-#define ID_AIR 0
+typedef struct BlockType {
 
-// id in lower 16 bits
-typedef uint32_t Block;
+	const char *name;
 
-int block_getId(Block block);
-void block_getTexture(Block block, int texture[]);
-int block_getIdFaceTexture(int id, int face);
+	// texture of 6 faces, following -z, z, -y, y, -x, x
+	int textures[6];
 
-void block_setId(Block *block, int id);
+	const char *break_sound;
+	float break_time;
+} BlockType;
 
-int block_id_of(const char *name);
+typedef enum BlockID {
+	BLOCK_Air,
+	BLOCK_GrassBlock,
+	BLOCK_Dirt,
+	BLOCK_Stone,
+	BLOCK_Unknown
+} BlockID;
+
+void block_init();
+BlockType *block_get(BlockID id);
+int block_idOf(const char *name);
 
 #endif

@@ -14,7 +14,7 @@ static struct vertex {
 } vertices[CHUNK_MAX_VERTICE_COUNT];
 
 // -z, z, -y, y, -x, x
-static void generate_face(int f, struct vertex face[], int x, int y, int z, int id) {
+static void generate_face(int f, struct vertex face[], int x, int y, int z, BlockID id) {
 	static const int indices[6][6][3] = {
 		{
 			{1, 0, 0}, {0, 0, 0}, {0, 1, 0},
@@ -51,7 +51,7 @@ static void generate_face(int f, struct vertex face[], int x, int y, int z, int 
 		{0, 0}, {1, 1}, {0, 1},
 	};
 
-	int t = block_getIdFaceTexture(id, f);
+	int t = block_get(id)->textures[f];
 	// tow triangles
 	for (int i = 0; i < 6; i++) {
 		face[i].position[0] = x + indices[f][i][0];
@@ -76,33 +76,33 @@ void chunk_generateVertex(Chunk *chunk, Chunk *nearbys[6]) {
 	for (int x = 0; x < CHUNK_SIZE; x++) {
 		for (int y = 0; y < CHUNK_SIZE; y++) {
 			for (int z = 0; z < CHUNK_SIZE; z++) {
-				Block block = chunk->blocks[x][y][z];
-				if (block_getId(block) == ID_AIR) { continue; }
+				BlockID id = chunk->blocks[x][y][z];
+				if (id == BLOCK_Air) { continue; }
 
 				for (int f = 0; f < 6; f++) {
 
 					// Face Culling
-					if ((f == 0 && z > 0 && block_getId(chunk->blocks[x][y][z-1]) != ID_AIR) ||
-					    (f == 1 && z < CHUNK_SIZE-1 && block_getId(chunk->blocks[x][y][z+1]) != ID_AIR) ||
-					    (f == 2 && y > 0 && block_getId(chunk->blocks[x][y-1][z]) != ID_AIR) ||
-					    (f == 3 && y < CHUNK_SIZE-1 && block_getId(chunk->blocks[x][y+1][z]) != ID_AIR) ||
-					    (f == 4 && x > 0 && block_getId(chunk->blocks[x-1][y][z]) != ID_AIR) ||
-					    (f == 5 && x < CHUNK_SIZE-1 && block_getId(chunk->blocks[x+1][y][z]) != ID_AIR)) {
+					if ((f == 0 && z > 0 && chunk->blocks[x][y][z-1] != BLOCK_Air) ||
+					    (f == 1 && z < CHUNK_SIZE-1 && chunk->blocks[x][y][z+1] != BLOCK_Air) ||
+					    (f == 2 && y > 0 && chunk->blocks[x][y-1][z] != BLOCK_Air) ||
+					    (f == 3 && y < CHUNK_SIZE-1 && chunk->blocks[x][y+1][z] != BLOCK_Air) ||
+					    (f == 4 && x > 0 && chunk->blocks[x-1][y][z] != BLOCK_Air) ||
+					    (f == 5 && x < CHUNK_SIZE-1 && chunk->blocks[x+1][y][z] != BLOCK_Air)) {
 						continue;
 					}
 					if (nearbys[f]) {
-						if ((f == 0 && z == 0 && block_getId(nearbys[f]->blocks[x][y][CHUNK_SIZE-1]) != ID_AIR) ||
-						    (f == 1 && z == CHUNK_SIZE-1 && block_getId(nearbys[f]->blocks[x][y][0]) != ID_AIR) ||
-						    (f == 2 && y == 0 && block_getId(nearbys[f]->blocks[x][CHUNK_SIZE-1][z]) != ID_AIR) ||
-						    (f == 3 && y == CHUNK_SIZE-1 && block_getId(nearbys[f]->blocks[x][0][z]) != ID_AIR) ||
-						    (f == 4 && x == 0 && block_getId(nearbys[f]->blocks[CHUNK_SIZE-1][y][z]) != ID_AIR) ||
-						    (f == 5 && x == CHUNK_SIZE-1 && block_getId(nearbys[f]->blocks[0][y][z]) != ID_AIR)) {
+						if ((f == 0 && z == 0 && nearbys[f]->blocks[x][y][CHUNK_SIZE-1] != BLOCK_Air) ||
+						    (f == 1 && z == CHUNK_SIZE-1 && nearbys[f]->blocks[x][y][0] != BLOCK_Air) ||
+						    (f == 2 && y == 0 && nearbys[f]->blocks[x][CHUNK_SIZE-1][z] != BLOCK_Air) ||
+						    (f == 3 && y == CHUNK_SIZE-1 && nearbys[f]->blocks[x][0][z] != BLOCK_Air) ||
+						    (f == 4 && x == 0 && nearbys[f]->blocks[CHUNK_SIZE-1][y][z] != BLOCK_Air) ||
+						    (f == 5 && x == CHUNK_SIZE-1 && nearbys[f]->blocks[0][y][z] != BLOCK_Air)) {
 							continue;
 						}
 					}
 
 					struct vertex face[6];
-					generate_face(f, face, x, y, z, block_getId(block));
+					generate_face(f, face, x, y, z, id);
 					memcpy(vertices+vertex_idx, face, sizeof(face));
 					vertex_idx += 6;
 				}

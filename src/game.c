@@ -4,6 +4,7 @@
 #include "render/font.h"
 #include "render/render.h"
 #include "util/props.h"
+#include "world/block/block.h"
 
 #include "scene/scenemanager.h"
 #include "world/world.h"
@@ -20,6 +21,7 @@ void game_init() {
 	font_init("assets/fonts/FandolHei-Regular.otf");
 	render_init();
 	props_init();
+	block_init();
 
 	g.world = newWorld();
 	g.camera = newCamera((float[]){0, 0, 0}, (float)g.window->width/g.window->height, CameraType_FPS);

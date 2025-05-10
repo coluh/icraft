@@ -35,16 +35,14 @@ static const int chunk_offsets[6][3] = {
 // load the chunk at x, y, z
 static Chunk *loadChunk(World *w, int x, int y, int z) {
 	Chunk *newly = newChunk(x, y, z);
-	if (!newly->generated) {
-		generator_default(newly);
+	generator_default(newly);
 
-		// update nearby vertex, reducing some faces
-		for (int f = 0; f < 6; f++) {
-			Chunk *nearby = findChunk(w, x+chunk_offsets[f][0],
-					y+chunk_offsets[f][1], z+chunk_offsets[f][2]);
-			if (nearby != NULL) {
-				nearby->dirty = true;
-			}
+	// update nearby vertex, reducing some faces
+	for (int f = 0; f < 6; f++) {
+		Chunk *nearby = findChunk(w, x+chunk_offsets[f][0],
+				y+chunk_offsets[f][1], z+chunk_offsets[f][2]);
+		if (nearby != NULL) {
+			nearby->dirty = true;
 		}
 	}
 
@@ -103,7 +101,7 @@ void world_updateChunks(World *w, int x, int y, int z) {
 	}
 }
 
-Block world_block(World *w, int x, int y, int z) {
+BlockID world_block(World *w, int x, int y, int z) {
 	int cx = ROUND_DOWN_BY(x, CHUNK_SIZE);
 	int cy = ROUND_DOWN_BY(y, CHUNK_SIZE);
 	int cz = ROUND_DOWN_BY(z, CHUNK_SIZE);
@@ -125,8 +123,8 @@ bool world_collide(World *world, Body *body) {
 	for (int i = floorf(x); i < ceilf(x + w); i++) {
 		for (int j = floorf(y); j < ceilf(y + h); j++) {
 			for (int k = floorf(z); k < ceilf(z + t); k++) {
-				Block block = world_block(world, i, j, k);
-				if (block_getId(block) == block_id_of("air")) {
+				BlockID block = world_block(world, i, j, k);
+				if (block == BLOCK_Air) {
 					continue;
 				}
 				if (((x + w > i) && (x < i + 1)) &&

@@ -1,7 +1,6 @@
 #ifndef _ICRAFT_world_chunk_h
 #define _ICRAFT_world_chunk_h
 
-#include "block/block.h"
 #include <stdbool.h>
 #include "../../third_party/cglm/include/cglm/types.h"
 
@@ -10,13 +9,16 @@
 
 typedef struct Chunk {
 	int x, y, z;  // the min xyz in this block
-
-	Block blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 	mat4 model;   // model matrix, gened from xyz
+
+	// only stores block id
+	int blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 	unsigned VAO, VBO;
 	int vertex_count;
 
+	// whether blocks data is generated
 	bool generated;
+	// whether blocks data is changed and need to modify vertex
 	bool dirty;
 } Chunk;
 
