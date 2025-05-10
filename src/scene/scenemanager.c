@@ -4,7 +4,7 @@
 #include "../util/props.h"
 #include "../util/mem.h"
 #include "../util/log.h"
-#include "ui/gui.h"
+#include "gui/gui.h"
 #include "di/di.h"
 #include "../game.h"
 

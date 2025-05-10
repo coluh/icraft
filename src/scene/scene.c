@@ -4,7 +4,7 @@
 #include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_video.h>
 #include <string.h>
-#include "ui/element.h"
+#include "gui/element.h"
 #include "../util/mem.h"
 #include "../util/props.h"
 

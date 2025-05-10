@@ -3,7 +3,7 @@
 
 #include <SDL2/SDL_events.h>
 #include <stdbool.h>
-#include "ui/element.h"
+#include "gui/element.h"
 #include "../input/keymap.h"
 
 typedef enum SceneType {
