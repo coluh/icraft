@@ -33,7 +33,7 @@ void game_loop() {
 	camera_attach(g.camera, g.player);
 	// input_setCallbacks(g.player, DEFAULT_PLAYER_KEYMAPS, 7);
 
-	sceneManager_push("InGame GUI");
+	sceneManager_push("Main HUD");
 
 	g.running = true;
 	SDL_Event event;

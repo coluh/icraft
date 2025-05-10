@@ -6,6 +6,7 @@
 #include "../util/log.h"
 #include "gui/gui.h"
 #include "di/di.h"
+#include "hud/hud.h"
 #include "../game.h"
 
 extern Game g;
@@ -17,7 +18,7 @@ static void registerScene(Scene *scene) {
 
 void sceneManager_init() {
 	g.scene_manager = zalloc(1, sizeof(SceneManager));
-	registerScene(gui_ofInGame());
+	registerScene(hud_ofMain());
 	registerScene(gui_ofEscape());
 	registerScene(di_ofMain());
 }

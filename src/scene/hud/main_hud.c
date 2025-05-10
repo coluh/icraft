@@ -1,14 +1,53 @@
 #include <SDL2/SDL_events.h>
+#include <math.h>
 #include "../scene.h"
 #include "../scenemanager.h"
-#include "gui.h"
 #include "../../game.h"
+#include "../../render/window.h"
 #include "../../player/player.h"
+#include "../../util/mem.h"
+#include "../../render/render_2d.h"
 
 extern Game g;
 
+typedef struct {
+	float height_unit;
+} MainHUDData;
+
+static void on_size_changed(Scene *self, int width, int height) {
+	((MainHUDData*)self->data)->height_unit = ceilf((float)height / 256) * 16;
+}
+
 static void on_scene_enter(Scene *self) {
-	setDefaultLayout(self);
+	on_size_changed(self, g.window->width, g.window->height);
+}
+
+static void render(Scene *self) {
+	const int a = ((MainHUDData*)self->data)->height_unit;
+	int w = 10 * a;
+	const int t = a / 8;
+
+	int y = g.window->height - a;
+	int x = (g.window->width - w) / 2;
+	twod_setColor(0, 0, 0, 0.5);
+	twod_drawQuad(x-1, y-1, w+2, a+2);
+	for (int i = 0; i < 10; i++) {
+		x = (g.window->width - w) / 2 + i * a;
+		twod_setColor(0.7, 0.7, 0.7, 1.0);
+		twod_drawQuad(x, y, a, t);
+		twod_drawQuad(x, y+a-t, a, t);
+		twod_drawQuad(x+1, y, t-1, a);
+		twod_drawQuad(x+a-t, y, t, a);
+		// twod_setColor(0.2, 0.2, 0.2, 1.0);
+		// twod_drawQuad(x+t, y+t, a-2*t, a-2*t);
+	}
+
+	w = g.window->width;
+	int h = g.window->height;
+	int l = a / 4;
+	twod_setColor(1, 1, 1, 1);
+	twod_drawQuad(w/2-l/2, h/2-1, l, 2);
+	twod_drawQuad(w/2-1, h/2-l/2, 2, l);
 }
 
 // void *a, SDL_Event *b
@@ -48,8 +87,8 @@ static void rotate(SDL_Event *ev) {
 	player_rotate(g.player, ev);
 }
 
-Scene *gui_ofInGame() {
-	Scene *s = newScene("InGame GUI", Scene_GUI, (Keymap[]) {
+Scene *hud_ofMain() {
+	Scene *s = newScene("Main HUD", Scene_HUD, (Keymap[]) {
 			{ Action_KEYDOWN, { "Escape" }, pause },
 			{ Action_KEYDOWN, { "F3" }, toggleDebugInfor },
 			{ Action_KEYPRESSED, { "W" }, forward },
@@ -60,7 +99,9 @@ Scene *gui_ofInGame() {
 			{ Action_KEYPRESSED, { "Left Shift" }, down },
 			{ Action_MOUSEMOTION, { 0 }, rotate },
 			}, 9);
-	s->root = ui_newElementLinear(NULL, 0, false);
+	s->data = zalloc(1, sizeof(MainHUDData)); // store the hud height unit
 	s->on_enter = on_scene_enter;
+	s->on_size_changed = on_size_changed;
+	s->render = render;
 	return s;
 }
