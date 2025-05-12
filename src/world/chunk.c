@@ -46,9 +46,11 @@ static void generate_face(int f, struct vertex face[], int x, int y, int z, Bloc
 		{0, -1, 0}, {0, 1, 0},
 		{-1, 0, 0}, {1, 0, 0},
 	};  // xyz, xzy, yxz, yzx, zxy, zyx
-	static const int uvs[6][2] = {
-		{0, 0}, {1, 0}, {1, 1},
-		{0, 0}, {1, 1}, {0, 1},
+	static const float uvs[6][2] = {
+		// {0, 0}, {1, 0}, {1, 1},
+		// {0, 0}, {1, 1}, {0, 1},
+		{0.0625, 0.0625}, {0.9375, 0.0625}, {0.9375, 0.9375},
+		{0.0625, 0.0625}, {0.9375, 0.9375}, {0.0625, 0.9375},
 	};
 
 	int t = block_get(id)->textures[f];

@@ -22,8 +22,8 @@ unsigned int texture_load(const char *texture_path) {
 	uint8_t *data = stbi_load(texture_path, &width, &height, &n_channel, 0);
 	Assert(data != NULL, "fail to load texture: %s", texture_path);
 
-	GLenum format = n_channel == 4 ? GL_RGBA : GL_RGB;
-	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+	Assert(n_channel == 4, "missing alpha channel");
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 	stbi_image_free(data);
