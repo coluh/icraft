@@ -1,6 +1,6 @@
 #include "di.h"
 #include "../../game.h"
-#include "../../player/player.h"
+#include "../../entity/entity.h"
 #include <stdio.h>
 #include <string.h>
 #include "../scene.h"
@@ -24,7 +24,7 @@ static void render(Scene *self) {
 	snprintf(buf, 3, "%2d", g.fps);
 	font_drawText(buf, 0, 0, 2);
 	memset(buf, 0, 32);
-	snprintf(buf, 29, "%8.4f, %8.4f, %8.4f", g.player->pos.x, g.player->pos.y, g.player->pos.z);
+	snprintf(buf, 29, "%8.4f, %8.4f, %8.4f", g.player->position.x, g.player->position.y, g.player->position.z);
 	font_drawText(buf, 10, 48, 2);
 }
 

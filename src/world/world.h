@@ -1,6 +1,7 @@
 #ifndef _ICRAFT_world_world_h
 #define _ICRAFT_world_world_h
 
+#include "../util/types.h"
 #include <stdbool.h>
 #include "chunk.h"
 
@@ -15,11 +16,6 @@ typedef struct World {
 
 	float g;
 } World;
-
-typedef struct Body {
-	float x, y, z;
-	float w, h, t;
-} Body;
 
 #define BODY(x, y, z, w, h, t) (&(Body){x,y,z,w,h,t})
 

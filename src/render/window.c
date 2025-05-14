@@ -45,6 +45,7 @@ void window_setSize(int width, int height) {
 		g.window->height = height;
 	}
 	gl_setSize(g.window->width, g.window->height);
+	// WARNING: did you forget to update camera aspect?
 }
 
 void window_focus(bool focus) {

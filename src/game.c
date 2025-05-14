@@ -2,14 +2,16 @@
 #include "util/log.h"
 #include "render/window.h"
 #include "render/font.h"
+#include "render/resource.h"
 #include "render/render.h"
 #include "util/props.h"
 #include "world/block/block.h"
+#include "entity/entity.h"
 
 #include "scene/scenemanager.h"
 #include "world/world.h"
-#include "player/camera.h"
-#include "player/player.h"
+#include "camera/camera.h"
+#include "entity/player.h"
 
 #include <SDL2/SDL.h>
 
@@ -19,13 +21,19 @@ void game_init() {
 	log_init();
 	window_init("Minecraft");
 	font_init("assets/fonts/FandolHei-Regular.otf");
+	resource_init();
 	render_init();
 	props_init();
 	block_init();
+	entity_init();
 
 	g.world = newWorld();
 	g.camera = newCamera((float[]){0, 0, 0}, (float)g.window->width/g.window->height, CameraType_FPS);
-	g.player = newPlayer();
+
+	Entity *player = entity_create(ENTITY_player, (V3){-10, 24, -5});
+	g.player = player;
+
+	entity_create(ENTITY_item, (V3){0, 22, 0});
 }
 
 void game_loop() {
@@ -75,9 +83,9 @@ void game_loop() {
 		while (accumulator >= GAME_UPDATE_DT) {
 
 			/* update game */
-			player_update(g.player, g.world);
+			entity_update(g.world);
 			camera_updatePos(g.camera);
-			world_updateChunks(g.world, UNPACK_XYZ(g.player->pos));
+			world_updateChunks(g.world, UNPACK_XYZ(g.player->position));
 
 			accumulator -= GAME_UPDATE_DT;
 		}

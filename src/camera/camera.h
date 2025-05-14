@@ -2,7 +2,7 @@
 #define _ICRAFT_player_camera_h
 
 #include "../../third_party/cglm/include/cglm/types.h"
-#include "player.h"
+#include "../entity/entity.h"
 
 typedef enum CameraType {
 	CameraType_FPS, CameraType_RD,
@@ -22,7 +22,7 @@ typedef struct Camera {
 	float speed;
 	CameraType type;
 
-	Player *player;
+	Entity *player;
 
 	// used in computation
 	mat4 view;
@@ -32,7 +32,7 @@ typedef struct Camera {
 Camera *newCamera(vec3 position, float aspect, CameraType type);
 void camera_rotate(Camera *camera, vec3 axis, float rad);
 void camera_move(Camera *camera, vec3 direction, float distance);
-void camera_attach(Camera *camera, Player *player);
+void camera_attach(Camera *camera, Entity *entity);
 
 // when attached to something, you should update to get pos and rot
 void camera_updatePos(Camera *camera);

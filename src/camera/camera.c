@@ -6,7 +6,7 @@
 #include "../../third_party/cglm/include/cglm/cam.h"
 #include "../../third_party/cglm/include/cglm/quat.h"
 #include "../../third_party/cglm/include/cglm/vec3.h"
-#include "player.h"
+#include "../entity/player.h"
 
 #define rdcam_SPEED_HALF_MAX 0.2f
 
@@ -45,7 +45,7 @@ void camera_move(Camera *camera, vec3 direction, float distance) {
 	glm_vec3_add(camera->position, offset, camera->position);
 }
 
-void camera_attach(Camera *camera, Player *player) {
+void camera_attach(Camera *camera, Entity *player) {
 	camera->player = player;
 }
 
@@ -53,13 +53,13 @@ void camera_updatePos(Camera *camera) {
 	FORR(3) {
 		camera->prev_position[i] = camera->position[i];
 	}
-	camera->position[0] = camera->player->pos.x;
-	camera->position[1] = camera->player->pos.y - PLAYER_HEIGHT/2 + 1.5;
-	camera->position[2] = camera->player->pos.z;
+	camera->position[0] = camera->player->position.x;
+	camera->position[1] = camera->player->position.y - PLAYER_HEIGHT/2 + 1.5;
+	camera->position[2] = camera->player->position.z;
 }
 void camera_updateRot(Camera *camera) {
 	FORR(4) {
-		camera->rotation[i] = camera->player->hrot[i];
+		camera->rotation[i] = camera->player->rotation[i];
 	}
 }
 

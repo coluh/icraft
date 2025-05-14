@@ -5,8 +5,11 @@
 #include <stdio.h>
 
 typedef struct Window Window;
+typedef struct ResourceManager ResourceManager;
 typedef struct SceneManager SceneManager;
 typedef struct World World;
+typedef struct EntityList EntityList;
+typedef struct Entity Entity;
 typedef struct Player Player;
 typedef struct Camera Camera;
 
@@ -14,9 +17,11 @@ typedef struct Game {
 	bool running;
 	int fps;
 	Window *window;
+	ResourceManager *res;
 	SceneManager *scene_manager;
 	World *world;
-	Player *player;
+	EntityList *entities;
+	Entity *player;
 	Camera *camera;
 	FILE *logfile;
 } Game;

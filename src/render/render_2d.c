@@ -1,14 +1,16 @@
 #include "render_2d.h"
-#include "gl.h"
-// #include "../util/log.h"
+#include "../game.h"
+#include "resource.h"
 
 #include "../../third_party/cglm/include/cglm/affine.h"
 #include "../../third_party/cglm/include/cglm/mat4.h"
 #include "../../third_party/cglm/include/cglm/types.h"
 
-void twod_setColor(float r, float g, float b, float a) {
-	gl_begin2d();
-	gl_setUniform4f(true, "color", r, g, b, a);
+extern Game g;
+
+void twod_setColor(float r, float gg, float b, float a) {
+	glUseProgram(g.res->shaders.ui);
+	glUniform4f(g.res->shaders.ui_location.color, r, gg, b, a);
 }
 
 static void twod_setRect(int x, int y, int w, int h) {
@@ -17,22 +19,29 @@ static void twod_setRect(int x, int y, int w, int h) {
 	glm_translate(model, (vec3){x, y, 0.0f});
 	glm_scale(model, (vec3){w, h, 1.0f});
 
-	mat4 mvp;
-	glm_mat4_mul(*gl_getProj2d(), model, mvp);
-
-	gl_begin2d();
-	gl_setUniformMatrix4fv(true, "proj", mvp);
+	glUseProgram(g.res->shaders.ui);
+	glUniformMatrix4fv(g.res->shaders.ui_location.model, 1, GL_FALSE, (float*)model);
 }
 
 void twod_drawQuad(int x, int y, int w, int h) {
 	twod_setRect(x, y, w, h);
-	gl_renderQuad();
+	glBindVertexArray(g.res->meshes.rectangleVAO);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+	glBindVertexArray(0);
 }
 
 void twod_drawTexture(int x, int y, int w, int h, GLuint texture) {
+
 	twod_setRect(x, y, w, h);
-	// twod_setRect(50, 50, 200, 200);
-	gl_bind2DTexture(texture);
-	gl_renderQuad();
-	gl_unbind2DTexture();
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glUniform1i(g.res->shaders.ui_location.useTexture, 1);
+
+	glBindVertexArray(g.res->meshes.rectangleVAO);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+	glBindVertexArray(0);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUniform1i(g.res->shaders.ui_location.useTexture, 0);
 }

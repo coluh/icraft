@@ -3,8 +3,9 @@
 #include "../scene.h"
 #include "../scenemanager.h"
 #include "../../game.h"
+#include "../../entity/entity.h"
 #include "../../render/window.h"
-#include "../../player/player.h"
+#include "../../entity/player.h"
 #include "../../util/mem.h"
 #include "../../render/render_2d.h"
 
@@ -67,19 +68,19 @@ static void toggleDebugInfor() {
 }
 
 static void forward(SDL_Event *ev) {
-	g.player->input.forward = 1;
+	g.player->player.input.forward = 1;
 }
 static void backward(SDL_Event *ev) {
-	g.player->input.backward = 1;
+	g.player->player.input.backward = 1;
 }
 static void left(SDL_Event *ev) {
-	g.player->input.left = 1;
+	g.player->player.input.left = 1;
 }
 static void right(SDL_Event *ev) {
-	g.player->input.right = 1;
+	g.player->player.input.right = 1;
 }
 static void up(SDL_Event *ev) {
-	g.player->input.jump = true;
+	g.player->player.input.jump = true;
 }
 static void down(SDL_Event *ev) {
 }
