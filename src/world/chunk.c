@@ -7,6 +7,21 @@
 
 #define CHUNK_MAX_VERTICE_COUNT (CHUNK_VOLUME*6*6)
 
+Chunk *newChunk(int x, int y, int z) {
+	Chunk *c = zalloc(1, sizeof(Chunk));
+	c->x = x;
+	c->y = y;
+	c->z = z;
+
+	glm_mat4_identity(c->model);
+	glm_translate(c->model, (vec3){x, y, z});
+
+	c->generated = false;
+	c->dirty = true;
+
+	return c;
+}
+
 static struct vertex {
 	vec3 position;
 	vec3 normal;
@@ -126,19 +141,4 @@ void chunk_generateVertex(Chunk *chunk, Chunk *nearbys[6]) {
 	glEnableVertexAttribArray(2);
 
 	chunk->vertex_count = vertex_idx;
-}
-
-Chunk *newChunk(int x, int y, int z) {
-	Chunk *c = zalloc(1, sizeof(Chunk));
-	c->x = x;
-	c->y = y;
-	c->z = z;
-
-	glm_mat4_identity(c->model);
-	glm_translate(c->model, (vec3){x, y, z});
-
-	c->generated = false;
-	c->dirty = true;
-
-	return c;
 }

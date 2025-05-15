@@ -10,6 +10,13 @@ typedef struct V3 {
 	float z;
 } V3;
 
+// block position
+typedef struct IV3 {
+	int x;
+	int y;
+	int z;
+} IV3;
+
 // cube body
 typedef struct Body {
 	float x, y, z;

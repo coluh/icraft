@@ -5,6 +5,7 @@
 #include "../../third_party/cglm/include/cglm/quat.h"
 #include "item.h"
 #include "player.h"
+#include "../camera/camera.h"
 
 #define ENTITY_LIST_INIT_CAP 32
 
@@ -17,6 +18,8 @@ void entity_init() {
 	g.entities = l;
 }
 
+// this will cause all entity struct address moved,
+// means that all pointer to them should be updated
 static void entity_expand(EntityList *l) {
 	int newcap = l->capacity;
 	if (l->capacity < 256) {
@@ -24,9 +27,11 @@ static void entity_expand(EntityList *l) {
 	} else {
 		newcap += (newcap + 3 * 256) / 4;
 	}
-	rezalloc(l->list, newcap, sizeof(Entity));
+	l->list = rezalloc(l->list, newcap, sizeof(Entity));
 	// zalloc to ensure new entity->active == false
 	l->capacity = newcap;
+	g.player = &l->list[0];
+	g.camera->player = g.player;
 }
 
 static void (*update_of(EntityType type))(Entity *self, World *world) {

@@ -24,6 +24,20 @@ static Chunk *findChunk(World *w, int x, int y, int z) {
 	return NULL;
 }
 
+Chunk *world_chunkAtf(World *world, float x, float y, float z) {
+	int cx = ROUND_DOWN_BY((int)floorf(x), CHUNK_SIZE);
+	int cy = ROUND_DOWN_BY((int)floorf(y), CHUNK_SIZE);
+	int cz = ROUND_DOWN_BY((int)floorf(z), CHUNK_SIZE);
+	return findChunk(world, cx, cy, cz);
+}
+
+Chunk *world_chunkAti(World *world, int x, int y, int z) {
+	int cx = ROUND_DOWN_BY(x, CHUNK_SIZE);
+	int cy = ROUND_DOWN_BY(y, CHUNK_SIZE);
+	int cz = ROUND_DOWN_BY(z, CHUNK_SIZE);
+	return findChunk(world, cx, cy, cz);
+}
+
 // use for convenience
 // same order as in src/world/chunk.c
 static const int chunk_offsets[6][3] = {
@@ -101,25 +115,57 @@ void world_updateChunks(World *w, int x, int y, int z) {
 	}
 }
 
-BlockID world_block(World *w, int x, int y, int z) {
+void world_modifyBlock(World *w, int x, int y, int z, BlockID block) {
+	Chunk *c = world_chunkAti(w, x, y, z);
+	int dx = x - c->x;
+	int dy = y - c->y;
+	int dz = z - c->z;
+	c->blocks[dx][dy][dz] = block;
+	c->dirty = true;
+
+	Chunk *n = NULL;
+	if ((dx == 0) && ((n = findChunk(w, c->x-CHUNK_SIZE, c->y, c->z)))) {
+		n->dirty = true;
+	} else if ((dx == CHUNK_SIZE-1) && ((n = findChunk(w, c->x+CHUNK_SIZE, c->y, c->z)))) {
+		n->dirty = true;
+	}
+	if ((dy == 0) && ((n = findChunk(w, c->x, c->y-CHUNK_SIZE, c->z)))) {
+		n->dirty = true;
+	} else if ((dy == CHUNK_SIZE-1) && ((n = findChunk(w, c->x, c->y+CHUNK_SIZE, c->z)))) {
+		n->dirty = true;
+	}
+	if ((dz == 0) && ((n = findChunk(w, c->x, c->y, c->z-CHUNK_SIZE)))) {
+		n->dirty = true;
+	} else if ((dz == CHUNK_SIZE-1) && ((n = findChunk(w, c->x, c->y, c->z+CHUNK_SIZE)))) {
+		n->dirty = true;
+	}
+}
+
+BlockID world_block(World *w, float xf, float yf, float zf) {
+	int x = floorf(xf);
+	int y = floorf(yf);
+	int z = floorf(zf);
 	int cx = ROUND_DOWN_BY(x, CHUNK_SIZE);
 	int cy = ROUND_DOWN_BY(y, CHUNK_SIZE);
 	int cz = ROUND_DOWN_BY(z, CHUNK_SIZE);
 	Chunk *chunk = findChunk(w, cx, cy, cz);
 	if (chunk == NULL) {
 		// debug
-		return 0; // air
+		return BLOCK_Air; // air
 	}
 	return chunk->blocks[x-cx][y-cy][z-cz];
 }
 
-bool world_collide(World *world, Body *body) {
+bool world_collide(World *world, const Body *body) {
 	float x = body->x;
 	float y = body->y;
 	float z = body->z;
 	float w = body->w;
 	float h = body->h;
 	float t = body->t;
+	if (w == 0 && h == 0 && t == 0) {
+		return false;
+	}
 	for (int i = floorf(x); i < ceilf(x + w); i++) {
 		for (int j = floorf(y); j < ceilf(y + h); j++) {
 			for (int k = floorf(z); k < ceilf(z + t); k++) {
@@ -127,9 +173,9 @@ bool world_collide(World *world, Body *body) {
 				if (block == BLOCK_Air) {
 					continue;
 				}
-				if (((x + w > i) && (x < i + 1)) &&
-					((y + h > j) && (y < j + 1)) &&
-					((z + t > k) && (z < k + 1))) {
+				if (((x + w > i) && (x < i + 1.0f)) &&
+					((y + h > j) && (y < j + 1.0f)) &&
+					((z + t > k) && (z < k + 1.0f))) {
 					return true;
 				}
 			}

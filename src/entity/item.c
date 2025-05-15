@@ -1,4 +1,5 @@
 #include "item.h"
+#include "common.h"
 #include "entity.h"
 #include "../game.h"
 #include <math.h>
@@ -23,7 +24,7 @@ static void topre(ItemData *id) {
 
 void item_init(Entity *entity) {
 	ItemData *item = &entity->item;
-	item->scale = 0.5;
+	item->scale = 0.2;
 	item->render_position[0] = entity->position.x;
 	item->render_position[1] = entity->position.y;
 	item->render_position[2] = entity->position.z;
@@ -34,19 +35,23 @@ void item_init(Entity *entity) {
 	topre(item);
 }
 
-void item_update(Entity *entity, World *w) {
-	ItemData *item = &entity->item;
+void item_update(Entity *self, World *w) {
+	ItemData *item = &self->item;
 
 	topre(item);
 
-	item->render_position[1] = entity->position.y + sinf(item->float_timer) * ITEM_FLOAT_RANGE;
+	item->render_position[0] = self->position.x;
+	item->render_position[1] = self->position.y + sinf(item->float_timer) * ITEM_FLOAT_RANGE;
+	item->render_position[2] = self->position.z;
 	vec3 up = {0, 1, 0};
 	versor rot;
 	glm_quatv(rot, item->rotate_timer, up);
-	glm_quat_mul(rot, entity->rotation, item->render_rotation);
+	glm_quat_mul(rot, self->rotation, item->render_rotation);
 
-	item->float_timer += ITEM_FLOAT_SPEED * GAME_UPDATE_DT;
-	item->rotate_timer += ITEM_ROTATE_SPEED * GAME_UPDATE_DT;
+	item->float_timer += ITEM_FLOAT_SPEED * g.update_delta;
+	item->rotate_timer += ITEM_ROTATE_SPEED * g.update_delta;
+
+	common_move_slide_gravity(self, w);
 }
 
 void item_render(Entity *entity, float alpha) {

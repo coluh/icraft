@@ -27,13 +27,14 @@ void game_init() {
 	block_init();
 	entity_init();
 
+	g.update_delta = 0.05f;
 	g.world = newWorld();
 	g.camera = newCamera((float[]){0, 0, 0}, (float)g.window->width/g.window->height, CameraType_FPS);
 
 	Entity *player = entity_create(ENTITY_player, (V3){-10, 24, -5});
 	g.player = player;
 
-	entity_create(ENTITY_item, (V3){0, 22, 0});
+	entity_create(ENTITY_item, (V3){0, 25, 0});
 }
 
 void game_loop() {
@@ -73,25 +74,26 @@ void game_loop() {
 			if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_F11) {
 				window_toggleFullscreen();
 			}
+			// if this called update function, it will impact game logic
 			sceneManager_handle(&event);
 		}
 		player_clearInput(g.player);
-		sceneManager_update();
 		camera_updateRot(g.camera);
 
 		accumulator += frame_time;
-		while (accumulator >= GAME_UPDATE_DT) {
+		while (accumulator >= g.update_delta) {
 
 			/* update game */
+			sceneManager_update();
 			entity_update(g.world);
 			camera_updatePos(g.camera);
 			world_updateChunks(g.world, UNPACK_XYZ(g.player->position));
 
-			accumulator -= GAME_UPDATE_DT;
+			accumulator -= g.update_delta;
 		}
 
 		/* render game */
-		float alpha = accumulator / GAME_UPDATE_DT;
+		float alpha = accumulator / g.update_delta;
 		render(g.camera, g.world, alpha);
 	}
 }

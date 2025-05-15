@@ -8,6 +8,8 @@
 #include "../../entity/player.h"
 #include "../../util/mem.h"
 #include "../../render/render_2d.h"
+#include "../../world/block/extra.h"
+#include "../../world/world.h"
 
 extern Game g;
 
@@ -87,6 +89,16 @@ static void down(SDL_Event *ev) {
 static void rotate(SDL_Event *ev) {
 	player_rotate(g.player, ev);
 }
+static void destroy(SDL_Event *ev) {
+	float fx = g.player->player.facing_block.x;
+	float fy = g.player->player.facing_block.y;
+	float fz = g.player->player.facing_block.z;
+	if (world_block(g.world, fx, fy, fz) == BLOCK_Air) {
+		return;
+	}
+	// block_destroyCallback(g.world, g.player->player.facing_block.x, g.player->player.facing_block.y, g.player->player.facing_block.z);
+	block_destroy(g.world, g.player->player.facing_block.x, g.player->player.facing_block.y, g.player->player.facing_block.z);
+}
 
 Scene *hud_ofMain() {
 	Scene *s = newScene("Main HUD", Scene_HUD, (Keymap[]) {
@@ -99,7 +111,8 @@ Scene *hud_ofMain() {
 			{ Action_KEYPRESSED, { "Space" }, up },
 			{ Action_KEYPRESSED, { "Left Shift" }, down },
 			{ Action_MOUSEMOTION, { 0 }, rotate },
-			}, 9);
+			{ Action_MOUSEDOWN, { .button = Mouse_LEFT }, destroy},
+			}, 10);
 	s->data = zalloc(1, sizeof(MainHUDData)); // store the hud height unit
 	s->on_enter = on_scene_enter;
 	s->on_size_changed = on_size_changed;

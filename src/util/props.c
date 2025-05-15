@@ -9,6 +9,11 @@ int rand_int(int min, int max) {
 	return min + rand() % (max-min);
 }
 
+float rand_float(float min, float max) {
+	float r = (float)rand() / RAND_MAX;
+	return min + r * (max-min);
+}
+
 int max_field_int_p(void *strp_arr[], int field_offset, int count) {
 	int max = *(int*)((char*)(strp_arr[0]) + field_offset);
 	for (int i = 0; i < count; i++) {

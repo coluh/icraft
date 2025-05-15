@@ -2,11 +2,9 @@
 #define _ICRAFT_player_player_h
 
 #include <stdbool.h>
+#include "../util/types.h"
 #include "../../third_party/cglm/include/cglm/types.h"
 #include <SDL2/SDL_events.h>
-
-#define PLAYER_WIDTH	0.6f
-#define PLAYER_HEIGHT	1.8f
 
 typedef struct PlayerData {
 	struct {
@@ -14,8 +12,8 @@ typedef struct PlayerData {
 		bool jump;
 	} input;
 	versor body_rotation;
+	IV3 facing_block;
 } PlayerData;
-
 
 typedef struct Entity Entity;
 typedef struct World World;

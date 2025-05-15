@@ -16,6 +16,7 @@ typedef struct Camera Camera;
 typedef struct Game {
 	bool running;
 	int fps;
+	float update_delta;
 	Window *window;
 	ResourceManager *res;
 	SceneManager *scene_manager;
@@ -25,8 +26,6 @@ typedef struct Game {
 	Camera *camera;
 	FILE *logfile;
 } Game;
-
-#define GAME_UPDATE_DT 0.05f
 
 void game_init();
 

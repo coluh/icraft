@@ -1,6 +1,7 @@
 #include "scene.h"
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_keyboard.h>
+#include <SDL2/SDL_mouse.h>
 #include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_video.h>
 #include <string.h>
@@ -79,6 +80,7 @@ void scene_update(Scene *s, bool input) {
 	}
 
 	const Uint8 *state = SDL_GetKeyboardState(NULL);
+	Uint32 buttons = SDL_GetMouseState(NULL, NULL);
 	FORR(s->keymaps_count) {
 		Keymap *km = &s->keymaps[i];
 		switch (km->type) {
@@ -87,6 +89,12 @@ void scene_update(Scene *s, bool input) {
 				km->callback(NULL);
 			}
 			break;
+		case Action_MOUSEDOWN:
+			if (((km->button == Mouse_LEFT) && (buttons & SDL_BUTTON(SDL_BUTTON_LEFT))) ||
+					((km->button == Mouse_MIDDLE) && (buttons & SDL_BUTTON(SDL_BUTTON_MIDDLE))) ||
+					((km->button == Mouse_RIGHT) && (buttons & SDL_BUTTON(SDL_BUTTON_RIGHT)))) {
+				km->callback(NULL);
+			}
 		default:
 			// these are handled in handle()
 			break;

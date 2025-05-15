@@ -32,6 +32,7 @@ void props_init();
 
 // [min, max)
 int rand_int(int min, int max);
+float rand_float(float min, float max);
 
 int max_field_int_p(void *strp_arr[], int field_offset, int count);
 int sum_field_int_p(void *strp_arr[], int field_offset, int count);

@@ -7,6 +7,7 @@
 #include "../../third_party/cglm/include/cglm/quat.h"
 #include "../../third_party/cglm/include/cglm/vec3.h"
 #include "../entity/player.h"
+#include "../entity/bodies.h"
 
 #define rdcam_SPEED_HALF_MAX 0.2f
 
@@ -54,7 +55,7 @@ void camera_updatePos(Camera *camera) {
 		camera->prev_position[i] = camera->position[i];
 	}
 	camera->position[0] = camera->player->position.x;
-	camera->position[1] = camera->player->position.y - PLAYER_HEIGHT/2 + 1.5;
+	camera->position[1] = camera->player->position.y + PLAYER_EYE_OFFSET_Y;
 	camera->position[2] = camera->player->position.z;
 }
 void camera_updateRot(Camera *camera) {

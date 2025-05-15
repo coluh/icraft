@@ -3,6 +3,7 @@
 
 #include "../util/types.h"
 #include <stdbool.h>
+#include "block/block.h"
 #include "chunk.h"
 
 typedef struct ChunkNode {
@@ -17,13 +18,15 @@ typedef struct World {
 	float g;
 } World;
 
-#define BODY(x, y, z, w, h, t) (&(Body){x,y,z,w,h,t})
-
 World *newWorld();
 
+Chunk *world_chunkAtf(World *world, float x, float y, float z);
+Chunk *world_chunkAti(World *world, int x, int y, int z);
 // update nearby chunks
 void world_updateChunks(World *world, int x, int y, int z);
 
-bool world_collide(World *world, Body *body);
+void world_modifyBlock(World *w, int x, int y, int z, BlockID block);
+BlockID world_block(World *w, float x, float y, float z);
+bool world_collide(World *world, const Body *body);
 
 #endif

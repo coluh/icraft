@@ -1,4 +1,6 @@
 #include "player.h"
+#include "bodies.h"
+#include "common.h"
 #include "entity.h"
 #include <math.h>
 #include "../world/world.h"
@@ -9,8 +11,6 @@
 #define PLAYER_ROTATE_SENSI	0.003f
 #define PLAYER_MOVE_SPEED	5.0f
 #define PLAYER_JUMP_SPEED	10.0f
-
-#define GAME_UPDATE_DT 0.05f
 
 void player_init(Entity *self) {
 	PlayerData *p = &self->player;
@@ -46,11 +46,7 @@ static void getv_upright(Entity *e, vec3 front, vec3 up, vec3 right) {
 	glm_vec3_crossn(front, up, right);
 }
 
-#define PLAYER_BODY(pos) BODY(pos.x-PLAYER_WIDTH/2,pos.y-PLAYER_HEIGHT/2,pos.z-PLAYER_WIDTH/2, \
-		PLAYER_WIDTH,PLAYER_HEIGHT,PLAYER_WIDTH)
-
 void player_update(Entity *self, World *w) {
-// void player_update(Player *p, World *w) {
 
 	PlayerData *p = &self->player;
 	vec3 input_dir = {p->input.right - p->input.left, 0, p->input.forward - p->input.backward};
@@ -72,60 +68,37 @@ void player_update(Entity *self, World *w) {
 		}
 	}
 
-	self->velocity.y += w->g * GAME_UPDATE_DT;
+	vec3 eye = {self->position.x, self->position.y + PLAYER_EYE_OFFSET_Y, self->position.z};
+	float d = 0.0f;
 
-	V3 new_pos = self->position;
-
-	if (self->velocity.y != 0) {
-		new_pos.y += self->velocity.y * GAME_UPDATE_DT;
-		if (world_collide(w, PLAYER_BODY(new_pos))) {
-			if (self->velocity.y > 0) {
-				// this assumes that the border is at integer coord
-				new_pos.y = floorf(new_pos.y + PLAYER_HEIGHT/2) - PLAYER_HEIGHT/2;
-			} else {
-				new_pos.y = ceilf(new_pos.y - PLAYER_HEIGHT/2) + PLAYER_HEIGHT/2;
-				self->on_ground = true;
-				// if block_below.height is not integer...
-			}
-			self->velocity.y = 0;
+	vec3 fr = {1, 0, 0};
+	glm_quat_rotatev(self->rotation, fr, fr);
+	glm_vec3_normalize(fr);
+	const float u = 0.1f;
+	vec3 uoff;
+	glm_vec3_scale(fr, u, uoff);
+	while (world_block(w, eye[0], eye[1], eye[2]) == BLOCK_Air) {
+		glm_vec3_add(eye, uoff, eye);
+		d += u;
+		if (d >= 5.0f) {
+			break;
 		}
 	}
+	p->facing_block = (IV3){floorf(eye[0]), floorf(eye[1]), floorf(eye[2])};
 
-	if (self->velocity.x != 0) {
-		new_pos.x += self->velocity.x * GAME_UPDATE_DT;
-		if (world_collide(w, PLAYER_BODY(new_pos))) {
-			if (self->velocity.x > 0) {
-				new_pos.x = floorf(new_pos.x + PLAYER_WIDTH/2) - PLAYER_WIDTH/2;
-			} else {
-				new_pos.x = ceilf(new_pos.x - PLAYER_WIDTH/2) + PLAYER_WIDTH/2;
-			}
-			self->velocity.x = 0;
-		}
-	}
-
-	if (self->velocity.z != 0) {
-		new_pos.z += self->velocity.z * GAME_UPDATE_DT;
-		if (world_collide(w, PLAYER_BODY(new_pos))) {
-			if (self->velocity.z > 0) {
-				new_pos.z = floorf(new_pos.z + PLAYER_WIDTH/2) - PLAYER_WIDTH/2;
-			} else {
-				new_pos.z = ceilf(new_pos.z - PLAYER_WIDTH/2) + PLAYER_WIDTH/2;
-			}
-			self->velocity.z = 0;
-		}
-	}
-
-	self->position = new_pos;
+	common_move_slide_gravity(self, w);
 }
 
 void player_rotateHead(Entity *self, vec3 axis, float rad) {
+	// since player_rotate is a callback for event while calling this, this
+	// function better not impact the game logic too much
 	versor rotation;
 	glm_quatv(rotation, rad, axis);
 	glm_quat_mul(rotation, self->rotation, self->rotation);
 	glm_quat_normalize(self->rotation); // is this necessary?
 }
 
-// auto rotate following head. you cannot rotate body without rotate head
+// auto rotate, following head. you cannot rotate body without rotate head
 static void player_rotateBody(Entity *self, vec3 axis, float rad) {
 	versor rotation;
 	glm_quatv(rotation, rad, axis);
@@ -142,7 +115,7 @@ void player_rotate(void *p, SDL_Event *ev) {
 
 	vec3 fr = {1, 0, 0};
 	glm_quat_rotatev(((Entity*)p)->rotation, fr, fr);
-	if (fabsf(glm_vec3_dot(fr, up)) > 0.99f) {
+	if (fabsf(glm_vec3_dot(fr, up)) > 0.995f) {
 		// back
 		player_rotateHead(p, right, dy * PLAYER_ROTATE_SENSI);
 	}
