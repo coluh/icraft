@@ -8,6 +8,9 @@ typedef struct ResourceManager {
 			int model;
 			int view;
 			int proj;
+			int normal_matrix;
+			int use_uv_offset;
+			int uv_offset;
 		} basic_location;
 		int ui;
 		struct {

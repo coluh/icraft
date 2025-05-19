@@ -71,6 +71,21 @@ void item_render(Entity *entity, float alpha) {
 	glm_scale_uni(model, item->scale);
 
 	glUniformMatrix4fv(g.res->shaders.basic_location.model, 1, GL_FALSE, (float*)model);
+	mat3 normal_matrix;
+	glm_mat4_pick3(model, normal_matrix);
+	glm_mat3_inv(normal_matrix, normal_matrix);
+	glm_mat3_transpose(normal_matrix);
+	glUniformMatrix3fv(g.res->shaders.basic_location.normal_matrix, 1, GL_FALSE, (float*)normal_matrix);
+
+	glUniform1i(g.res->shaders.basic_location.use_uv_offset, 1);
+	int texture = block_get(item->blockId)->textures[0];
+	float uv[2];
+	uv[0] = (float)(texture % BLOCK_TEXTURE_ROW_COUNT) / BLOCK_TEXTURE_ROW_COUNT;
+	uv[1] = (float)(int)(texture / BLOCK_TEXTURE_ROW_COUNT) / BLOCK_TEXTURE_ROW_COUNT;
+	glUniform2f(g.res->shaders.basic_location.uv_offset, uv[0], uv[1]);
+
 	glBindVertexArray(g.res->meshes.cubeVAO);
 	glDrawArrays(GL_TRIANGLES, 0, g.res->meshes.cubeVAO_count);
+
+	glUniform1i(g.res->shaders.basic_location.use_uv_offset, 0);
 }

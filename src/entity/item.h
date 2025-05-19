@@ -2,6 +2,7 @@
 #define _ICRAFT_entity_item_h
 
 #include "../../third_party/cglm/include/cglm/types.h"
+#include "../world/block/block.h"
 
 typedef struct ItemData {
 	float scale;
@@ -11,6 +12,8 @@ typedef struct ItemData {
 	versor render_rotation;
 	vec3 previous_position;
 	versor previous_rotation;
+
+	BlockID blockId;
 } ItemData;
 
 typedef struct Entity Entity;

@@ -115,11 +115,12 @@ void world_updateChunks(World *w, int x, int y, int z) {
 	}
 }
 
-void world_modifyBlock(World *w, int x, int y, int z, BlockID block) {
+BlockID world_modifyBlock(World *w, int x, int y, int z, BlockID block) {
 	Chunk *c = world_chunkAti(w, x, y, z);
 	int dx = x - c->x;
 	int dy = y - c->y;
 	int dz = z - c->z;
+	BlockID ret = c->blocks[dx][dy][dz];
 	c->blocks[dx][dy][dz] = block;
 	c->dirty = true;
 
@@ -139,6 +140,8 @@ void world_modifyBlock(World *w, int x, int y, int z, BlockID block) {
 	} else if ((dz == CHUNK_SIZE-1) && ((n = findChunk(w, c->x, c->y, c->z+CHUNK_SIZE)))) {
 		n->dirty = true;
 	}
+
+	return ret;
 }
 
 BlockID world_block(World *w, float xf, float yf, float zf) {
@@ -162,20 +165,20 @@ bool world_collide(World *world, const Body *body, float *collide_boundary, int 
 	float z = body->z;
 	float w = body->w;
 	float h = body->h;
-	float t = body->t;
-	if (w == 0 && h == 0 && t == 0) {
+	float d = body->d;
+	if (w == 0 && h == 0 && d == 0) {
 		return false;
 	}
 	for (int i = floorf(x); i < ceilf(x + w); i++) {
 		for (int j = floorf(y); j < ceilf(y + h); j++) {
-			for (int k = floorf(z); k < ceilf(z + t); k++) {
+			for (int k = floorf(z); k < ceilf(z + d); k++) {
 				BlockID block = world_block(world, i, j, k);
 				if (block == BLOCK_Air) {
 					continue;
 				}
 				if (((x + w > i) && (x < i + 1.0f)) &&
 					((y + h > j) && (y < j + 1.0f)) &&
-					((z + t > k) && (z < k + 1.0f))) {
+					((z + d > k) && (z < k + 1.0f))) {
 					collide_boundary[0] = x < i ? i : i + 1.0f;
 					collide_boundary[1] = y < j ? j : j + 1.0f;
 					collide_boundary[2] = z < k ? k : k + 1.0f;
@@ -195,7 +198,7 @@ CollisionType world_collisionTest(const Body *stati, const Body *moving, V3 velo
 	const V3 bounding = {
 		.x = MAX(stati->x + stati->w, moving->x + moving->w) - MIN(stati->x, moving->x),
 		.y = MAX(stati->y + stati->h, moving->y + moving->h) - MIN(stati->y, moving->y),
-		.z = MAX(stati->z + stati->t, moving->z + moving->t) - MIN(stati->z, moving->z),
+		.z = MAX(stati->z + stati->d, moving->z + moving->d) - MIN(stati->z, moving->z),
 	};
 	const float total_time = *collide_time;
 
@@ -208,7 +211,7 @@ CollisionType world_collisionTest(const Body *stati, const Body *moving, V3 velo
 			if (((velocity.y > 0 && stati->y - (moving->y + moving->h) > inner_margin) ||
 						(velocity.y < 0 && moving->y - (stati->y + stati->h) > inner_margin)) &&
 					(MAX(moving->x + moving->w + velocity.x * dt, stati->x + stati->w) - MIN(moving->x + velocity.x * dt, stati->x) < moving->w + stati->w - 0.01) &&
-					(MAX(moving->z + moving->t + velocity.z * dt, stati->z + stati->t) - MIN(moving->z + velocity.z * dt, stati->z) < moving->t + stati->t - 0.01)) {
+					(MAX(moving->z + moving->d + velocity.z * dt, stati->z + stati->d) - MIN(moving->z + velocity.z * dt, stati->z) < moving->d + stati->d - 0.01)) {
 				return Collision_Y;
 			}
 		} else {
@@ -225,7 +228,7 @@ CollisionType world_collisionTest(const Body *stati, const Body *moving, V3 velo
 			if (((velocity.x > 0 && stati->x - (moving->x + moving->w) > inner_margin) ||
 						(velocity.x < 0 && moving->x - (stati->x + stati->w) > inner_margin)) &&
 					(MAX(moving->y + moving->h + velocity.y * dt, stati->y + stati->h) - MIN(moving->y + velocity.y * dt, stati->y) < moving->h + stati->h - 0.01) &&
-					(MAX(moving->z + moving->t + velocity.z * dt, stati->z + stati->t) - MIN(moving->z + velocity.z * dt, stati->z) < moving->t + stati->t - 0.01)) {
+					(MAX(moving->z + moving->d + velocity.z * dt, stati->z + stati->d) - MIN(moving->z + velocity.z * dt, stati->z) < moving->d + stati->d - 0.01)) {
 				return Collision_X;
 			}
 		} else {
@@ -234,13 +237,13 @@ CollisionType world_collisionTest(const Body *stati, const Body *moving, V3 velo
 	}
 
 	if (velocity.z) {
-		const float distance = bounding.z - (stati->t + moving->t);
+		const float distance = bounding.z - (stati->d + moving->d);
 		*collide_time = distance / ABS(velocity.z);
 		const float dt = MAX(*collide_time, 0);
 		if (*collide_time < total_time) {
-			const float inner_margin = MAX(-0.5f * stati->t, -2.0f);
-			if (((velocity.z > 0 && stati->z - (moving->z + moving->t) > inner_margin) ||
-						(velocity.z < 0 && moving->z - (stati->z + stati->t) > inner_margin)) &&
+			const float inner_margin = MAX(-0.5f * stati->d, -2.0f);
+			if (((velocity.z > 0 && stati->z - (moving->z + moving->d) > inner_margin) ||
+						(velocity.z < 0 && moving->z - (stati->z + stati->d) > inner_margin)) &&
 					(MAX(moving->x + moving->w + velocity.x * dt, stati->x + stati->w) - MIN(moving->x + velocity.x * dt, stati->x) < moving->w + stati->w - 0.01) &&
 					(MAX(moving->y + moving->h + velocity.y * dt, stati->y + stati->h) - MIN(moving->y + velocity.y * dt, stati->y) < moving->h + stati->h - 0.01)) {
 				return Collision_Z;

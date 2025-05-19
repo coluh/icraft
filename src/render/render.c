@@ -12,10 +12,10 @@
 extern Game g;
 
 void render_init() {
+	gl_init();
 	// GLenum err;
 	// while ((err = glGetError()) != GL_NO_ERROR)
 	// 	logw("1 OpenGL Error: %d", err);
-	gl_init();
 	sceneManager_init();
 }
 
@@ -23,10 +23,11 @@ void render(Camera *camera, World *world, float alpha) {
 	gl_clear(0.4f, 0.8f, 1.0f, 1.0f);
 
 	// 3D content
-	glUseProgram(g.res->shaders.basic);
 	camera_updateMatrix(camera, alpha);
+	glUseProgram(g.res->shaders.basic);
 	glUniformMatrix4fv(g.res->shaders.basic_location.view, 1, GL_FALSE, (float*)camera->view);
 	glUniformMatrix4fv(g.res->shaders.basic_location.proj, 1, GL_FALSE, (float*)camera->proj);
+	glUniformMatrix3fv(g.res->shaders.basic_location.normal_matrix, 1, GL_FALSE, (float*)(float[]){1.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,1.0f});
 	threed_renderChunks(camera, world);
 	entity_render(alpha);
 

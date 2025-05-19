@@ -20,7 +20,7 @@ typedef struct IV3 {
 // cube body
 typedef struct Body {
 	float x, y, z;
-	float w, h, t;
+	float w, h, d;
 } Body;
 
 #endif

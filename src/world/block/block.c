@@ -14,7 +14,7 @@ void block_init() {
 	block_types[BLOCK_Stone] = (BlockType){ "stone", { 4, 4, 4, 4, 4, 4 }, NULL, 7.5f };
 }
 
-BlockType *block_get(BlockID id) {
+const BlockType *block_get(BlockID id) {
 	return &block_types[id];
 }
 

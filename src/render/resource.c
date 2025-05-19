@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include "shader.h"
 #include "texture.h"
+#include "../world/block/block.h"
 
 extern Game g;
 
@@ -14,6 +15,9 @@ void resource_init() {
 	res->shaders.basic_location.model = glGetUniformLocation(res->shaders.basic, "model");
 	res->shaders.basic_location.view = glGetUniformLocation(res->shaders.basic, "view");
 	res->shaders.basic_location.proj = glGetUniformLocation(res->shaders.basic, "proj");
+	res->shaders.basic_location.normal_matrix = glGetUniformLocation(res->shaders.basic, "normal_matrix");
+	res->shaders.basic_location.use_uv_offset = glGetUniformLocation(res->shaders.basic, "use_uv_offset");
+	res->shaders.basic_location.uv_offset = glGetUniformLocation(res->shaders.basic, "uv_offset");
 	res->shaders.ui = shader_get("assets/shaders/basic2d.vs", "assets/shaders/basic2d.fs");
 	res->shaders.ui_location.model = glGetUniformLocation(res->shaders.ui, "model");
 	res->shaders.ui_location.proj = glGetUniformLocation(res->shaders.ui, "proj");
@@ -66,6 +70,8 @@ void resource_init() {
 		cube_faces_vertices[i][0] -= 0.5;
 		cube_faces_vertices[i][1] -= 0.5;
 		cube_faces_vertices[i][2] -= 0.5;
+		cube_faces_vertices[i][6] /= BLOCK_TEXTURE_ROW_COUNT;
+		cube_faces_vertices[i][7] /= BLOCK_TEXTURE_ROW_COUNT;
 	}
 
 	glGenVertexArrays(1, &VAO);

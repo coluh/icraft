@@ -26,7 +26,7 @@ typedef enum BlockID {
 } BlockID;
 
 void block_init();
-BlockType *block_get(BlockID id);
+const BlockType *block_get(BlockID id);
 int block_idOf(const char *name);
 
 #endif

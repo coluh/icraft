@@ -10,9 +10,11 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 proj;
 
+uniform mat3 normal_matrix;
+
 void main() {
 	gl_Position = proj * view * model * vec4(aPos, 1.0);
-	Normal = aNormal;
+	Normal = normal_matrix * aNormal;
 	TexCoord = aTexCoord;
 }
 
