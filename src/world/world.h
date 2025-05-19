@@ -27,6 +27,12 @@ void world_updateChunks(World *world, int x, int y, int z);
 
 void world_modifyBlock(World *w, int x, int y, int z, BlockID block);
 BlockID world_block(World *w, float x, float y, float z);
-bool world_collide(World *world, const Body *body);
+bool world_collide(World *world, const Body *body, float *collide_boundary, int *direction);
+
+typedef enum CollisionType {
+	Collision_NONE, Collision_X, Collision_Y, Collision_Z,
+} CollisionType;
+
+CollisionType world_collisionTest(const Body *stati, const Body *moving, V3 velocity, float *collide_time);
 
 #endif

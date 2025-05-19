@@ -29,13 +29,13 @@ static void render(Scene *self) {
 	snprintf(buf, 29, "%8.4f, %8.4f, %8.4f", g.player->position.x, g.player->position.y, g.player->position.z);
 	font_drawText(buf, 10, 48, 1);
 	memset(buf, 0, 32);
-	float fx = g.player->player.facing_block.x;
-	float fy = g.player->player.facing_block.y;
-	float fz = g.player->player.facing_block.z;
-	snprintf(buf, 29, "%8.4f, %8.4f, %8.4f", fx, fy, fz);
+	int fx = g.player->player.facing_block.x;
+	int fy = g.player->player.facing_block.y;
+	int fz = g.player->player.facing_block.z;
+	snprintf(buf, 29, "%4d, %4d, %4d", fx, fy, fz);
 	font_drawText(buf, 10, 96, 1);
 	memset(buf, 0, 32);
-	snprintf(buf, 30, "type: %s", block_get(world_block(g.world, fx, fy, fz))->name);
+	snprintf(buf, 30, "facing: %s", block_get(world_block(g.world, fx, fy, fz))->name);
 	font_drawText(buf, 10, 144, 1);
 }
 

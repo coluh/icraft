@@ -21,7 +21,7 @@ void block_destroy(World *world, int x, int y, int z) {
 
 	Entity *item = entity_create(ENTITY_item, (V3){x+0.5f, y+0.5f, z+0.5f});
 	item->velocity.x = rand_float(-2.0f, 2.0f);
-	item->velocity.y = 5.0f;
+	item->velocity.y = rand_float(2.0f, 5.0f);
 	item->velocity.z = rand_float(-2.0f, 2.0f);
 }
 

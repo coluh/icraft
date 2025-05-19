@@ -18,8 +18,8 @@ void entity_init() {
 	g.entities = l;
 }
 
-// this will cause all entity struct address moved,
-// means that all pointer to them should be updated
+// WARNING: this will cause all entity struct address moved,
+// meaning that all pointer to them should be updated
 static void entity_expand(EntityList *l) {
 	int newcap = l->capacity;
 	if (l->capacity < 256) {

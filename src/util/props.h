@@ -6,6 +6,7 @@
 #define ARRLEN(arr) (sizeof(arr)/sizeof((arr)[0]))
 #define MIN(x, y) ((x) < (y) ? (x) : (y))
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
+#define ABS(x) ((x) > 0 ? (x) : -(x))
 
 #define EQUAL 0
 

@@ -7,7 +7,7 @@
 #include "../render/resource.h"
 #include "../render/gl.h"
 
-#define ITEM_FLOAT_RANGE 0.2f
+#define ITEM_FLOAT_RANGE 0.1f
 #define ITEM_FLOAT_SPEED 3.0f
 #define ITEM_ROTATE_SPEED 2.0f
 
@@ -41,7 +41,7 @@ void item_update(Entity *self, World *w) {
 	topre(item);
 
 	item->render_position[0] = self->position.x;
-	item->render_position[1] = self->position.y + sinf(item->float_timer) * ITEM_FLOAT_RANGE;
+	item->render_position[1] = self->position.y + (sinf(item->float_timer) + 1.0f) * ITEM_FLOAT_RANGE;
 	item->render_position[2] = self->position.z;
 	vec3 up = {0, 1, 0};
 	versor rot;
