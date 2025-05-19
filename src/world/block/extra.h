@@ -11,7 +11,7 @@ typedef struct BlockExtra {
 	BlockExtraType type;
 	union {
 		struct {
-			float progress;
+			float time;
 		} destroying;
 	};
 } BlockExtra;

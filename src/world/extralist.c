@@ -18,8 +18,9 @@ void extralist_remove(BlockExtraList *list, BlockExtra *extra) {
 		if ((*p)->extra == extra) {
 			BlockExtraNode *n = *p;
 			*p = n->next;
-			free(n->extra); // seems the first free in proj
+			free(n->extra);
 			free(n);
+			return;
 		}
 	}
 	logw("No such node: %p", extra);

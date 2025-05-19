@@ -33,9 +33,9 @@ void block_destroyCallback(World *world, int x, int y, int z) {
 		e = newBlockExtra(world, x, y, z, BlockExtra_DESTROY);
 	}
 
-	e->destroying.progress += 0.025;
+	e->destroying.time += g.update_delta;
 
-	if (e->destroying.progress >= 1.0f) {
+	if (e->destroying.time >= block_get(world_block(world, x, y, z))->break_time) {
 		extralist_remove(&c->extras, e);
 		block_destroy(world, x, y, z);
 	}

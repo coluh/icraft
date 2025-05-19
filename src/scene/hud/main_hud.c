@@ -96,8 +96,8 @@ static void destroy(SDL_Event *ev) {
 	if (world_block(g.world, fx, fy, fz) == BLOCK_Air) {
 		return;
 	}
-	// block_destroyCallback(g.world, g.player->player.facing_block.x, g.player->player.facing_block.y, g.player->player.facing_block.z);
-	block_destroy(g.world, g.player->player.facing_block.x, g.player->player.facing_block.y, g.player->player.facing_block.z);
+	block_destroyCallback(g.world, g.player->player.facing_block.x, g.player->player.facing_block.y, g.player->player.facing_block.z);
+	// block_destroy(g.world, g.player->player.facing_block.x, g.player->player.facing_block.y, g.player->player.facing_block.z);
 }
 
 Scene *hud_ofMain() {
