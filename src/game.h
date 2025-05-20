@@ -3,13 +3,13 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include "util/types.h"
 
 typedef struct Window Window;
 typedef struct ResourceManager ResourceManager;
 typedef struct SceneManager SceneManager;
 typedef struct World World;
 typedef struct EntityList EntityList;
-typedef struct Entity Entity;
 typedef struct Player Player;
 typedef struct Camera Camera;
 
@@ -22,7 +22,7 @@ typedef struct Game {
 	SceneManager *scene_manager;
 	World *world;
 	EntityList *entities;
-	Entity *player;
+	PoolHandle player_ref;
 	Camera *camera;
 	FILE *logfile;
 } Game;

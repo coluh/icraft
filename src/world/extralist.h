@@ -13,6 +13,7 @@ typedef struct BlockExtraNode {
 void extralist_add(BlockExtraList *list, BlockExtra *extra);
 void extralist_remove(BlockExtraList *list, BlockExtra *extra);
 void extralist_autoRemove(BlockExtraList *list);
+void extralist_update(BlockExtraList *list);
 BlockExtra *extralist_find(BlockExtraList list, int x, int y, int z, BlockExtraType type);
 
 #endif

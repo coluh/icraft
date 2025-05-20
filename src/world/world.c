@@ -9,7 +9,6 @@
 #include "extralist.h"
 #include "generation/generator.h"
 #include <stddef.h>
-#include "../entity/entity.h"
 
 extern Game g;
 
@@ -76,8 +75,11 @@ static Chunk *loadChunk(World *w, int x, int y, int z) {
 	return newly;
 }
 
-// update the vertex data; update blockextra states
+// update vertex data;
+// update blockextra states;
 static void world_updateChunk(World *w, Chunk *chunk) {
+
+	// vertex data
 	if (chunk->dirty) {
 		Chunk *nearbys[6];
 		for (int f = 0; f < 6; f++) {
@@ -88,19 +90,7 @@ static void world_updateChunk(World *w, Chunk *chunk) {
 		chunk->dirty = false;
 	}
 
-	for (BlockExtraNode *bp = chunk->extras; bp != NULL; bp = bp->next) {
-		BlockExtra *be = bp->extra;
-		if (be->type == BlockExtra_DESTROY) {
-			if (!be->destroying.focus ||
-					(g.player->player.facing_block.x != be->x) ||
-					(g.player->player.facing_block.y != be->y) ||
-					(g.player->player.facing_block.z != be->z)) {
-				bp->delete_me = true;
-			}
-			be->destroying.focus = false;
-		}
-	}
-	extralist_autoRemove(&chunk->extras);
+	extralist_update(&chunk->extras);
 }
 
 void world_updateChunks(World *w, int x, int y, int z) {

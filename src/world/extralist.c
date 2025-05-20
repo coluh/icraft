@@ -1,5 +1,6 @@
 #include "extralist.h"
 #include "../util/mem.h"
+#include "../entity/entity.h"
 
 void extralist_add(BlockExtraList *list, BlockExtra *extra) {
 	BlockExtraNode *node = zalloc(1, sizeof(BlockExtraNode));
@@ -24,6 +25,24 @@ void extralist_remove(BlockExtraList *list, BlockExtra *extra) {
 		}
 	}
 	logw("No such node: %p", extra);
+}
+
+void extralist_update(BlockExtraList *list) {
+	// blockextra states
+	for (BlockExtraNode *bp = *list; bp != NULL; bp = bp->next) {
+		BlockExtra *be = bp->extra;
+		if (be->type == BlockExtra_DESTROY) {
+			const Entity *player = entity_get(g.entities, g.player_ref);
+			if (!be->destroying.focus ||
+					(player->player.facing_block.x != be->x) ||
+					(player->player.facing_block.y != be->y) ||
+					(player->player.facing_block.z != be->z)) {
+				bp->delete_me = true;
+			}
+			be->destroying.focus = false;
+		}
+	}
+	extralist_autoRemove(list);
 }
 
 void extralist_autoRemove(BlockExtraList *list) {

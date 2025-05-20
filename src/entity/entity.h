@@ -18,7 +18,10 @@ typedef struct Camera Camera;
 
 typedef struct Entity {
 
+	// data need for reuse
 	bool active; // mean used
+	unsigned int generation;
+
 	EntityType type;
 
 	V3 position;
@@ -36,15 +39,17 @@ typedef struct Entity {
 } Entity;
 
 typedef struct EntityList {
-	Entity *list;
+	Entity *data;
 	int capacity;
 } EntityList;
 
-void entity_init();
-Entity *entity_create(EntityType type, V3 position);
-void entity_delete(Entity *entity);
+EntityList *newEntityList();
 
-void entity_update(World *world);
-void entity_render(float alpha);
+PoolHandle entity_create(EntityType type, V3 position, EntityList *list);
+Entity *entity_get(EntityList *list, PoolHandle ref);
+void entity_delete(EntityList *list, Entity *entity);
+
+void entity_update(EntityList *list, World *world);
+void entity_render(const EntityList *list, float alpha);
 
 #endif

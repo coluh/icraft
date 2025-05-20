@@ -7,6 +7,6 @@
 void render_init();
 int render_getFPS();
 
-void render(Camera *camera, const World *world, float alpha);
+void render(Camera *camera, const EntityList *entities, const World *world, float alpha);
 
 #endif

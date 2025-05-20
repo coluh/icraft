@@ -18,6 +18,7 @@ static void update(Scene *self) {
 }
 
 static void render(Scene *self) {
+	const Entity *player = entity_get(g.entities, g.player_ref);
 	twod_setColor(0, 0, 0, 0.5);
 	twod_drawQuad(0, 0, 100, 48);
 	twod_setColor(1, 1, 1, 1);
@@ -26,12 +27,12 @@ static void render(Scene *self) {
 	snprintf(buf, 3, "%2d", g.fps);
 	font_drawText(buf, 0, 0, 1);
 	memset(buf, 0, 32);
-	snprintf(buf, 29, "%8.4f, %8.4f, %8.4f", g.player->position.x, g.player->position.y, g.player->position.z);
+	snprintf(buf, 29, "%8.4f, %8.4f, %8.4f", player->position.x, player->position.y, player->position.z);
 	font_drawText(buf, 10, 48, 1);
 	memset(buf, 0, 32);
-	int fx = g.player->player.facing_block.x;
-	int fy = g.player->player.facing_block.y;
-	int fz = g.player->player.facing_block.z;
+	int fx = player->player.facing_block.x;
+	int fy = player->player.facing_block.y;
+	int fz = player->player.facing_block.z;
 	snprintf(buf, 29, "%4d, %4d, %4d", fx, fy, fz);
 	font_drawText(buf, 10, 96, 1);
 	memset(buf, 0, 32);

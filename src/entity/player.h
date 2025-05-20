@@ -5,6 +5,10 @@
 #include "../util/types.h"
 #include "../../third_party/cglm/include/cglm/types.h"
 #include <SDL2/SDL_events.h>
+#include "../item/item.h"
+
+#define PLAYER_INVENTORY_COLOMN 9
+// #define PLAYER_INVENTORY_ROW 3 // this cannot be other value, right?
 
 typedef struct PlayerData {
 	struct {
@@ -13,6 +17,13 @@ typedef struct PlayerData {
 	} input;
 	versor body_rotation;
 	IV3 facing_block;
+
+	struct {
+		Slot hotbar[PLAYER_INVENTORY_COLOMN];
+		Slot storage[3][PLAYER_INVENTORY_COLOMN];
+		Slot armor[4];
+		Slot offhand;
+	} inventory;
 } PlayerData;
 
 typedef struct Entity Entity;

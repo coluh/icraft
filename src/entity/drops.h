@@ -2,7 +2,7 @@
 #define _ICRAFT_entity_drops_h
 
 #include "../../third_party/cglm/include/cglm/types.h"
-#include "../world/block/block.h"
+#include "../item/item.h"
 
 typedef struct DropsData {
 	float scale;
@@ -13,7 +13,7 @@ typedef struct DropsData {
 	vec3 previous_position;
 	versor previous_rotation;
 
-	BlockID blockId;
+	ItemID item;
 } DropsData;
 
 typedef struct Entity Entity;

@@ -7,6 +7,7 @@
 #include "../../third_party/cglm/include/cglm/quat.h"
 #include "../render/resource.h"
 #include "../render/gl.h"
+#include "../world/block/block.h"
 
 #define DROPS_FLOAT_RANGE 0.1f
 #define DROPS_FLOAT_SPEED 3.0f
@@ -81,7 +82,7 @@ void drops_render(Entity *entity, float alpha) {
 	glBindVertexArray(g.res->meshes.cubeVAO);
 
 	glUniform1i(g.res->shaders.basic_location.use_uv_offset, 1);
-	const int *textures = block_get(drops->blockId)->textures;
+	const int *textures = block_get(block_ofItem(drops->item))->textures;
 	float uv[2];
 	for (int f = 0; f < 6; f++) {
 		const int texture = textures[f];

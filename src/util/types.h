@@ -23,4 +23,10 @@ typedef struct Body {
 	float w, h, d;
 } Body;
 
+
+typedef struct PoolHandle {
+	unsigned int index;
+	unsigned int generation;
+} PoolHandle;
+
 #endif

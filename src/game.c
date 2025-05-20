@@ -25,21 +25,19 @@ void game_init() {
 	render_init();
 	props_init();
 	block_init();
-	entity_init();
 
 	g.update_delta = 0.05f;
+	g.entities = newEntityList();
 	g.world = newWorld();
 	g.camera = newCamera((float[]){0, 0, 0}, (float)g.window->width/g.window->height, CameraType_FPS);
+	g.player_ref = entity_create(Entity_PLAYER, (V3){-10, 24, -5}, g.entities);
 
-	Entity *player = entity_create(Entity_PLAYER, (V3){-10, 24, -5});
-	g.player = player;
-
-	entity_create(Entity_DROPS, (V3){0, 25, 0});
+	entity_create(Entity_DROPS, (V3){0, 25, 0}, g.entities);
 }
 
 void game_loop() {
 
-	camera_attach(g.camera, g.player);
+	camera_attach(g.camera, entity_get(g.entities, g.player_ref));
 	// input_setCallbacks(g.player, DEFAULT_PLAYER_KEYMAPS, 7);
 
 	sceneManager_push("Main HUD");
@@ -78,7 +76,7 @@ void game_loop() {
 			// so do not call logic-related functions in this function
 			sceneManager_handle(&event);
 		}
-		player_clearInput(g.player);
+		player_clearInput(entity_get(g.entities, g.player_ref));
 		camera_updateRot(g.camera);
 
 		accumulator += frame_time;
@@ -86,15 +84,15 @@ void game_loop() {
 
 			/* update game */
 			sceneManager_update();
-			entity_update(g.world);
+			entity_update(g.entities, g.world);
 			camera_updatePos(g.camera);
-			world_updateChunks(g.world, UNPACK_XYZ(g.player->position));
+			world_updateChunks(g.world, UNPACK_XYZ(entity_get(g.entities, g.player_ref)->position));
 
 			accumulator -= g.update_delta;
 		}
 
 		/* render game */
 		float alpha = accumulator / g.update_delta;
-		render(g.camera, g.world, alpha);
+		render(g.camera, g.entities, g.world, alpha);
 	}
 }

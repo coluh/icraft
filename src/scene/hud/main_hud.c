@@ -70,33 +70,34 @@ static void toggleDebugInfor() {
 }
 
 static void forward(SDL_Event *ev) {
-	g.player->player.input.forward = 1;
+	entity_get(g.entities, g.player_ref)->player.input.forward = 1;
 }
 static void backward(SDL_Event *ev) {
-	g.player->player.input.backward = 1;
+	entity_get(g.entities, g.player_ref)->player.input.backward = 1;
 }
 static void left(SDL_Event *ev) {
-	g.player->player.input.left = 1;
+	entity_get(g.entities, g.player_ref)->player.input.left = 1;
 }
 static void right(SDL_Event *ev) {
-	g.player->player.input.right = 1;
+	entity_get(g.entities, g.player_ref)->player.input.right = 1;
 }
 static void up(SDL_Event *ev) {
-	g.player->player.input.jump = true;
+	entity_get(g.entities, g.player_ref)->player.input.jump = true;
 }
 static void down(SDL_Event *ev) {
 }
 static void rotate(SDL_Event *ev) {
-	player_rotate(g.player, ev);
+	player_rotate(entity_get(g.entities, g.player_ref), ev);
 }
 static void destroy(SDL_Event *ev) {
-	float fx = g.player->player.facing_block.x;
-	float fy = g.player->player.facing_block.y;
-	float fz = g.player->player.facing_block.z;
+	const Entity *player = entity_get(g.entities, g.player_ref);
+	float fx = player->player.facing_block.x;
+	float fy = player->player.facing_block.y;
+	float fz = player->player.facing_block.z;
 	if (world_block(g.world, fx, fy, fz) == BLOCK_Air) {
 		return;
 	}
-	block_destroyCallback(g.world, g.player->player.facing_block.x, g.player->player.facing_block.y, g.player->player.facing_block.z);
+	block_destroyCallback(g.world, player->player.facing_block.x, player->player.facing_block.y, player->player.facing_block.z);
 	// block_destroy(g.world, g.player->player.facing_block.x, g.player->player.facing_block.y, g.player->player.facing_block.z);
 }
 

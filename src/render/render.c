@@ -19,7 +19,7 @@ void render_init() {
 	sceneManager_init();
 }
 
-void render(Camera *camera, const World *world, float alpha) {
+void render(Camera *camera, const EntityList *entities, const World *world, float alpha) {
 	gl_clear(0.4f, 0.8f, 1.0f, 1.0f);
 
 	// 3D content
@@ -31,7 +31,7 @@ void render(Camera *camera, const World *world, float alpha) {
 	glBindTexture(GL_TEXTURE_2D, g.res->textures.blocks);
 	threed_renderChunks(world);
 	threed_renderExtras(world);
-	entity_render(alpha);
+	entity_render(entities, alpha);
 
 	// 2D content
 	glUseProgram(g.res->shaders.ui);
