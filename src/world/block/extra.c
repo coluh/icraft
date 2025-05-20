@@ -21,11 +21,11 @@ BlockExtra *newBlockExtra(World *world, int x, int y, int z, BlockExtraType type
 void block_destroy(World *world, int x, int y, int z) {
 	BlockID origin = world_modifyBlock(world, x, y, z, BLOCK_Air);
 
-	Entity *item = entity_create(ENTITY_item, (V3){x+0.5f, y+0.5f, z+0.5f});
-	item->item.blockId = origin;
-	item->velocity.x = rand_float(-2.0f, 2.0f);
-	item->velocity.y = rand_float(2.0f, 5.0f);
-	item->velocity.z = rand_float(-2.0f, 2.0f);
+	Entity *drops = entity_create(Entity_DROPS, (V3){x+0.5f, y+0.5f, z+0.5f});
+	drops->drops.blockId = origin;
+	drops->velocity.x = rand_float(-2.0f, 2.0f);
+	drops->velocity.y = rand_float(2.0f, 5.0f);
+	drops->velocity.z = rand_float(-2.0f, 2.0f);
 }
 
 void block_destroyCallback(World *world, int x, int y, int z) {

@@ -6,11 +6,11 @@
 #include "../../third_party/cglm/include/cglm/types.h"
 
 #include "player.h"
-#include "item.h"
+#include "drops.h"
 
 typedef enum EntityType {
-	ENTITY_player,
-	ENTITY_item,
+	Entity_PLAYER,
+	Entity_DROPS,
 } EntityType;
 
 typedef struct World World;
@@ -31,7 +31,7 @@ typedef struct Entity {
 
 	union {
 		PlayerData player;
-		ItemData item;
+		DropsData drops;
 	};
 } Entity;
 

@@ -11,10 +11,10 @@ extern Game g;
 
 float widthof(EntityType type) {
 	switch (type) {
-	case ENTITY_player:
+	case Entity_PLAYER:
 		return PLAYER_WIDTH;
-	case ENTITY_item:
-		return ITEM_WIDTH;
+	case Entity_DROPS:
+		return DROPS_WIDTH;
 	default:
 		return 0;
 	}
@@ -22,10 +22,10 @@ float widthof(EntityType type) {
 
 float heightof(EntityType type) {
 	switch (type) {
-	case ENTITY_player:
+	case Entity_PLAYER:
 		return PLAYER_HEIGHT;
-	case ENTITY_item:
-		return ITEM_WIDTH;
+	case Entity_DROPS:
+		return DROPS_WIDTH;
 	default:
 		return 0;
 	}
@@ -33,10 +33,10 @@ float heightof(EntityType type) {
 
 float thicknessof(EntityType type) {
 	switch (type) {
-	case ENTITY_player:
+	case Entity_PLAYER:
 		return PLAYER_WIDTH;
-	case ENTITY_item:
-		return ITEM_WIDTH;
+	case Entity_DROPS:
+		return DROPS_WIDTH;
 	default:
 		return 0;
 	}

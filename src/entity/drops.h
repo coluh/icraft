@@ -1,10 +1,10 @@
-#ifndef _ICRAFT_entity_item_h
-#define _ICRAFT_entity_item_h
+#ifndef _ICRAFT_entity_drops_h
+#define _ICRAFT_entity_drops_h
 
 #include "../../third_party/cglm/include/cglm/types.h"
 #include "../world/block/block.h"
 
-typedef struct ItemData {
+typedef struct DropsData {
 	float scale;
 	float float_timer;
 	float rotate_timer;
@@ -14,13 +14,13 @@ typedef struct ItemData {
 	versor previous_rotation;
 
 	BlockID blockId;
-} ItemData;
+} DropsData;
 
 typedef struct Entity Entity;
 typedef struct World World;
 typedef struct Camera Camera;
-void item_init(Entity *entity);
-void item_update(Entity *entity, World *w);
-void item_render(Entity *entity, float alpha);
+void drops_init(Entity *entity);
+void drops_update(Entity *entity, World *w);
+void drops_render(Entity *entity, float alpha);
 
 #endif

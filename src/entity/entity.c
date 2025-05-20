@@ -3,7 +3,7 @@
 #include "../game.h"
 #include "../util/mem.h"
 #include "../../third_party/cglm/include/cglm/quat.h"
-#include "item.h"
+#include "drops.h"
 #include "player.h"
 #include "../camera/camera.h"
 
@@ -36,10 +36,10 @@ static void entity_expand(EntityList *l) {
 
 static void (*update_of(EntityType type))(Entity *self, World *world) {
 	switch (type) {
-	case ENTITY_player:
+	case Entity_PLAYER:
 		return player_update;
-	case ENTITY_item:
-		return item_update;
+	case Entity_DROPS:
+		return drops_update;
 	default:
 		return NULL;
 	}
@@ -47,10 +47,10 @@ static void (*update_of(EntityType type))(Entity *self, World *world) {
 
 static void (*render_of(EntityType type))(Entity *self, float alpha) {
 	switch (type) {
-	case ENTITY_player:
+	case Entity_PLAYER:
 		return NULL;
-	case ENTITY_item:
-		return item_render;
+	case Entity_DROPS:
+		return drops_render;
 	default:
 		return NULL;
 	}
@@ -72,11 +72,11 @@ Entity *entity_create(EntityType type, V3 position) {
 			ep->render = render_of(type);
 
 			switch (ep->type) {
-			case ENTITY_player:
+			case Entity_PLAYER:
 				player_init(ep);
 				break;
-			case ENTITY_item:
-				item_init(ep);
+			case Entity_DROPS:
+				drops_init(ep);
 				break;
 			default:
 				break;

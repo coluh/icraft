@@ -1,4 +1,4 @@
-#include "item.h"
+#include "drops.h"
 #include "common.h"
 #include "entity.h"
 #include "../game.h"
@@ -8,13 +8,13 @@
 #include "../render/resource.h"
 #include "../render/gl.h"
 
-#define ITEM_FLOAT_RANGE 0.1f
-#define ITEM_FLOAT_SPEED 3.0f
-#define ITEM_ROTATE_SPEED 2.0f
+#define DROPS_FLOAT_RANGE 0.1f
+#define DROPS_FLOAT_SPEED 3.0f
+#define DROPS_ROTATE_SPEED 2.0f
 
 extern Game g;
 
-static void topre(ItemData *id) {
+static void topre(DropsData *id) {
 	for (int i = 0; i < 3; i++) {
 		id->previous_position[i] = id->render_position[i];
 	}
@@ -23,45 +23,45 @@ static void topre(ItemData *id) {
 	}
 }
 
-void item_init(Entity *entity) {
-	ItemData *item = &entity->item;
-	item->scale = 0.2;
-	item->render_position[0] = entity->position.x;
-	item->render_position[1] = entity->position.y;
-	item->render_position[2] = entity->position.z;
-	item->render_rotation[0] = entity->rotation[0];
-	item->render_rotation[1] = entity->rotation[1];
-	item->render_rotation[2] = entity->rotation[2];
-	item->render_rotation[3] = entity->rotation[3];
-	topre(item);
+void drops_init(Entity *entity) {
+	DropsData *drops = &entity->drops;
+	drops->scale = 0.2;
+	drops->render_position[0] = entity->position.x;
+	drops->render_position[1] = entity->position.y;
+	drops->render_position[2] = entity->position.z;
+	drops->render_rotation[0] = entity->rotation[0];
+	drops->render_rotation[1] = entity->rotation[1];
+	drops->render_rotation[2] = entity->rotation[2];
+	drops->render_rotation[3] = entity->rotation[3];
+	topre(drops);
 }
 
-void item_update(Entity *self, World *w) {
-	ItemData *item = &self->item;
+void drops_update(Entity *self, World *w) {
+	DropsData *drops = &self->drops;
 
-	topre(item);
+	topre(drops);
 
-	item->render_position[0] = self->position.x;
-	item->render_position[1] = self->position.y + (sinf(item->float_timer) + 1.0f) * ITEM_FLOAT_RANGE;
-	item->render_position[2] = self->position.z;
+	drops->render_position[0] = self->position.x;
+	drops->render_position[1] = self->position.y + (sinf(drops->float_timer) + 1.0f) * DROPS_FLOAT_RANGE;
+	drops->render_position[2] = self->position.z;
 	vec3 up = {0, 1, 0};
 	versor rot;
-	glm_quatv(rot, item->rotate_timer, up);
-	glm_quat_mul(rot, self->rotation, item->render_rotation);
+	glm_quatv(rot, drops->rotate_timer, up);
+	glm_quat_mul(rot, self->rotation, drops->render_rotation);
 
-	item->float_timer += ITEM_FLOAT_SPEED * g.update_delta;
-	item->rotate_timer += ITEM_ROTATE_SPEED * g.update_delta;
+	drops->float_timer += DROPS_FLOAT_SPEED * g.update_delta;
+	drops->rotate_timer += DROPS_ROTATE_SPEED * g.update_delta;
 
 	common_move_slide_gravity(self, w);
 }
 
-void item_render(Entity *entity, float alpha) {
+void drops_render(Entity *entity, float alpha) {
 
-	ItemData *item = &entity->item;
+	DropsData *drops = &entity->drops;
 	vec3 position;
-	glm_vec3_lerp(item->previous_position, item->render_position, alpha, position);
+	glm_vec3_lerp(drops->previous_position, drops->render_position, alpha, position);
 	versor rotation;
-	glm_quat_lerp(item->previous_rotation, item->render_rotation, alpha, rotation);
+	glm_quat_lerp(drops->previous_rotation, drops->render_rotation, alpha, rotation);
 
 	mat4 model;
 	glm_mat4_identity(model);
@@ -69,7 +69,7 @@ void item_render(Entity *entity, float alpha) {
 	mat4 rot;
 	glm_quat_mat4(rotation, rot);
 	glm_mat4_mul(model, rot, model);
-	glm_scale_uni(model, item->scale);
+	glm_scale_uni(model, drops->scale);
 
 	glUniformMatrix4fv(g.res->shaders.basic_location.model, 1, GL_FALSE, (float*)model);
 	mat3 normal_matrix;
@@ -81,7 +81,7 @@ void item_render(Entity *entity, float alpha) {
 	glBindVertexArray(g.res->meshes.cubeVAO);
 
 	glUniform1i(g.res->shaders.basic_location.use_uv_offset, 1);
-	const int *textures = block_get(item->blockId)->textures;
+	const int *textures = block_get(drops->blockId)->textures;
 	float uv[2];
 	for (int f = 0; f < 6; f++) {
 		const int texture = textures[f];

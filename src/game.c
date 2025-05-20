@@ -31,10 +31,10 @@ void game_init() {
 	g.world = newWorld();
 	g.camera = newCamera((float[]){0, 0, 0}, (float)g.window->width/g.window->height, CameraType_FPS);
 
-	Entity *player = entity_create(ENTITY_player, (V3){-10, 24, -5});
+	Entity *player = entity_create(Entity_PLAYER, (V3){-10, 24, -5});
 	g.player = player;
 
-	entity_create(ENTITY_item, (V3){0, 25, 0});
+	entity_create(Entity_DROPS, (V3){0, 25, 0});
 }
 
 void game_loop() {
