@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #define BLOCK_TEXTURE_SIZE 16
+// How many textures in one row. Also column count
 #define BLOCK_TEXTURE_ROW_COUNT 16
 
 typedef struct BlockType {

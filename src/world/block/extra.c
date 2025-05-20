@@ -16,6 +16,8 @@ BlockExtra *newBlockExtra(World *world, int x, int y, int z, BlockExtraType type
 	return be;
 }
 
+// below are two use examples
+
 void block_destroy(World *world, int x, int y, int z) {
 	BlockID origin = world_modifyBlock(world, x, y, z, BLOCK_Air);
 
@@ -34,6 +36,7 @@ void block_destroyCallback(World *world, int x, int y, int z) {
 	}
 
 	e->destroying.time += g.update_delta;
+	e->destroying.focus = true;
 
 	if (e->destroying.time >= block_get(world_block(world, x, y, z))->break_time) {
 		extralist_remove(&c->extras, e);

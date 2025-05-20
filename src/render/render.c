@@ -19,7 +19,7 @@ void render_init() {
 	sceneManager_init();
 }
 
-void render(Camera *camera, World *world, float alpha) {
+void render(Camera *camera, const World *world, float alpha) {
 	gl_clear(0.4f, 0.8f, 1.0f, 1.0f);
 
 	// 3D content
@@ -28,7 +28,9 @@ void render(Camera *camera, World *world, float alpha) {
 	glUniformMatrix4fv(g.res->shaders.basic_location.view, 1, GL_FALSE, (float*)camera->view);
 	glUniformMatrix4fv(g.res->shaders.basic_location.proj, 1, GL_FALSE, (float*)camera->proj);
 	glUniformMatrix3fv(g.res->shaders.basic_location.normal_matrix, 1, GL_FALSE, (float*)(float[]){1.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,1.0f});
-	threed_renderChunks(camera, world);
+	glBindTexture(GL_TEXTURE_2D, g.res->textures.blocks);
+	threed_renderChunks(world);
+	threed_renderExtras(world);
 	entity_render(alpha);
 
 	// 2D content

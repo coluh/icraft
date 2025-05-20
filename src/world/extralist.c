@@ -26,6 +26,23 @@ void extralist_remove(BlockExtraList *list, BlockExtra *extra) {
 	logw("No such node: %p", extra);
 }
 
+void extralist_autoRemove(BlockExtraList *list) {
+	for (BlockExtraNode **p = list; *p != NULL;) {
+		if ((*p)->delete_me) {
+			BlockExtraNode *n = *p;
+			*p = n->next;
+			free(n->extra);
+			free(n);
+			if (*p != NULL) {
+				continue;
+			} else {
+				break;
+			}
+		}
+		p = &(*p)->next;
+	}
+}
+
 BlockExtra *extralist_find(BlockExtraList list, int x, int y, int z, BlockExtraType type) {
 	for (BlockExtraNode *p = list; p != NULL; p = p->next) {
 		BlockExtra *e = p->extra;

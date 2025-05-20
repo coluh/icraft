@@ -2,6 +2,7 @@
 #include "../game.h"
 #include "../util/mem.h"
 #include <glad/glad.h>
+#include <string.h>
 #include "shader.h"
 #include "texture.h"
 #include "../world/block/block.h"
@@ -25,6 +26,11 @@ void resource_init() {
 	res->shaders.ui_location.useTexture = glGetUniformLocation(res->shaders.ui, "useTexture");
 
 	res->textures.blocks = texture_load("assets/textures/texture.png");
+	// for (int i = 0; i < 10; i++) {
+	// 	char filename[] = "assets/textures/destroy_stage_#.png";
+	// 	*strchr(filename, '#') = '0' + i;
+	// 	res->textures.destroy_stages[i] = texture_load(filename);
+	// }
 
 	float rectangle_vertices[] = {
 		// pos      // tex

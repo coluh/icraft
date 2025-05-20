@@ -2,11 +2,16 @@
 #include <math.h>
 #include <stdbool.h>
 #include "block/block.h"
+#include "block/extra.h"
 #include "chunk.h"
 #include "../util/mem.h"
 #include "../util/props.h"
+#include "extralist.h"
 #include "generation/generator.h"
 #include <stddef.h>
+#include "../entity/entity.h"
+
+extern Game g;
 
 World *newWorld() {
 	World *w = zalloc(1, sizeof(World));
@@ -15,7 +20,7 @@ World *newWorld() {
 }
 
 // find the chunk in x, y, z
-static Chunk *findChunk(World *w, int x, int y, int z) {
+static Chunk *findChunk(const World *w, int x, int y, int z) {
 	for (ChunkNode *p = w->chunks; p != NULL; p = p->next) {
 		if ((p->chunk->x == x) && (p->chunk->y == y) && (p->chunk->z == z)) {
 			return p->chunk;
@@ -71,7 +76,7 @@ static Chunk *loadChunk(World *w, int x, int y, int z) {
 	return newly;
 }
 
-// update the vertex data
+// update the vertex data; update blockextra states
 static void world_updateChunk(World *w, Chunk *chunk) {
 	if (chunk->dirty) {
 		Chunk *nearbys[6];
@@ -81,8 +86,21 @@ static void world_updateChunk(World *w, Chunk *chunk) {
 		}
 		chunk_generateVertex(chunk, nearbys);
 		chunk->dirty = false;
-
 	}
+
+	for (BlockExtraNode *bp = chunk->extras; bp != NULL; bp = bp->next) {
+		BlockExtra *be = bp->extra;
+		if (be->type == BlockExtra_DESTROY) {
+			if (!be->destroying.focus ||
+					(g.player->player.facing_block.x != be->x) ||
+					(g.player->player.facing_block.y != be->y) ||
+					(g.player->player.facing_block.z != be->z)) {
+				bp->delete_me = true;
+			}
+			be->destroying.focus = false;
+		}
+	}
+	extralist_autoRemove(&chunk->extras);
 }
 
 void world_updateChunks(World *w, int x, int y, int z) {
@@ -144,7 +162,7 @@ BlockID world_modifyBlock(World *w, int x, int y, int z, BlockID block) {
 	return ret;
 }
 
-BlockID world_block(World *w, float xf, float yf, float zf) {
+BlockID world_block(const World *w, float xf, float yf, float zf) {
 	int x = floorf(xf);
 	int y = floorf(yf);
 	int z = floorf(zf);

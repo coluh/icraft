@@ -75,6 +75,7 @@ void game_loop() {
 				window_toggleFullscreen();
 			}
 			// if this called update function, it will impact game logic
+			// so do not call logic-related functions in this function
 			sceneManager_handle(&event);
 		}
 		player_clearInput(g.player);
