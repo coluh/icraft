@@ -1,6 +1,9 @@
 #ifndef _ICRAFT_render_resource_h
 #define _ICRAFT_render_resource_h
 
+// how to determine this value
+#define ITEM_BLOCK_MAX 256
+
 typedef struct ResourceManager {
 	struct ShaderManager {
 		int basic;
@@ -9,6 +12,7 @@ typedef struct ResourceManager {
 			int view;
 			int proj;
 			int normal_matrix;
+			int light;
 			int use_uv_offset;
 			int uv_offset;
 		} basic_location;
@@ -18,10 +22,16 @@ typedef struct ResourceManager {
 			int proj;
 			int color;
 			int useTexture;
+			int useTextureAlpha;
 		} ui_location;
 	} shaders;
 	struct TextureManager {
 		unsigned int blocks;
+		struct {
+			// unsigned int fbo, rbo;
+			// mat4 proj, view;
+			unsigned int texture;
+		} block_icons[ITEM_BLOCK_MAX];
 	} textures;
 	struct MeshManager {
 		unsigned int rectangleVAO;

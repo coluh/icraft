@@ -142,6 +142,7 @@ void player_pickup(Entity *self, Item item) {
 		if (slot->count == 0) {
 			slot->item = item;
 			slot->count += 1;
+			return;
 		}
 	}
 }

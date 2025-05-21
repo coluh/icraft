@@ -16,7 +16,6 @@ typedef struct Item {
 
 	// these have default values according to the id
 	const char *name;
-	int texture;
 } Item;
 
 typedef struct Slot {
@@ -24,6 +23,7 @@ typedef struct Slot {
 	int count;
 } Slot;
 
+unsigned int item_texture(ItemID id);
 bool item_isBlock(ItemID id);
 
 #endif

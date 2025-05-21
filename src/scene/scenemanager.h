@@ -19,6 +19,7 @@ typedef struct SceneManager {
 	int library_count;
 } SceneManager;
 
+// register all scenes
 void sceneManager_init();
 
 void sceneManager_push(const char *name);

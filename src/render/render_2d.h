@@ -5,6 +5,7 @@
 
 void twod_setColor(float r, float g, float b, float a);
 void twod_drawQuad(int x, int y, int w, int h);
+void twod_drawTextureShape(int x, int y, int w, int h, GLuint texture);
 void twod_drawTexture(int x, int y, int w, int h, GLuint texture);
 
 #endif

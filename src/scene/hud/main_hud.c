@@ -1,5 +1,6 @@
 #include <SDL2/SDL_events.h>
 #include <math.h>
+#include <stdio.h>
 #include "../scene.h"
 #include "../scenemanager.h"
 #include "../../game.h"
@@ -8,8 +9,10 @@
 #include "../../entity/player.h"
 #include "../../util/mem.h"
 #include "../../render/render_2d.h"
+#include "../../render/font.h"
 #include "../../world/block/extra.h"
 #include "../../world/world.h"
+#include "component.h"
 
 extern Game g;
 
@@ -28,23 +31,54 @@ static void on_scene_enter(Scene *self) {
 static void render(Scene *self) {
 	const int a = ((MainHUDData*)self->data)->height_unit;
 	int w = 10 * a;
-	const int t = a / 8;
+	const int t = a / 16;
 
-	int y = g.window->height - a;
+	const PlayerData *player = &entity_get(g.entities, g.player_ref)->player;
+
+	int y = g.window->height - a - t;
 	int x = (g.window->width - w) / 2;
+	char count[3];
+	// big outer border
+	twod_setColor(0, 0, 0, 1);
+	bar(x-t, y-t, w+2*t, a+2*t, t);
 	twod_setColor(0, 0, 0, 0.5);
-	twod_drawQuad(x-1, y-1, w+2, a+2);
+	twod_drawQuad(x, y, w, a);
 	for (int i = 0; i < 10; i++) {
 		x = (g.window->width - w) / 2 + i * a;
+		const Slot *slot = &player->inventory.hotbar[i];
+		if (slot->count > 0) {
+			twod_drawTexture(x, y, a, a, item_texture(slot->item.id));
+		}
 		twod_setColor(0.7, 0.7, 0.7, 1.0);
-		twod_drawQuad(x, y, a, t);
-		twod_drawQuad(x, y+a-t, a, t);
-		twod_drawQuad(x+1, y, t-1, a);
-		twod_drawQuad(x+a-t, y, t, a);
-		// twod_setColor(0.2, 0.2, 0.2, 1.0);
-		// twod_drawQuad(x+t, y+t, a-2*t, a-2*t);
+		bar(x, y, a, a, t);
+		twod_setColor(0.5, 0.5, 0.5, 1.0);
+		bar(x+t, y+t, a-2*t, a-2*t, t);
+	}
+	x = (g.window->width - w) / 2;
+	for (int i = 0; i < 10; i++) {
+		x = (g.window->width - w) / 2 + i * a;
+		if (i == player->holding) {
+			twod_setColor(0, 0, 0, 1);
+			bar(x-2*t, y-2*t, a+4*t, a+4*t, t);
+			twod_setColor(0.9, 0.9, 0.9, 1);
+			bar(x-t, y-t, a+2*t, a+2*t, 2*t);
+		}
+		// draw hotbar items
+		const Slot *slot = &player->inventory.hotbar[i];
+		if (slot->count > 1) {
+			if (slot->count < 10) {
+				snprintf(count, 2, "%1d", slot->count);
+			} else {
+				snprintf(count, 3, "%2d", slot->count);
+			}
+			twod_setColor(0.0f, 0.0f, 0.0f, 1.0f);
+			font_drawTextCentered(count, x+a*0.7+2, y+a*0.8+2, 1.0f);
+			twod_setColor(1.0f, 1.0f, 1.0f, 1.0f);
+			font_drawTextCentered(count, x+a*0.7, y+a*0.8, 1.0f);
+		}
 	}
 
+	// draw '+'
 	w = g.window->width;
 	int h = g.window->height;
 	int l = a / 4;
@@ -89,6 +123,7 @@ static void down(SDL_Event *ev) {
 static void rotate(SDL_Event *ev) {
 	player_rotate(entity_get(g.entities, g.player_ref), ev);
 }
+
 static void destroy(SDL_Event *ev) {
 	const Entity *player = entity_get(g.entities, g.player_ref);
 	float fx = player->player.facing_block.x;
@@ -99,6 +134,20 @@ static void destroy(SDL_Event *ev) {
 	}
 	block_destroyCallback(g.world, player->player.facing_block.x, player->player.facing_block.y, player->player.facing_block.z);
 	// block_destroy(g.world, g.player->player.facing_block.x, g.player->player.facing_block.y, g.player->player.facing_block.z);
+}
+
+static void switch_holding(SDL_Event *ev) {
+	PlayerData *player = &entity_get(g.entities, g.player_ref)->player;
+	if (ev->wheel.y > 0) {
+		player->holding--;
+		while (player->holding < 0)
+			player->holding += 10;
+	}
+	if (ev->wheel.y < 0) {
+		player->holding++;
+		while (player->holding >= 10)
+			player->holding -= 10;
+	}
 }
 
 Scene *hud_ofMain() {
@@ -113,7 +162,8 @@ Scene *hud_ofMain() {
 			{ Action_KEYPRESSED, { "Left Shift" }, down },
 			{ Action_MOUSEMOTION, { 0 }, rotate },
 			{ Action_MOUSEDOWN, { .button = Mouse_LEFT }, destroy},
-			}, 10);
+			{ Action_MOUSEWHEEL, { 0 }, switch_holding},
+			}, 11);
 	s->data = zalloc(1, sizeof(MainHUDData)); // store the hud height unit
 	s->on_enter = on_scene_enter;
 	s->on_size_changed = on_size_changed;

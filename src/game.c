@@ -21,11 +21,11 @@ Game g;
 void game_init() {
 	log_init();
 	window_init("Minecraft");
+	block_init();
 	font_init("assets/fonts/FandolHei-Regular.otf");
 	resource_init();
 	render_init();
 	props_init();
-	block_init();
 
 	g.update_delta = 0.05f;
 	g.entities = newEntityList();

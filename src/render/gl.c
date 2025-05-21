@@ -12,18 +12,7 @@
 extern Game g;
 
 void gl_init() {
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_DEPTH_TEST);
-
 	gl_setSize(g.window->width, g.window->height);
-	glUseProgram(g.res->shaders.ui);
-	glUniform1i(g.res->shaders.ui_location.useTexture, 0);
-	// GLenum err;
-	// while ((err = glGetError()) != GL_NO_ERROR)
-	// 	logw("21 OpenGL Error: %d", err);
-	glUseProgram(g.res->shaders.basic);
-	glUniform1i(g.res->shaders.basic_location.use_uv_offset, 0);
 }
 
 void gl_setSize(int width, int height) {

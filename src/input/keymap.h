@@ -6,7 +6,7 @@
 typedef enum ActionType {
 	// handle
 	Action_KEYDOWN, Action_KEYUP, 
-	Action_MOUSEDOWN, Action_MOUSEUP, Action_MOUSEMOTION,
+	Action_MOUSEDOWN, Action_MOUSEUP, Action_MOUSEMOTION, Action_MOUSEWHEEL,
 	// update
 	Action_KEYPRESSED,
 } ActionType;

@@ -55,6 +55,12 @@ void scene_handle(Scene *s, SDL_Event *ev) {
 			if (ev->type == SDL_MOUSEMOTION) {
 				km->callback(ev);
 			}
+			break;
+		case Action_MOUSEWHEEL:
+			if (ev->type == SDL_MOUSEWHEEL) {
+				km->callback(ev);
+			}
+			break;
 		default:
 			break;
 		}
@@ -95,6 +101,7 @@ void scene_update(Scene *s, bool input) {
 					((km->button == Mouse_RIGHT) && (buttons & SDL_BUTTON(SDL_BUTTON_RIGHT)))) {
 				km->callback(NULL);
 			}
+			break;
 		default:
 			// these are handled in handle()
 			break;

@@ -25,6 +25,8 @@ typedef struct PlayerData {
 		Slot offhand;
 		Slot armor[4];
 	} inventory;
+
+	int holding; // index to hotbar
 } PlayerData;
 
 typedef struct Entity Entity;

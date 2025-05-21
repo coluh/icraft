@@ -142,7 +142,7 @@ void font_drawTextFromOrigin(const char *utf8str, float x, float y, float scale)
 		int h = c->height * scale;
 
 		// glBindTexture(GL_TEXTURE_2D, c->textureID);
-		twod_drawTexture(xpos, ypos, w, h, c->textureID);
+		twod_drawTextureShape(xpos, ypos, w, h, c->textureID);
 
 		x += c->advance * scale;
 	}
@@ -170,8 +170,14 @@ void font_drawText(const char *utf8str, float x, float y, float scale) {
 		int h = c->height * scale;
 
 		// glBindTexture(GL_TEXTURE_2D, c->textureID);
-		twod_drawTexture(xpos, ypos, w, h, c->textureID);
+		twod_drawTextureShape(xpos, ypos, w, h, c->textureID);
 
 		x += c->advance * scale;
 	}
+}
+
+void font_drawTextCentered(const char *utf8str, float x, float y, float scale) {
+	int width, height;
+	font_queryText(utf8str, scale, &width, &height);
+	font_drawText(utf8str, x - (float)width/2, y - (float)height/2, scale);
 }

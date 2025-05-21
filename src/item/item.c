@@ -1,5 +1,10 @@
 #include "item.h"
 #include "../util/props.h"
+#include "../game.h"
+#include "../render/resource.h"
+#include "../util/log.h"
+
+extern Game g;
 
 const ItemID blocks[] = {
 	ITEM_Unknown,
@@ -17,4 +22,12 @@ static bool inArray(ItemID id, const ItemID ids[], int len) {
 
 bool item_isBlock(ItemID id) {
 	return inArray(id, blocks, ARRLEN(blocks));
+}
+
+unsigned int item_texture(ItemID id) {
+	if (item_isBlock(id)) {
+		return g.res->textures.block_icons[id].texture;
+	}
+	logw("No corresponding texture for itemid: %d", id);
+	return 0;
 }

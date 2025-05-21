@@ -30,13 +30,25 @@ void twod_drawQuad(int x, int y, int w, int h) {
 	glBindVertexArray(0);
 }
 
-void twod_drawTexture(int x, int y, int w, int h, GLuint texture) {
-
+void twod_drawTextureShape(int x, int y, int w, int h, GLuint texture) {
 	twod_setRect(x, y, w, h);
 
-	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(g.res->shaders.ui_location.useTextureAlpha, 1);
 	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glBindVertexArray(g.res->meshes.rectangleVAO);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+	glBindVertexArray(0);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUniform1i(g.res->shaders.ui_location.useTextureAlpha, 0);
+}
+
+void twod_drawTexture(int x, int y, int w, int h, GLuint texture) {
+	twod_setRect(x, y, w, h);
+
 	glUniform1i(g.res->shaders.ui_location.useTexture, 1);
+	glBindTexture(GL_TEXTURE_2D, texture);
 
 	glBindVertexArray(g.res->meshes.rectangleVAO);
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);

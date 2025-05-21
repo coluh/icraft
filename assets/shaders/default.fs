@@ -5,6 +5,7 @@ in vec3 Normal;
 in vec2 TexCoord;
 
 uniform sampler2D myTexture;
+uniform vec3 light;
 uniform vec2 uv_offset;
 uniform bool use_uv_offset;
 
@@ -14,8 +15,7 @@ void main() {
 	vec3 ambient = 0.1 * lightColor;
 
 	vec3 norm = normalize(Normal);
-	vec3 light = normalize(vec3(-2.0, 1.0, -0.5));
-	float diff = max(dot(norm, light), 0.0);
+	float diff = max(dot(norm, -light), 0.0);
 	vec3 diffuse = diff * lightColor;
 
 	vec3 color = ambient + diffuse;

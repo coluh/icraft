@@ -12,6 +12,7 @@ typedef struct Window {
 	bool fullscreen;
 } Window;
 
+// contains SDL init, OpenGL Context init
 void window_init(const char *window_name);
 void window_setSize(int width, int height);
 void window_focus(bool focus);

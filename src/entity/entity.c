@@ -111,7 +111,7 @@ static bool moveEntityCallback(void *user_data) {
 	V3 b_pos = ((struct EntityMove*)user_data)->b_pos;
 	vec3 dir;
 	glm_vec3_sub((float*)&b_pos, (float*)&a->position, dir);
-	if (glm_vec3_norm2(dir) < 0.5f) {
+	if (glm_vec3_norm2(dir) < 0.25f) {
 		a->active = false;
 		return true;
 	}
