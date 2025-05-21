@@ -22,7 +22,7 @@ typedef struct Camera {
 	float speed;
 	CameraType type;
 
-	Entity *player;
+	PoolHandle player;
 
 	// used in computation
 	mat4 view;
@@ -32,7 +32,7 @@ typedef struct Camera {
 Camera *newCamera(vec3 position, float aspect, CameraType type);
 void camera_rotate(Camera *camera, vec3 axis, float rad);
 void camera_move(Camera *camera, vec3 direction, float distance);
-void camera_attach(Camera *camera, Entity *entity);
+void camera_attach(Camera *camera, PoolHandle entity);
 
 // when attached to something, you should update to get pos and rot
 void camera_updatePos(Camera *camera);

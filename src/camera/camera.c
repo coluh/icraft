@@ -46,21 +46,21 @@ void camera_move(Camera *camera, vec3 direction, float distance) {
 	glm_vec3_add(camera->position, offset, camera->position);
 }
 
-void camera_attach(Camera *camera, Entity *player) {
-	camera->player = player;
+void camera_attach(Camera *camera, PoolHandle entity) {
+	camera->player = entity;
 }
 
 void camera_updatePos(Camera *camera) {
 	FORR(3) {
 		camera->prev_position[i] = camera->position[i];
 	}
-	camera->position[0] = camera->player->position.x;
-	camera->position[1] = camera->player->position.y + PLAYER_EYE_OFFSET_Y;
-	camera->position[2] = camera->player->position.z;
+	camera->position[0] = entity_get(g.entities, camera->player)->position.x;
+	camera->position[1] = entity_get(g.entities, camera->player)->position.y + PLAYER_EYE_OFFSET_Y;
+	camera->position[2] = entity_get(g.entities, camera->player)->position.z;
 }
 void camera_updateRot(Camera *camera) {
 	FORR(4) {
-		camera->rotation[i] = camera->player->rotation[i];
+		camera->rotation[i] = entity_get(g.entities, camera->player)->rotation[i];
 	}
 }
 

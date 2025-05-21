@@ -91,6 +91,7 @@ Entity *entity_get(EntityList *l, PoolHandle ref) {
 	}
 
 	// the entity you reference to is already dead
+	logi("entity already died");
 	return NULL;
 }
 

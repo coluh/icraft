@@ -135,7 +135,7 @@ void player_pickup(Entity *self, Item item) {
 	for (int i = 0; i < PLAYER_FREESLOTS_COUNT; i++) {
 		Slot *slot = &slots[i];
 		// TODO: if (slot->item == item) // should ensure they are completely the same
-		if (slot->item.id == item.id) {
+		if (slot->item.id == item.id && slot->count < 64) {
 			slot->count += 1;
 			return;
 		}

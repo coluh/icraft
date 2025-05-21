@@ -38,7 +38,7 @@ void game_init() {
 
 void game_loop() {
 
-	camera_attach(g.camera, entity_get(g.entities, g.player_ref));
+	camera_attach(g.camera, g.player_ref);
 	// input_setCallbacks(g.player, DEFAULT_PLAYER_KEYMAPS, 7);
 
 	sceneManager_push("Main HUD");
