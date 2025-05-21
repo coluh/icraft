@@ -23,7 +23,7 @@ void block_destroy(World *world, int x, int y, int z) {
 	// block -> entity
 	BlockID origin = world_modifyBlock(world, x, y, z, BLOCK_Air);
 	Entity *drops = entity_get(g.entities, entity_create(Entity_DROPS, (V3){x+0.5f, y+0.5f, z+0.5f}, g.entities));
-	drops->drops.item = block_get(origin)->break_item;
+	drops->drops.item.id = block_get(origin)->break_item;
 	drops->velocity.x = rand_float(-2.0f, 2.0f);
 	drops->velocity.y = rand_float(2.0f, 5.0f);
 	drops->velocity.z = rand_float(-2.0f, 2.0f);

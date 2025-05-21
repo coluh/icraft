@@ -13,7 +13,7 @@ typedef struct DropsData {
 	vec3 previous_position;
 	versor previous_rotation;
 
-	ItemID item;
+	Item item;
 } DropsData;
 
 typedef struct Entity Entity;

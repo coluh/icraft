@@ -52,11 +52,7 @@ void extralist_autoRemove(BlockExtraList *list) {
 			*p = n->next;
 			free(n->extra);
 			free(n);
-			if (*p != NULL) {
-				continue;
-			} else {
-				break;
-			}
+			continue;
 		}
 		p = &(*p)->next;
 	}

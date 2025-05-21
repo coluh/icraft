@@ -12,6 +12,7 @@
 #include "world/world.h"
 #include "camera/camera.h"
 #include "entity/player.h"
+#include "timer/timer.h"
 
 #include <SDL2/SDL.h>
 
@@ -87,6 +88,7 @@ void game_loop() {
 			entity_update(g.entities, g.world);
 			camera_updatePos(g.camera);
 			world_updateChunks(g.world, UNPACK_XYZ(entity_get(g.entities, g.player_ref)->position));
+			timer_update();
 
 			accumulator -= g.update_delta;
 		}

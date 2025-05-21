@@ -9,6 +9,7 @@
 
 #define PLAYER_INVENTORY_COLOMN 9
 // #define PLAYER_INVENTORY_ROW 3 // this cannot be other value, right?
+#define PLAYER_FREESLOTS_COUNT (PLAYER_INVENTORY_COLOMN*4+1)
 
 typedef struct PlayerData {
 	struct {
@@ -21,8 +22,8 @@ typedef struct PlayerData {
 	struct {
 		Slot hotbar[PLAYER_INVENTORY_COLOMN];
 		Slot storage[3][PLAYER_INVENTORY_COLOMN];
-		Slot armor[4];
 		Slot offhand;
+		Slot armor[4];
 	} inventory;
 } PlayerData;
 
@@ -35,5 +36,7 @@ void player_update(Entity *self, World *world);
 void player_rotateHead(Entity *self, vec3 axis, float rad);
 // callbacks
 void player_rotate(void *p, SDL_Event *ev);
+
+void player_pickup(Entity *self, Item item);
 
 #endif

@@ -106,6 +106,7 @@ static void player_rotateBody(Entity *self, vec3 axis, float rad) {
 	glm_quat_normalize(self->player.body_rotation); // is this necessary?
 }
 
+// why void *p? cause this is a callback function
 void player_rotate(void *p, SDL_Event *ev) {
 	int dx = ev->motion.xrel;
 	int dy = ev->motion.yrel;
@@ -124,6 +125,23 @@ void player_rotate(void *p, SDL_Event *ev) {
 	player_rotateHead(p, up, -dx * PLAYER_ROTATE_SENSI);
 
 	// body only rotate around up vec
+	// TODO: no no in minecraft body rotate following the walk direction not the head
 	player_rotateBody(p, up, -dx * PLAYER_ROTATE_SENSI);
 }
 
+void player_pickup(Entity *self, Item item) {
+	PlayerData *player = &self->player;
+	Slot *slots = (Slot*)&player->inventory;
+	for (int i = 0; i < PLAYER_FREESLOTS_COUNT; i++) {
+		Slot *slot = &slots[i];
+		// TODO: if (slot->item == item) // should ensure they are completely the same
+		if (slot->item.id == item.id) {
+			slot->count += 1;
+			return;
+		}
+		if (slot->count == 0) {
+			slot->item = item;
+			slot->count += 1;
+		}
+	}
+}

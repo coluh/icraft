@@ -23,4 +23,17 @@ static inline void *rezalloc(void *ptr, int nmemb, int size) {
 	return ptr;
 }
 
+static inline void *dupalloc(void *ptr) {
+	int size = sizeof(ptr);
+	void *p = malloc(size);
+	memcpy(p, ptr, size);
+	return p;
+}
+
+static inline void *dupnalloc(void *ptr, int size) {
+	void *p = malloc(size);
+	memcpy(p, ptr, size);
+	return p;
+}
+
 #endif

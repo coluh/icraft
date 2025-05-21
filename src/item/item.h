@@ -13,12 +13,14 @@ typedef enum ItemID {
 
 typedef struct Item {
 	ItemID id; // base id
+
+	// these have default values according to the id
 	const char *name;
 	int texture;
 } Item;
 
 typedef struct Slot {
-	ItemID item;
+	Item item;
 	int count;
 } Slot;
 

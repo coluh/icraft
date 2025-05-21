@@ -12,6 +12,7 @@
 #define DROPS_FLOAT_RANGE 0.1f
 #define DROPS_FLOAT_SPEED 3.0f
 #define DROPS_ROTATE_SPEED 2.0f
+#define DROPS_SCALE 0.25f
 
 extern Game g;
 
@@ -26,7 +27,7 @@ static void topre(DropsData *id) {
 
 void drops_init(Entity *entity) {
 	DropsData *drops = &entity->drops;
-	drops->scale = 0.2;
+	drops->scale = DROPS_SCALE;
 	drops->render_position[0] = entity->position.x;
 	drops->render_position[1] = entity->position.y;
 	drops->render_position[2] = entity->position.z;
@@ -53,7 +54,9 @@ void drops_update(Entity *self, World *w) {
 	drops->float_timer += DROPS_FLOAT_SPEED * g.update_delta;
 	drops->rotate_timer += DROPS_ROTATE_SPEED * g.update_delta;
 
-	common_move_slide_gravity(self, w);
+	if (!self->only_render) {
+		common_move_slide_gravity(self, w);
+	}
 }
 
 void drops_render(Entity *entity, float alpha) {
@@ -82,7 +85,7 @@ void drops_render(Entity *entity, float alpha) {
 	glBindVertexArray(g.res->meshes.cubeVAO);
 
 	glUniform1i(g.res->shaders.basic_location.use_uv_offset, 1);
-	const int *textures = block_get(block_ofItem(drops->item))->textures;
+	const int *textures = block_get(block_ofItem(drops->item.id))->textures;
 	float uv[2];
 	for (int f = 0; f < 6; f++) {
 		const int texture = textures[f];

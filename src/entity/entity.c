@@ -2,8 +2,10 @@
 #include <string.h>
 #include "../util/mem.h"
 #include "../../third_party/cglm/include/cglm/quat.h"
+#include "bodies.h"
 #include "drops.h"
 #include "player.h"
+#include "../timer/timer.h"
 
 #define ENTITY_LIST_INIT_CAP 32
 
@@ -100,8 +102,27 @@ void entity_delete(EntityList *l, Entity *entity) {
 	}
 }
 
+struct EntityMove {
+	Entity *a;
+	V3 b_pos;
+};
+static bool moveEntityCallback(void *user_data) {
+	Entity *a = ((struct EntityMove*)user_data)->a;
+	V3 b_pos = ((struct EntityMove*)user_data)->b_pos;
+	vec3 dir;
+	glm_vec3_sub((float*)&b_pos, (float*)&a->position, dir);
+	if (glm_vec3_norm2(dir) < 0.5f) {
+		a->active = false;
+		return true;
+	}
+	const float decay = 0.7f;
+	glm_vec3_scale(dir, 1.0f - decay, dir);
+	glm_vec3_add((float*)&a->position, dir, (float*)&a->position);
+	return false;
+}
+
 // update every entities;
-// perform attraction of drops towards player
+// perform attraction of drops towards player;
 void entity_update(EntityList *l, World *w) {
 
 	for (int i = 0; i < l->capacity; i++) {
@@ -112,9 +133,21 @@ void entity_update(EntityList *l, World *w) {
 	}
 
 	// attraction
-	for (int i = 0; i < g.entities->capacity; i++) {
-		for (int j = 0; j < g.entities->capacity; j++) {
-			;
+	for (int i = 0; i < l->capacity; i++) {
+		for (int j = 0; j < l->capacity; j++) {
+			Entity *a = &l->data[i];
+			Entity *b = &l->data[j];
+			if (!a->active || !b->active || a->only_render || b->only_render) {
+				continue;
+			}
+			if (a->type == Entity_DROPS && b->type == Entity_PLAYER && glm_vec3_distance2((float*)&a->position, (float*)&b->position) < DROPS_ATTRACTION_DISTANCE_SQUARE) {
+				// player get the drops immediately, while there is an animation of drops flying to player
+				a->only_render = true;
+				player_pickup(b, a->drops.item);
+				timer_schedule_repeat(g.update_delta, moveEntityCallback, &(struct EntityMove){
+						a, {b->position.x, b->position.y+PLAYER_EYE_OFFSET_Y, b->position.z}
+				}, sizeof(struct EntityMove));
+			}
 		}
 	}
 }
