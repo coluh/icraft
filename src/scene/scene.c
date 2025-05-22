@@ -8,6 +8,7 @@
 #include "gui/element.h"
 #include "../util/mem.h"
 #include "../util/props.h"
+#include "../render/window.h"
 
 Scene *newScene(const char *name, SceneType type, Keymap keymaps[], int count) {
 	Scene *s = zalloc(1, sizeof(Scene) + count * sizeof(Keymap));
@@ -26,10 +27,26 @@ const char *scene_getName(Scene *scene) { return scene->name; }
 
 void scene_free(Scene *scene) {}
 
+void setDefaultLayout(Scene *self) {
+	self->x = 0;
+	self->y = 0;
+	self->w = g.window->width;
+	self->h = g.window->height;
+	self->root->rect.w = g.zoom_level * 200;
+	self->root->rect.h = 0;
+	self->root->rect.x = (self->w - self->root->rect.w) / 2;
+	self->root->rect.y = self->h/6;
+	ui_arrangeLinearLayout(self->root);
+}
+
 void scene_handle(Scene *s, SDL_Event *ev) {
 
 	if (ev->type == SDL_WINDOWEVENT && ev->window.event == SDL_WINDOWEVENT_RESIZED) {
 		if (s->on_size_changed) s->on_size_changed(s, ev->window.data1, ev->window.data2);
+		// NOTE: gui scene root should be linear layout
+		if (s->type == Scene_GUI) {
+			setDefaultLayout(s);
+		}
 	}
 
 	switch (s->type) {

@@ -1,7 +1,6 @@
 #include "gl.h"
 #include "../game.h"
 #include "resource.h"
-#include "window.h"
 #include "../util/log.h"
 
 #include <glad/glad.h>
@@ -11,9 +10,7 @@
 
 extern Game g;
 
-void gl_init() {
-	gl_setSize(g.window->width, g.window->height);
-}
+void gl_init() {}
 
 void gl_setSize(int width, int height) {
 	glViewport(0, 0, width, height);

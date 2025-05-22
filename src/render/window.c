@@ -3,6 +3,7 @@
 #include "../game.h"
 #include "../util/log.h"
 #include "../util/mem.h"
+#include "../util/props.h"
 #include <stdbool.h>
 #include <glad/glad.h>
 /* glad first */
@@ -20,7 +21,7 @@ void window_init(const char *window_name) {
 	g.window = w;
 	w->title = window_name ? window_name : "Icraft";
 	w->width = 1400;
-	w->height = 700;
+	w->height = 800;
 	w->fullscreen = false;
 	w->window = SDL_CreateWindow(w->title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 			w->width, w->height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
@@ -44,6 +45,7 @@ void window_setSize(int width, int height) {
 	if (height != 0) {
 		g.window->height = height;
 	}
+	g.zoom_level = MAX(ceilf((g.window->height - 240) / 240.0f), 1);
 	gl_setSize(g.window->width, g.window->height);
 	// WARNING: did you forget to update camera aspect?
 }

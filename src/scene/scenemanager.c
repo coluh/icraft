@@ -8,6 +8,7 @@
 #include "di/di.h"
 #include "hud/hud.h"
 #include "../game.h"
+#include "../render/window.h"
 
 extern Game g;
 
@@ -21,6 +22,7 @@ void sceneManager_init() {
 	registerScene(hud_ofMain());
 	registerScene(gui_ofEscape());
 	registerScene(di_ofMain());
+	window_setSize(0, 0);
 }
 
 static Scene *getScene(const char *name) {
@@ -55,6 +57,9 @@ void sceneManager_push(const char *name) {
 	Scene *current = sceneManager_peek();
 	if (current->on_enter != NULL) {
 		current->on_enter(current);
+	}
+	if (current->type == Scene_GUI) {
+		setDefaultLayout(current);
 	}
 }
 

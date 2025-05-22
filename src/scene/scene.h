@@ -42,7 +42,7 @@ Scene *newScene(const char *name, SceneType type, Keymap keymaps[], int count);
 void scene_free(Scene *scene);
 const char *scene_getName(Scene *scene);
 
-void scene_updateLayout(Scene *scene);
+void setDefaultLayout(Scene *self);
 
 void scene_handle(Scene *scene, SDL_Event *event);
 void scene_update(Scene *scene, bool input);

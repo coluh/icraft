@@ -1,7 +1,7 @@
 #include "../element.h"
 #include "../../../render/render_2d.h"
 #include "../../../render/font.h"
-// #include "../../../util/props.h"
+#include "../../../util/props.h"
 #include "../../../util/mem.h"
 #include <SDL2/SDL_events.h>
 
@@ -27,8 +27,8 @@ void ui_renderElementLabel(uiElement *m) {
 	const uiLabel *l = (uiLabel*)m;
 
 	twod_setColor(ELEMENT_FONT_COLOR, 1.0f);
-	font_drawText(l->text,
-		m->rect.x + (m->rect.w - l->text_width) / 2.0f,
-		m->rect.y + (m->rect.h - l->text_height) / 2.0f,
-	1);
+	font_drawTextCentered(l->text,
+		m->rect.x + m->rect.w / 2.0f,
+		m->rect.y + m->rect.h / 2.0f,
+	LEVEL_CHOOSE(g.zoom_level, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0));
 }

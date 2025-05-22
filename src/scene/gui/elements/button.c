@@ -63,7 +63,7 @@ void ui_renderElementButton(uiElement *m) {
 	}
 	twod_drawQuad(UNPACK_RECT(b->e.rect));
 
-	const int t = ELEMENT_BORDER_THICKNESS;
+	const int t = g.zoom_level;
 	const int x = b->e.rect.x;
 	const int y = b->e.rect.y;
 	const int w = b->e.rect.w;
@@ -83,8 +83,8 @@ void ui_renderElementButton(uiElement *m) {
 
 	// word
 	twod_setColor(ELEMENT_FONT_COLOR, 1.0f);
-	font_drawText(b->text,
-		x + (w - b->text_width) / 2.0f,
-		y + (h - b->text_height) / 2.0f,
-	1);
+	font_drawTextCentered(b->text,
+		x + w / 2.0f,
+		y + h / 2.0f,
+	LEVEL_CHOOSE(g.zoom_level, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0));
 }

@@ -11,6 +11,7 @@
 #define EQUAL 0
 
 #define IN_RECT(m, n, r) (((m)>=(r).x)&&((m)<((r).x+(r).w))&&((n)>=(r).y)&&((n)<((r).y+(r).h)))
+#define LEVEL_CHOOSE(level, l1, l2, l3, l4, l5, l6, l7) ((level) > 7 ? (l7) : (((float[]){0,l1,l2,l3,l4,l5,l6,l7})[level]))
 
 #define POSITIVE_REMAINDER(a, b) (((a)%(b)>=0)?((a)%(b)):((a)%(b)+(b)))
 #define ROUND_DOWN_BY(x, m) ((x)-POSITIVE_REMAINDER(x,m))
@@ -26,6 +27,7 @@
 #define MAX_FIELD_INT_P(strp_arr, str_name, field, count) max_field_int_p((void**)strp_arr, offsetof(str_name, field), count)
 // used for an array of struct pointer, to get sum of INT field of structs
 #define SUM_FIELD_INT_P(strp_arr, str_name, field, count) sum_field_int_p((void**)strp_arr, offsetof(str_name, field), count)
+// example: m.rect.h = SUM_FIELD_INT_P(l->children, uiElement, rect.h, l->count);
 
 #define FORR(n) for (int i = 0; i < n; i++)
 

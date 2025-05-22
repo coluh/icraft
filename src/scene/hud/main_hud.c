@@ -1,5 +1,4 @@
 #include <SDL2/SDL_events.h>
-#include <math.h>
 #include <stdio.h>
 #include "../scene.h"
 #include "../scenemanager.h"
@@ -7,29 +6,17 @@
 #include "../../entity/entity.h"
 #include "../../render/window.h"
 #include "../../entity/player.h"
-#include "../../util/mem.h"
 #include "../../render/render_2d.h"
 #include "../../render/font.h"
 #include "../../world/block/extra.h"
 #include "../../world/world.h"
 #include "component.h"
+#include "../../util/props.h"
 
 extern Game g;
 
-typedef struct {
-	float height_unit;
-} MainHUDData;
-
-static void on_size_changed(Scene *self, int width, int height) {
-	((MainHUDData*)self->data)->height_unit = ceilf((float)height / 256) * 16;
-}
-
-static void on_scene_enter(Scene *self) {
-	on_size_changed(self, g.window->width, g.window->height);
-}
-
 static void render(Scene *self) {
-	const int a = ((MainHUDData*)self->data)->height_unit;
+	const int a = g.zoom_level * 16;
 	int w = 10 * a;
 	const int t = a / 16;
 
@@ -72,9 +59,9 @@ static void render(Scene *self) {
 				snprintf(count, 3, "%2d", slot->count);
 			}
 			twod_setColor(0.0f, 0.0f, 0.0f, 1.0f);
-			font_drawTextCentered(count, x+a*0.7+2, y+a*0.8+2, 1.0f);
+			font_drawTextCentered(count, x+a*0.7+2, y+a*0.8+2, LEVEL_CHOOSE(g.zoom_level, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0));
 			twod_setColor(1.0f, 1.0f, 1.0f, 1.0f);
-			font_drawTextCentered(count, x+a*0.7, y+a*0.8, 1.0f);
+			font_drawTextCentered(count, x+a*0.7, y+a*0.8, LEVEL_CHOOSE(g.zoom_level, 0.5, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0));
 		}
 	}
 
@@ -164,9 +151,6 @@ Scene *hud_ofMain() {
 			{ Action_MOUSEDOWN, { .button = Mouse_LEFT }, destroy},
 			{ Action_MOUSEWHEEL, { 0 }, switch_holding},
 			}, 11);
-	s->data = zalloc(1, sizeof(MainHUDData)); // store the hud height unit
-	s->on_enter = on_scene_enter;
-	s->on_size_changed = on_size_changed;
 	s->render = render;
 	return s;
 }

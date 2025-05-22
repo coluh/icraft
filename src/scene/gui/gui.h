@@ -4,6 +4,5 @@
 #include "../scene.h"
 
 Scene *gui_ofEscape();
-void setDefaultLayout(Scene *self);
 
 #endif
