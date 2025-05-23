@@ -85,6 +85,8 @@ void player_update(Entity *self, World *w) {
 		}
 	}
 	p->facing_block = (IV3){floorf(eye[0]), floorf(eye[1]), floorf(eye[2])};
+	glm_vec3_sub(eye, uoff, eye);
+	p->putable_block = (IV3){floorf(eye[0]), floorf(eye[1]), floorf(eye[2])};
 
 	common_move_slide_gravity(self, w);
 }

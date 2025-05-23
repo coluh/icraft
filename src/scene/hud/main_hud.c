@@ -123,6 +123,27 @@ static void destroy(SDL_Event *ev) {
 	// block_destroy(g.world, g.player->player.facing_block.x, g.player->player.facing_block.y, g.player->player.facing_block.z);
 }
 
+static void put(SDL_Event *ev) {
+	PlayerData *player = &entity_get(g.entities, g.player_ref)->player;
+	const IV3 *put_pos = &player->putable_block;
+	Slot *slot = &player->inventory.hotbar[player->holding];
+	if (slot->count > 0) {
+		Item *item = &slot->item;
+		ItemID id = item->id;
+		if (!item_isBlock(id)) {
+			// TODO: support more operations
+			return;
+		}
+
+		BlockID block = block_ofItem(id);
+		if (world_block(g.world, put_pos->x, put_pos->y, put_pos->z) == BLOCK_Air) {
+			// item -> block
+			slot->count--;
+			world_modifyBlock(g.world, put_pos->x, put_pos->y, put_pos->z, block);
+		}
+	}
+}
+
 static void switch_holding(SDL_Event *ev) {
 	PlayerData *player = &entity_get(g.entities, g.player_ref)->player;
 	if (ev->wheel.y > 0) {
@@ -148,9 +169,10 @@ Scene *hud_ofMain() {
 			{ Action_KEYPRESSED, { "Space" }, up },
 			{ Action_KEYPRESSED, { "Left Shift" }, down },
 			{ Action_MOUSEMOTION, { 0 }, rotate },
-			{ Action_MOUSEDOWN, { .button = Mouse_LEFT }, destroy},
+			{ Action_MOUSEPRESSED, { .button = Mouse_LEFT }, destroy},
+			{ Action_MOUSEDOWN, { .button = Mouse_RIGHT }, put},
 			{ Action_MOUSEWHEEL, { 0 }, switch_holding},
-			}, 11);
+			}, 12);
 	s->render = render;
 	return s;
 }

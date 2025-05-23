@@ -5,5 +5,6 @@
 
 void threed_renderChunks(const World *world);
 void threed_renderExtras(const World *world);
+void threed_renderFacing();
 
 #endif

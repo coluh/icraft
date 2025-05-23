@@ -18,6 +18,7 @@ typedef struct PlayerData {
 	} input;
 	versor body_rotation;
 	IV3 facing_block;
+	IV3 putable_block; // before the facing_block
 
 	struct {
 		Slot hotbar[PLAYER_INVENTORY_COLOMN];

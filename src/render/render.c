@@ -31,6 +31,7 @@ void render(Camera *camera, const EntityList *entities, const World *world, floa
 	glBindTexture(GL_TEXTURE_2D, g.res->textures.blocks);
 	threed_renderChunks(world);
 	threed_renderExtras(world);
+	threed_renderFacing();
 	entity_render(entities, alpha);
 
 	// 2D content

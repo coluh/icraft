@@ -3,6 +3,7 @@
 #include "resource.h"
 #include "../world/chunk.h"
 #include "gl.h"
+#include "../entity/entity.h"
 #include "../util/log.h"
 #include "../../third_party/cglm/include/cglm/cglm.h"
 
@@ -63,4 +64,21 @@ void threed_renderExtras(const World *world) {
 			}
 		}
 	}
+}
+
+void threed_renderFacing() {
+	const IV3 *b = &entity_get(g.entities, g.player_ref)->player.facing_block;
+	if (world_block(g.world, b->x, b->y, b->z) == BLOCK_Air) {
+		return;
+	}
+	mat4 model;
+	glm_mat4_identity(model);
+	glm_translate(model, (vec3){b->x, b->y, b->z});
+	glm_translate(model, (vec3){0.5f, 0.5f, 0.5f});
+	glUniformMatrix4fv(g.res->shaders.basic_location.model, 1, GL_FALSE, (float*)model);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glBindVertexArray(g.res->meshes.cubeVAO);
+	glDrawArrays(GL_TRIANGLES, 0, g.res->meshes.cubeVAO_count);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }

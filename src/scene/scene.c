@@ -9,6 +9,7 @@
 #include "../util/mem.h"
 #include "../util/props.h"
 #include "../render/window.h"
+#include "../util/log.h"
 
 Scene *newScene(const char *name, SceneType type, Keymap keymaps[], int count) {
 	Scene *s = zalloc(1, sizeof(Scene) + count * sizeof(Keymap));
@@ -68,6 +69,11 @@ void scene_handle(Scene *s, SDL_Event *ev) {
 				km->callback(NULL);
 			}
 			break;
+		case Action_MOUSEDOWN:
+			if (ev->type == SDL_MOUSEBUTTONDOWN && ev->button.button == km->button) {
+				km->callback(NULL);
+			}
+			break;
 		case Action_MOUSEMOTION:
 			if (ev->type == SDL_MOUSEMOTION) {
 				km->callback(ev);
@@ -112,7 +118,7 @@ void scene_update(Scene *s, bool input) {
 				km->callback(NULL);
 			}
 			break;
-		case Action_MOUSEDOWN:
+		case Action_MOUSEPRESSED:
 			if (((km->button == Mouse_LEFT) && (buttons & SDL_BUTTON(SDL_BUTTON_LEFT))) ||
 					((km->button == Mouse_MIDDLE) && (buttons & SDL_BUTTON(SDL_BUTTON_MIDDLE))) ||
 					((km->button == Mouse_RIGHT) && (buttons & SDL_BUTTON(SDL_BUTTON_RIGHT)))) {
