@@ -74,11 +74,9 @@ void threed_renderFacing() {
 	mat4 model;
 	glm_mat4_identity(model);
 	glm_translate(model, (vec3){b->x, b->y, b->z});
-	glm_translate(model, (vec3){0.5f, 0.5f, 0.5f});
 	glUniformMatrix4fv(g.res->shaders.basic_location.model, 1, GL_FALSE, (float*)model);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glBindVertexArray(g.res->meshes.cubeVAO);
-	glDrawArrays(GL_TRIANGLES, 0, g.res->meshes.cubeVAO_count);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glLineWidth(3.0f);
+	glBindVertexArray(g.res->meshes.frameVAO);
+	glDrawArrays(GL_LINES, 0, g.res->meshes.frameVAO_count);
 }

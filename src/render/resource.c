@@ -110,6 +110,29 @@ void resource_init() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
+	// frame mesh
+	float frame_vertices[][3] = {
+		{1, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 1, 0}, {0, 1, 0}, {1, 1, 0}, {1, 1, 0}, {1, 0, 0},
+		{0, 0, 1}, {1, 0, 1}, {1, 0, 1}, {1, 1, 1}, {1, 1, 1}, {0, 1, 1}, {0, 1, 1}, {0, 0, 1},
+		{0, 0, 0}, {1, 0, 0}, {1, 0, 0}, {1, 0, 1}, {1, 0, 1}, {0, 0, 1}, {0, 0, 1}, {0, 0, 0},
+		{0, 1, 0}, {0, 1, 1}, {0, 1, 1}, {1, 1, 1}, {1, 1, 1}, {1, 1, 0}, {1, 1, 0}, {0, 1, 0},
+		{0, 0, 0}, {0, 0, 1}, {0, 0, 1}, {0, 1, 1}, {0, 1, 1}, {0, 1, 0}, {0, 1, 0}, {0, 0, 0},
+		{1, 0, 1}, {1, 0, 0}, {1, 0, 0}, {1, 1, 0}, {1, 1, 0}, {1, 1, 1}, {1, 1, 1}, {1, 0, 1},
+	};
+	glGenVertexArrays(1, &VAO);
+	res->meshes.frameVAO = VAO;
+	res->meshes.frameVAO_count = sizeof(frame_vertices) / sizeof(frame_vertices[0]);
+	glGenBuffers(1, &VBO);
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	glBufferData(GL_ARRAY_BUFFER, sizeof(frame_vertices), frame_vertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), NULL);
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
 	// init some uniforms
 	glUseProgram(res->shaders.ui);
 	glUniform1i(res->shaders.ui_location.useTexture, 0);

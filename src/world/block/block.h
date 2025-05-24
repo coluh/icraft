@@ -17,6 +17,11 @@ typedef enum BlockID {
 	BLOCK_Unknown
 } BlockID;
 
+typedef enum FaceIndex {
+	// -z, z, -y, y, -x, x
+	Face_BACK, Face_FRONT, Face_BOTTOM, Face_TOP, Face_LEFT, Face_RIGHT,
+} FaceIndex;
+
 typedef struct BlockType {
 
 	const char *name;

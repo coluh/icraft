@@ -38,6 +38,8 @@ typedef struct ResourceManager {
 		unsigned int rectangleVAO_count;
 		unsigned int cubeVAO;
 		unsigned int cubeVAO_count;
+		unsigned int frameVAO;
+		unsigned int frameVAO_count;
 	} meshes;
 } ResourceManager;
 
