@@ -14,7 +14,9 @@ typedef enum BlockID {
 	BLOCK_Dirt,
 	BLOCK_Stone,
 	BLOCK_CobbleStone,
-	BLOCK_Unknown
+	BLOCK_Poppy,
+	BLOCK_Dandelion,
+	BLOCK_Unknown,
 } BlockID;
 
 typedef enum FaceIndex {
@@ -39,5 +41,8 @@ const BlockType *block_get(BlockID id);
 
 BlockID block_idOf(const char *name);
 BlockID block_ofItem(ItemID item);
+
+bool block_isOpaqueBlock(BlockID id);
+bool block_isPlant(BlockID id);
 
 #endif

@@ -33,6 +33,8 @@ void resource_init() {
 	res->shaders.ui_location.color = glGetUniformLocation(res->shaders.ui, "color");
 	res->shaders.ui_location.useTexture = glGetUniformLocation(res->shaders.ui, "useTexture");
 	res->shaders.ui_location.useTextureAlpha = glGetUniformLocation(res->shaders.ui, "useTextureAlpha");
+	res->shaders.ui_location.use_uv_offset = glGetUniformLocation(res->shaders.ui, "use_uv_offset");
+	res->shaders.ui_location.uv_offset = glGetUniformLocation(res->shaders.ui, "uv_offset");
 
 	// load texture
 	res->textures.blocks = texture_load("assets/textures/texture.png");
@@ -137,6 +139,7 @@ void resource_init() {
 	glUseProgram(res->shaders.ui);
 	glUniform1i(res->shaders.ui_location.useTexture, 0);
 	glUniform1i(res->shaders.ui_location.useTextureAlpha, 0);
+	glUniform1i(res->shaders.ui_location.use_uv_offset, 0);
 	glUseProgram(res->shaders.basic);
 	vec3 light = {-2.0f, -1.0f, 0.5f};
 	glm_vec3_normalize(light);

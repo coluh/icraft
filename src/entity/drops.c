@@ -85,6 +85,7 @@ void drops_render(Entity *entity, float alpha) {
 	glm_mat3_transpose(normal_matrix);
 	glUniformMatrix3fv(g.res->shaders.basic_location.normal_matrix, 1, GL_FALSE, (float*)normal_matrix);
 
+	// TODO: render non-block drops
 	glBindVertexArray(g.res->meshes.cubeVAO);
 
 	glUniform1i(g.res->shaders.basic_location.use_uv_offset, 1);

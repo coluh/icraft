@@ -23,6 +23,8 @@ typedef struct ResourceManager {
 			int color;
 			int useTexture;
 			int useTextureAlpha;
+			int use_uv_offset;
+			int uv_offset;
 		} ui_location;
 	} shaders;
 	struct TextureManager {

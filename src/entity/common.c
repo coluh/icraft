@@ -73,7 +73,7 @@ void common_move_slide(Entity *self, World *world) {
 	for (int i = bounding_min.x; i <= bounding_max.x; i++) {
 		for (int j = bounding_min.y; j <= bounding_max.y; j++) {
 			for (int k = bounding_min.z; k <= bounding_max.z; k++) {
-				if (world_block(world, i, j, k) != BLOCK_Air) {
+				if (block_isOpaqueBlock(world_block(world, i, j, k))) {
 					static_boxes[n_static_boxes] = (Body){
 						i, j, k, 1.0f, 1.0f, 1.0f
 					};

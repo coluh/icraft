@@ -13,6 +13,9 @@ void generator_default(Chunk *chunk) {
 				if (y == top && (dx == 0 || dz == 0)) {
 					id = BLOCK_Stone;
 				}
+				if (y == top + 1 && rand_float(0, 1) < 0.1f) {
+					id = rand_float(0, 1) < 0.5f ? BLOCK_Poppy : BLOCK_Dandelion;
+				}
 
 				chunk->blocks[dx][dy][dz] = id;
 			}

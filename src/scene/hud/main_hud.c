@@ -36,7 +36,11 @@ static void render(Scene *self) {
 		x = (g.window->width - w) / 2 + i * a;
 		const Slot *slot = &player->inventory.hotbar[i];
 		if (slot->count > 0) {
-			twod_drawTexture(x, y, a, a, item_texture(slot->item.id));
+			if (item_isBlock(slot->item.id)) {
+				twod_drawTexture(x, y, a, a, item_blockTexture(slot->item.id));
+			} else {
+				twod_drawIndexedTexture(x, y, a, a, block_get(block_ofItem(slot->item.id))->textures[0]);
+			}
 		}
 		twod_setColor(0.7, 0.7, 0.7, 1.0);
 		bar(x, y, a, a, t);
@@ -133,10 +137,7 @@ static void put(SDL_Event *ev) {
 	if (slot->count > 0) {
 		Item *item = &slot->item;
 		ItemID id = item->id;
-		if (!item_isBlock(id)) {
-			// TODO: support more operations
-			return;
-		}
+		// TODO: items that can not be put
 
 		BlockID block = block_ofItem(id);
 		if (world_block(g.world, put_pos->x, put_pos->y, put_pos->z) == BLOCK_Air) {

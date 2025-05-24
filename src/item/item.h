@@ -9,6 +9,8 @@ typedef enum ItemID {
 	ITEM_CobbleStone,
 	ITEM_GrassBlock,
 	ITEM_Stone,
+	ITEM_Poppy,
+	ITEM_Dandelion,
 } ItemID;
 
 typedef struct Item {
@@ -23,7 +25,7 @@ typedef struct Slot {
 	int count;
 } Slot;
 
-unsigned int item_texture(ItemID id);
+unsigned int item_blockTexture(ItemID id);
 bool item_isBlock(ItemID id);
 
 #endif

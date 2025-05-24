@@ -24,10 +24,10 @@ bool item_isBlock(ItemID id) {
 	return inArray(id, blocks, ARRLEN(blocks));
 }
 
-unsigned int item_texture(ItemID id) {
+unsigned int item_blockTexture(ItemID id) {
 	if (item_isBlock(id)) {
 		return g.res->textures.block_icons[id].texture;
 	}
-	logw("No corresponding texture for itemid: %d", id);
-	return 0;
+	logw("No corresponding block texture for itemid: %d", id);
+	return g.res->textures.block_icons[ITEM_Unknown].texture;
 }
