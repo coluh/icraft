@@ -6,14 +6,15 @@
 
 typedef struct DropsData {
 	float scale;
-	float float_timer;
-	float rotate_timer;
+	float float_timer; // grow from 0
+	float rotate_timer; // grow from 0
 	vec3 render_position;
 	versor render_rotation;
 	vec3 previous_position;
 	versor previous_rotation;
 
 	Item item;
+	float pickup_timer; // count down
 } DropsData;
 
 typedef struct Entity Entity;

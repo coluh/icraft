@@ -8,6 +8,7 @@
 #include "../render/resource.h"
 #include "../render/gl.h"
 #include "../world/block/block.h"
+#include "../util/props.h"
 
 #define DROPS_FLOAT_RANGE 0.1f
 #define DROPS_FLOAT_SPEED 3.0f
@@ -35,6 +36,7 @@ void drops_init(Entity *entity) {
 	drops->render_rotation[1] = entity->rotation[1];
 	drops->render_rotation[2] = entity->rotation[2];
 	drops->render_rotation[3] = entity->rotation[3];
+	drops->pickup_timer = 0.5f;
 	topre(drops);
 }
 
@@ -53,6 +55,7 @@ void drops_update(Entity *self, World *w) {
 
 	drops->float_timer += DROPS_FLOAT_SPEED * g.update_delta;
 	drops->rotate_timer += DROPS_ROTATE_SPEED * g.update_delta;
+	drops->pickup_timer = MAX(drops->pickup_timer - g.update_delta, 0);
 
 	if (!self->only_render) {
 		common_move_slide_gravity(self, w);

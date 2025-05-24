@@ -142,6 +142,9 @@ void entity_update(EntityList *l, World *w) {
 				continue;
 			}
 			if (a->type == Entity_DROPS && b->type == Entity_PLAYER && glm_vec3_distance2((float*)&a->position, (float*)&b->position) < DROPS_ATTRACTION_DISTANCE_SQUARE) {
+				if (a->drops.pickup_timer > 0) { // not now
+					continue;
+				}
 				// player get the drops immediately, while there is an animation of drops flying to player
 				a->only_render = true;
 				player_pickup(b, a->drops.item);

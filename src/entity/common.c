@@ -2,8 +2,9 @@
 #include <math.h>
 #include "bodies.h"
 #include "entity.h"
-#include "../world/world.h"
 #include "../game.h"
+#include "../world/world.h"
+#include "../physics/collision.h"
 #include "../util/log.h"
 #include "../util/props.h"
 
@@ -96,7 +97,7 @@ void common_move_slide(Entity *self, World *world) {
 
 		for (int i = 0; i < n_static_boxes; i++) {
 			float collide_time = nearest_collide_time;
-			CollisionType collided = world_collisionTest(&static_boxes[i], moving, self->velocity, &collide_time);
+			CollisionType collided = collision_test(&static_boxes[i], moving, self->velocity, &collide_time);
 			if (collided == Collision_NONE || collide_time >= nearest_collide_time) {
 				continue;
 			} else {

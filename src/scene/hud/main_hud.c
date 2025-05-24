@@ -2,16 +2,18 @@
 #include <stdio.h>
 #include "../scene.h"
 #include "../scenemanager.h"
+#include "component.h"
 #include "../../game.h"
 #include "../../entity/entity.h"
-#include "../../render/window.h"
 #include "../../entity/player.h"
-#include "../../render/render_2d.h"
-#include "../../render/font.h"
+#include "../../entity/bodies.h"
 #include "../../world/block/extra.h"
 #include "../../world/world.h"
-#include "component.h"
+#include "../../render/window.h"
+#include "../../render/render_2d.h"
+#include "../../render/font.h"
 #include "../../util/props.h"
+#include "../../physics/collision.h"
 
 extern Game g;
 
@@ -124,7 +126,8 @@ static void destroy(SDL_Event *ev) {
 }
 
 static void put(SDL_Event *ev) {
-	PlayerData *player = &entity_get(g.entities, g.player_ref)->player;
+	Entity *entity = entity_get(g.entities, g.player_ref);
+	PlayerData *player = &entity->player;
 	const IV3 *put_pos = &player->putable_block;
 	Slot *slot = &player->inventory.hotbar[player->holding];
 	if (slot->count > 0) {
@@ -137,6 +140,11 @@ static void put(SDL_Event *ev) {
 
 		BlockID block = block_ofItem(id);
 		if (world_block(g.world, put_pos->x, put_pos->y, put_pos->z) == BLOCK_Air) {
+			Body *block_body = &(Body){put_pos->x, put_pos->y, put_pos->z, 1.0f, 1.0f, 1.0f};
+			Body *player_body = BODYP(entity->position, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH);
+			if (collision_overlap(block_body, player_body)) {
+				return;
+			}
 			// item -> block
 			slot->count--;
 			world_modifyBlock(g.world, put_pos->x, put_pos->y, put_pos->z, block);
