@@ -4,6 +4,7 @@
 #include "../../third_party/cglm/include/cglm/cglm.h"
 #include "block/block.h"
 #include "../util/mem.h"
+#include "../render/texture.h"
 
 #define CHUNK_MAX_VERTICE_COUNT (CHUNK_VOLUME*6*6)
 
@@ -70,7 +71,6 @@ static void generate_face(int f, struct vertex face[], int x, int y, int z, Bloc
 		// {0.001, 0.001}, {0.999, 0.999}, {0.001, 0.999},
 	};
 
-	int t = block_get(id)->textures[f];
 	// tow triangles
 	for (int i = 0; i < 6; i++) {
 		face[i].position[0] = x + indices[f][i][0];
@@ -79,12 +79,13 @@ static void generate_face(int f, struct vertex face[], int x, int y, int z, Bloc
 		face[i].normal[0] = norms[f][0];
 		face[i].normal[1] = norms[f][1];
 		face[i].normal[2] = norms[f][2];
-		face[i].uv[0] = (float)(uvs[i][0] + t % BLOCK_TEXTURE_ROW_COUNT) / BLOCK_TEXTURE_ROW_COUNT;
-		face[i].uv[1] = (float)(uvs[i][1] + (int)(t / BLOCK_TEXTURE_ROW_COUNT)) / BLOCK_TEXTURE_ROW_COUNT;
+		texture_blockUVoffset(block_get(id)->textures[f], face[i].uv);
+		face[i].uv[0] += uvs[i][0] / BLOCK_TEXTURE_ROW_COUNT;
+		face[i].uv[1] += uvs[i][1] / BLOCK_TEXTURE_ROW_COUNT;
 	}
 }
 
-static void generate_cross_face(struct vertex face[], int x, int y, int z, int texture) {
+static void generate_cross_face(struct vertex face[], int x, int y, int z, int textureIndex) {
 	static const int indices[][3] = {
 		{0, 0, 0}, {1, 0, 1}, {1, 1, 1},
 		{0, 0, 0}, {1, 1, 1}, {0, 1, 0},
@@ -94,7 +95,7 @@ static void generate_cross_face(struct vertex face[], int x, int y, int z, int t
 	static const int norm[3] = {
 		0, 1, 0,
 	};
-	static const int uvs[][2] = {
+	static const float uvs[][2] = {
 		{0, 0}, {1, 0}, {1, 1},
 		{0, 0}, {1, 1}, {0, 1},
 		{0, 0}, {1, 0}, {1, 1},
@@ -107,8 +108,9 @@ static void generate_cross_face(struct vertex face[], int x, int y, int z, int t
 		face[i].normal[0] = norm[0];
 		face[i].normal[1] = norm[1];
 		face[i].normal[2] = norm[2];
-		face[i].uv[0] = (float)(uvs[i][0] + texture % BLOCK_TEXTURE_ROW_COUNT) / BLOCK_TEXTURE_ROW_COUNT;
-		face[i].uv[1] = (float)(uvs[i][1] + (int)(texture / BLOCK_TEXTURE_ROW_COUNT)) / BLOCK_TEXTURE_ROW_COUNT;
+		texture_blockUVoffset(textureIndex, face[i].uv);
+		face[i].uv[0] += uvs[i][0] / BLOCK_TEXTURE_ROW_COUNT;
+		face[i].uv[1] += uvs[i][1] / BLOCK_TEXTURE_ROW_COUNT;
 	}
 }
 

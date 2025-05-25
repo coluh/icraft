@@ -194,7 +194,7 @@ void resource_init() {
 	glViewport(0, 0, BLOCK_ICON_SIZE, BLOCK_ICON_SIZE);
 	glBindVertexArray(res->meshes.cubeVAO);
 	for (int i = 0; i < ITEM_BLOCK_MAX; i++) {
-		if (!item_isBlock((ItemID)i)) {
+		if (!item_isCube((ItemID)i)) {
 			continue;
 		}
 
@@ -213,14 +213,13 @@ void resource_init() {
 		glBindTexture(GL_TEXTURE_2D, res->textures.blocks);
 		const int *textures = block_get(block_ofItem((ItemID)i))->textures;
 		for (int f = 0; f < 6; f++) {
-			const int texture = textures[f];
-			float uv0 = (float)(texture % BLOCK_TEXTURE_ROW_COUNT) / BLOCK_TEXTURE_ROW_COUNT;
-			float uv1 = (float)(int)(texture / BLOCK_TEXTURE_ROW_COUNT) / BLOCK_TEXTURE_ROW_COUNT;
-			glUniform2f(res->shaders.basic_location.uv_offset, uv0, uv1);
+			float uv[2];
+			texture_blockUVoffset(textures[f], uv);
+			glUniform2f(res->shaders.basic_location.uv_offset, uv[0], uv[1]);
 			glDrawArrays(GL_TRIANGLES, f * res->meshes.cubeVAO_count / 6, res->meshes.cubeVAO_count / 6);
 		}
 
-		res->textures.block_icons[i].texture = tex;
+		res->textures.cube_icons[i].texture = tex;
 	}
 	glUniform1i(res->shaders.basic_location.use_uv_offset, 0);
 	glUniform3fv(res->shaders.basic_location.light, 1, (float*)light);

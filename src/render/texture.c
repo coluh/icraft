@@ -30,3 +30,8 @@ unsigned int texture_load(const char *texture_path) {
 
 	return texture;
 }
+
+void texture_blockUVoffset(int index, float uv[]) {
+	uv[0] = (float)(index % BLOCK_TEXTURE_ROW_COUNT) / BLOCK_TEXTURE_ROW_COUNT;
+	uv[1] = (float)((int)(index / BLOCK_TEXTURE_ROW_COUNT)) / BLOCK_TEXTURE_ROW_COUNT;
+}

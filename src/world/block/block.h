@@ -4,9 +4,8 @@
 #include <stdint.h>
 #include "../../item/item.h"
 
-#define BLOCK_TEXTURE_SIZE 16
-// How many textures in one row. Also column count
-#define BLOCK_TEXTURE_ROW_COUNT 16
+/* block is not cube */
+/* block is the basic unit of the chunk */
 
 typedef enum BlockID {
 	BLOCK_Air,
@@ -37,12 +36,20 @@ typedef struct BlockType {
 } BlockType;
 
 void block_init();
+
+// get detailed data of this type of block
 const BlockType *block_get(BlockID id);
 
+// used in: ? command
 BlockID block_idOf(const char *name);
+
+// itemID -> BlockID
+// used in: put block, drops render
 BlockID block_ofItem(ItemID item);
 
+// used in: chunk vertex generation
 bool block_isOpaqueBlock(BlockID id);
+// used in: chunk vertex generation
 bool block_isPlant(BlockID id);
 
 #endif

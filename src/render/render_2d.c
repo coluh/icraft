@@ -1,6 +1,7 @@
 #include "render_2d.h"
 #include "../game.h"
 #include "resource.h"
+#include "texture.h"
 #include "../world/block/block.h"
 
 #include "../../third_party/cglm/include/cglm/affine.h"
@@ -59,15 +60,14 @@ void twod_drawTexture(int x, int y, int w, int h, GLuint texture) {
 	glUniform1i(g.res->shaders.ui_location.useTexture, 0);
 }
 
-void twod_drawIndexedTexture(int x, int y, int w, int h, unsigned int id) {
+void twod_drawIndexedTexture(int x, int y, int w, int h, int index) {
 	twod_setRect(x, y + h, w, -h);
 
 	glUniform1i(g.res->shaders.ui_location.useTexture, 1);
 	glBindTexture(GL_TEXTURE_2D, g.res->textures.blocks);
 	glUniform1i(g.res->shaders.ui_location.use_uv_offset, 1);
 	float uv[2];
-	uv[0] = (float)(id % BLOCK_TEXTURE_ROW_COUNT) / BLOCK_TEXTURE_ROW_COUNT;
-	uv[1] = (float)(int)(id / BLOCK_TEXTURE_ROW_COUNT) / BLOCK_TEXTURE_ROW_COUNT;
+	texture_blockUVoffset(index, uv);
 	glUniform2f(g.res->shaders.ui_location.uv_offset, uv[0], uv[1]);
 
 	glBindVertexArray(g.res->meshes.rectangleVAO);

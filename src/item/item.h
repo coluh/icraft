@@ -25,7 +25,19 @@ typedef struct Slot {
 	int count;
 } Slot;
 
-unsigned int item_blockTexture(ItemID id);
-bool item_isBlock(ItemID id);
+// item is cube, can be put, show 3d texture in inventory
+bool item_isCube(ItemID id);
+
+// return an opengl texture
+// used in: inventory, container ui
+unsigned int item_cubeIconTexture(ItemID id);
+
+// return index in the g.res->textures.blocks texture
+// keep the same with block_types.textures
+// used in: inventory, container ui
+int item_textureIndex(ItemID id);
+
+// used in: block put
+bool item_putable(ItemID id);
 
 #endif

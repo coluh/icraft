@@ -7,6 +7,7 @@
 #include "../../third_party/cglm/include/cglm/quat.h"
 #include "../render/resource.h"
 #include "../render/gl.h"
+#include "../render/texture.h"
 #include "../world/block/block.h"
 #include "../util/props.h"
 
@@ -92,9 +93,7 @@ void drops_render(Entity *entity, float alpha) {
 	const int *textures = block_get(block_ofItem(drops->item.id))->textures;
 	float uv[2];
 	for (int f = 0; f < 6; f++) {
-		const int texture = textures[f];
-		uv[0] = (float)(texture % BLOCK_TEXTURE_ROW_COUNT) / BLOCK_TEXTURE_ROW_COUNT;
-		uv[1] = (float)(int)(texture / BLOCK_TEXTURE_ROW_COUNT) / BLOCK_TEXTURE_ROW_COUNT;
+		texture_blockUVoffset(textures[f], uv);
 		glUniform2f(g.res->shaders.basic_location.uv_offset, uv[0], uv[1]);
 		glDrawArrays(GL_TRIANGLES, f * g.res->meshes.cubeVAO_count / 6, g.res->meshes.cubeVAO_count / 6);
 	}
