@@ -91,8 +91,8 @@ static void generate_cross_face(struct vertex face[], int x, int y, int z, int t
 		{0, 0, 1}, {1, 0, 0}, {1, 1, 0},
 		{0, 0, 1}, {1, 1, 0}, {0, 1, 1},
 	};
-	static const int norms[2][3] = {
-		{-1, 0, 1}, {1, 0, 1},
+	static const int norm[3] = {
+		0, 1, 0,
 	};
 	static const int uvs[][2] = {
 		{0, 0}, {1, 0}, {1, 1},
@@ -104,9 +104,9 @@ static void generate_cross_face(struct vertex face[], int x, int y, int z, int t
 		face[i].position[0] = x + indices[i][0];
 		face[i].position[1] = y + indices[i][1];
 		face[i].position[2] = z + indices[i][2];
-		face[i].normal[0] = i < 6 ? norms[0][0] : norms[1][0];
-		face[i].normal[1] = i < 6 ? norms[0][1] : norms[1][1];
-		face[i].normal[2] = i < 6 ? norms[0][2] : norms[1][2];
+		face[i].normal[0] = norm[0];
+		face[i].normal[1] = norm[1];
+		face[i].normal[2] = norm[2];
 		face[i].uv[0] = (float)(uvs[i][0] + texture % BLOCK_TEXTURE_ROW_COUNT) / BLOCK_TEXTURE_ROW_COUNT;
 		face[i].uv[1] = (float)(uvs[i][1] + (int)(texture / BLOCK_TEXTURE_ROW_COUNT)) / BLOCK_TEXTURE_ROW_COUNT;
 	}
@@ -114,12 +114,8 @@ static void generate_cross_face(struct vertex face[], int x, int y, int z, int t
 
 void chunk_generateVertex(Chunk *chunk, Chunk *nearbys[6]) {
 
-	glGenVertexArrays(1, &chunk->VAO);
-	glGenBuffers(1, &chunk->VBO);
-
 	// generate vertex data
 	int vertex_idx = 0;
-	chunk->vertex_count = 0;
 	for (int x = 0; x < CHUNK_SIZE; x++) {
 		for (int y = 0; y < CHUNK_SIZE; y++) {
 			for (int z = 0; z < CHUNK_SIZE; z++) {
@@ -161,16 +157,20 @@ void chunk_generateVertex(Chunk *chunk, Chunk *nearbys[6]) {
 		}
 	}
 
-	glBindVertexArray(chunk->VAO);
+	if (chunk->VAO == 0) {
+		glGenVertexArrays(1, &chunk->VAO);
+		glGenBuffers(1, &chunk->VBO);
+		glBindVertexArray(chunk->VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, chunk->VBO);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct vertex), (void*)0);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(struct vertex), (void*)sizeof(vec3));
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertex), (void*)(sizeof(vec3)*2));
+		glEnableVertexAttribArray(2);
+	}
+
 	glBindBuffer(GL_ARRAY_BUFFER, chunk->VBO);
 	glBufferData(GL_ARRAY_BUFFER, vertex_idx*sizeof(struct vertex), vertices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct vertex), (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(struct vertex), (void*)sizeof(vec3));
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertex), (void*)(sizeof(vec3)*2));
-	glEnableVertexAttribArray(2);
-
 	chunk->vertex_count = vertex_idx;
 }

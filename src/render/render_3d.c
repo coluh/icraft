@@ -36,7 +36,6 @@ static void renderDestroyingTexture(const BlockExtra *be, BlockID block) {
 		(float)(BLOCK_TEXTURE_ROW_COUNT - 1) / BLOCK_TEXTURE_ROW_COUNT,
 	};
 	glUniform2f(g.res->shaders.basic_location.uv_offset, uv[0], uv[1]);
-	glDepthMask(GL_FALSE);
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(-1.0f, -1.0f);
 
@@ -50,7 +49,6 @@ static void renderDestroyingTexture(const BlockExtra *be, BlockID block) {
 	glDrawArrays(GL_TRIANGLES, 0, g.res->meshes.cubeVAO_count);
 
 	glDisable(GL_POLYGON_OFFSET_FILL);
-	glDepthMask(GL_TRUE);
 	glUniform1i(g.res->shaders.basic_location.use_uv_offset, 0);
 }
 
@@ -76,7 +74,10 @@ void threed_renderFacing() {
 	glm_translate(model, (vec3){b->x, b->y, b->z});
 	glUniformMatrix4fv(g.res->shaders.basic_location.model, 1, GL_FALSE, (float*)model);
 
-	glLineWidth(3.0f);
+	glLineWidth(1.0f);
+	glEnable(GL_POLYGON_OFFSET_LINE);
+	glPolygonOffset(-1.0f, -1.0f);
 	glBindVertexArray(g.res->meshes.frameVAO);
 	glDrawArrays(GL_LINES, 0, g.res->meshes.frameVAO_count);
+	glDisable(GL_POLYGON_OFFSET_LINE);
 }

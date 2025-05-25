@@ -25,7 +25,7 @@ void main() {
 
 	result = pow(result, vec3(1.0 / 2.2));
 
-	if (texColor.a < 0.01)
+	if (texColor.a < 0.2)
 		discard;
 	FragColor = vec4(result, texColor.a);
 }
