@@ -7,6 +7,7 @@
 #include "../physics/collision.h"
 #include "../util/log.h"
 #include "../util/props.h"
+#include "../../third_party/cglm/include/cglm/vec2.h"
 
 extern Game g;
 
@@ -47,10 +48,14 @@ void common_move_slide_gravity(Entity *self, World *world) {
 	self->velocity.y += world->g * g.update_delta;
 	common_move_slide(self, world);
 	if (self->on_ground) {
-		float nvx = self->velocity.x - SIGN(self->velocity.x) * 0.1f * ABS(world->g) * g.update_delta;
-		self->velocity.x = (SIGN(nvx) == SIGN(self->velocity.x)) ? nvx : 0.0f;
-		float nvz = self->velocity.z - SIGN(self->velocity.z) * 0.1f * ABS(world->g) * g.update_delta;
-		self->velocity.z = (SIGN(nvz) == SIGN(self->velocity.z)) ? nvz : 0.0f;
+		const float r = 0.7f;
+		self->velocity.x *= r;
+		self->velocity.z *= r;
+		float v = glm_vec2_norm((vec2){self->velocity.x, self->velocity.z});
+		if (v < 0.01f) {
+			self->velocity.x = 0.0f;
+			self->velocity.z = 0.0f;
+		}
 	}
 }
 

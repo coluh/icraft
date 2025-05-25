@@ -4,12 +4,13 @@
 #include "entity.h"
 #include <math.h>
 #include "../world/world.h"
+#include "../util/props.h"
 
 #include "../../third_party/cglm/include/cglm/vec3.h"
 #include "../../third_party/cglm/include/cglm/quat.h"
 
 #define PLAYER_ROTATE_SENSI	0.003f
-#define PLAYER_MOVE_SPEED	5.0f
+#define PLAYER_MOVE_SPEED	4.3f
 #define PLAYER_JUMP_SPEED	10.0f
 
 void player_init(Entity *self) {
@@ -56,9 +57,9 @@ void player_update(Entity *self, World *w) {
 	vec3 hv;
 	glm_vec3_scale(right, input_dir[0], right);
 	glm_vec3_scale(front, input_dir[2], front);
-	glm_vec3_add(right, front, hv);
-	self->velocity.x = hv[0] * PLAYER_MOVE_SPEED;
-	self->velocity.z = hv[2] * PLAYER_MOVE_SPEED;
+	glm_vec3_add(right, front, hv); // we will not normalize here to keep the move feature
+	self->velocity.x = hv[0] != 0 ? hv[0] * PLAYER_MOVE_SPEED : self->velocity.x;
+	self->velocity.z = hv[2] != 0 ? hv[2] * PLAYER_MOVE_SPEED : self->velocity.z;
 
 	if (p->input.jump) {
 		p->input.jump = false;

@@ -16,7 +16,7 @@
 #include "../../physics/collision.h"
 #include "../../../third_party/cglm/include/cglm/cglm.h"
 
-#define PLAYER_DROP_SPEED 3.0f
+#define PLAYER_DROP_SPEED 5.0f
 
 extern Game g;
 

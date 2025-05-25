@@ -126,50 +126,30 @@ void font_queryText(const char *utf8str, float scale, int *width, int *height) {
 	*height = ymax - ymin;
 }
 
-void font_drawTextFromOrigin(const char *utf8str, float x, float y, float scale) {
-	uint32_t ch;
-	while (*utf8str) {
-		utf8str = utf8next(utf8str, &ch);
-		if (characters[ch].textureID == 0) {
-			// logv("Load %c", ch);
-			font_loadCharacter(ch);
-		}
-
-		Character *c = &characters[ch];
-		int xpos = x + c->bearingX * scale;
-		int ypos = y - c->bearingY * scale;
-		int w = c->width * scale;
-		int h = c->height * scale;
-
-		// glBindTexture(GL_TEXTURE_2D, c->textureID);
-		twod_drawTextureShape(xpos, ypos, w, h, c->textureID);
-
-		x += c->advance * scale;
-	}
-}
-
 void font_drawText(const char *utf8str, float x, float y, float scale) {
 	uint32_t ch;
-	int first = 1;
-	while (*utf8str) {
-		utf8str = utf8next(utf8str, &ch);
+	const char *p = utf8str;
+	float max_bearing_y = 0;
+
+	while (*p) {
+		p = utf8next(p, &ch);
 		if (characters[ch].textureID == 0) {
-			// logv("Load %c", ch);
 			font_loadCharacter(ch);
 		}
+		if (characters[ch].bearingY > max_bearing_y) {
+			max_bearing_y = characters[ch].bearingY;
+		}
+	}
+
+	while (*utf8str) {
+		utf8str = utf8next(utf8str, &ch);
 
 		Character *c = &characters[ch];
-		if (first) {
-			x -= c->bearingX * scale;
-			y += c->bearingY * scale;
-			first = 0;
-		}
 		int xpos = x + c->bearingX * scale;
-		int ypos = y - c->bearingY * scale;
+		int ypos = y + (max_bearing_y - c->bearingY) * scale;
 		int w = c->width * scale;
 		int h = c->height * scale;
 
-		// glBindTexture(GL_TEXTURE_2D, c->textureID);
 		twod_drawTextureShape(xpos, ypos, w, h, c->textureID);
 
 		x += c->advance * scale;

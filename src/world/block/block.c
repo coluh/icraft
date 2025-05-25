@@ -17,6 +17,8 @@ void block_init() {
 	block_types[BLOCK_CobbleStone] = (BlockType) { "cobblestone", { 5, 5, 5, 5, 5, 5 }, NULL, 10.0f, ITEM_CobbleStone };
 	block_types[BLOCK_Poppy] = (BlockType) { "poppy", { 6, 0, 0, 0, 0, 0 }, NULL, 0.0f, ITEM_Poppy };
 	block_types[BLOCK_Dandelion] = (BlockType) { "dandelion", { 7, 0, 0, 0, 0, 0 }, NULL, 0.0f, ITEM_Dandelion };
+
+	block_types[BLOCK_Unknown] = (BlockType) { "unknown", { 0, 0, 0, 0, 0, 0 }, NULL, 0.0f, ITEM_Unknown };
 	// now break item is hardcoded, change it later
 }
 

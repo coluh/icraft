@@ -126,7 +126,7 @@ void chunk_generateVertex(Chunk *chunk, Chunk *nearbys[6]) {
 				if (block_isOpaqueBlock(id)) {
 					for (int f = 0; f < 6; f++) {
 						// Face Culling
-						if ((f == 0 && z > 0 && chunk->blocks[x][y][z-1] != BLOCK_Air) ||
+						if ((f == 0 && z > 0 && block_isOpaqueBlock(chunk->blocks[x][y][z-1])) ||
 								(f == 1 && z < CHUNK_SIZE-1 && block_isOpaqueBlock(chunk->blocks[x][y][z+1])) ||
 								(f == 2 && y > 0 && block_isOpaqueBlock(chunk->blocks[x][y-1][z])) ||
 								(f == 3 && y < CHUNK_SIZE-1 && block_isOpaqueBlock(chunk->blocks[x][y+1][z])) ||
