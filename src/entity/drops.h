@@ -5,7 +5,6 @@
 #include "../item/item.h"
 
 typedef struct DropsData {
-	float scale;
 	float float_timer; // grow from 0
 	float rotate_timer; // grow from 0
 	vec3 render_position;

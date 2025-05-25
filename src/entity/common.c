@@ -46,6 +46,12 @@ float thicknessof(EntityType type) {
 void common_move_slide_gravity(Entity *self, World *world) {
 	self->velocity.y += world->g * g.update_delta;
 	common_move_slide(self, world);
+	if (self->on_ground) {
+		float nvx = self->velocity.x - SIGN(self->velocity.x) * 0.1f * ABS(world->g) * g.update_delta;
+		self->velocity.x = (SIGN(nvx) == SIGN(self->velocity.x)) ? nvx : 0.0f;
+		float nvz = self->velocity.z - SIGN(self->velocity.z) * 0.1f * ABS(world->g) * g.update_delta;
+		self->velocity.z = (SIGN(nvz) == SIGN(self->velocity.z)) ? nvz : 0.0f;
+	}
 }
 
 void common_move_slide(Entity *self, World *world) {

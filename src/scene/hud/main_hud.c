@@ -14,6 +14,9 @@
 #include "../../render/font.h"
 #include "../../util/props.h"
 #include "../../physics/collision.h"
+#include "../../../third_party/cglm/include/cglm/cglm.h"
+
+#define PLAYER_DROP_SPEED 3.0f
 
 extern Game g;
 
@@ -156,6 +159,27 @@ static void put(SDL_Event *ev) {
 	}
 }
 
+static void drop(SDL_Event *ev) {
+	Entity *self = entity_get(g.entities, g.player_ref);
+	Slot *slot = &self->player.inventory.hotbar[self->player.holding];
+	if (slot->count == 0) {
+		return;
+	}
+
+	Entity *drops = entity_get(g.entities, entity_create(Entity_DROPS, (V3){
+				self->position.x, self->position.y + PLAYER_EYE_OFFSET_Y, self->position.z}, g.entities));
+	drops->drops.item = slot->item;
+	slot->count--;
+	vec3 fr = {1, 0, 0};
+	glm_quat_rotatev(self->rotation, fr, fr);
+	glm_vec3_normalize(fr);
+	glm_vec3_scale(fr, PLAYER_DROP_SPEED, fr);
+	drops->velocity.x = fr[0];
+	drops->velocity.y = fr[1];
+	drops->velocity.z = fr[2];
+	drops->drops.pickup_timer = 2.0f; // override
+}
+
 static void switch_holding(SDL_Event *ev) {
 	PlayerData *player = &entity_get(g.entities, g.player_ref)->player;
 	if (ev->wheel.y > 0) {
@@ -180,11 +204,12 @@ Scene *hud_ofMain() {
 			{ Action_KEYPRESSED, { "D" }, right },
 			{ Action_KEYPRESSED, { "Space" }, up },
 			{ Action_KEYPRESSED, { "Left Shift" }, down },
+			{ Action_KEYPRESSED, { "Q" }, drop },
 			{ Action_MOUSEMOTION, { 0 }, rotate },
 			{ Action_MOUSEPRESSED, { .button = Mouse_LEFT }, destroy},
-			{ Action_MOUSEDOWN, { .button = Mouse_RIGHT }, put},
+			{ Action_MOUSEPRESSED, { .button = Mouse_RIGHT }, put},
 			{ Action_MOUSEWHEEL, { 0 }, switch_holding},
-			}, 12);
+			}, 13);
 	s->render = render;
 	return s;
 }

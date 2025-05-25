@@ -3,7 +3,6 @@
 #include "entity.h"
 #include "../game.h"
 #include <math.h>
-#include <stdatomic.h>
 #include "../../third_party/cglm/include/cglm/quat.h"
 #include "../render/resource.h"
 #include "../render/gl.h"
@@ -14,7 +13,8 @@
 #define DROPS_FLOAT_RANGE 0.1f
 #define DROPS_FLOAT_SPEED 3.0f
 #define DROPS_ROTATE_SPEED 2.0f
-#define DROPS_SCALE 0.25f
+#define DROPS_SCALE_BLOCK 0.25f
+#define DROPS_SCALE_NONBLOCK 0.5f
 
 extern Game g;
 
@@ -29,7 +29,6 @@ static void topre(DropsData *id) {
 
 void drops_init(Entity *entity) {
 	DropsData *drops = &entity->drops;
-	drops->scale = DROPS_SCALE;
 	drops->render_position[0] = entity->position.x;
 	drops->render_position[1] = entity->position.y;
 	drops->render_position[2] = entity->position.z;
@@ -47,7 +46,8 @@ void drops_update(Entity *self, World *w) {
 	topre(drops);
 
 	drops->render_position[0] = self->position.x;
-	drops->render_position[1] = self->position.y + (sinf(drops->float_timer) + 1.0f) * DROPS_FLOAT_RANGE;
+	const float scale = item_isCube(drops->item.id) ? DROPS_SCALE_BLOCK : DROPS_SCALE_NONBLOCK;
+	drops->render_position[1] = self->position.y + (sinf(drops->float_timer) + 1.0f) * DROPS_FLOAT_RANGE + scale/2;
 	drops->render_position[2] = self->position.z;
 	vec3 up = {0, 1, 0};
 	versor rot;
@@ -77,25 +77,38 @@ void drops_render(Entity *entity, float alpha) {
 	mat4 rot;
 	glm_quat_mat4(rotation, rot);
 	glm_mat4_mul(model, rot, model);
-	glm_scale_uni(model, drops->scale);
-
+	if (item_isCube(drops->item.id)) {
+		glm_scale_uni(model, DROPS_SCALE_BLOCK);
+	} else {
+		glm_scale(model, (vec3){DROPS_SCALE_NONBLOCK, DROPS_SCALE_NONBLOCK, 1.0f/16});
+	}
 	glUniformMatrix4fv(g.res->shaders.basic_location.model, 1, GL_FALSE, (float*)model);
+
 	mat3 normal_matrix;
 	glm_mat4_pick3(model, normal_matrix);
 	glm_mat3_inv(normal_matrix, normal_matrix);
 	glm_mat3_transpose(normal_matrix);
 	glUniformMatrix3fv(g.res->shaders.basic_location.normal_matrix, 1, GL_FALSE, (float*)normal_matrix);
 
-	// TODO: render non-block drops
 	glBindVertexArray(g.res->meshes.cubeVAO);
-
 	glUniform1i(g.res->shaders.basic_location.use_uv_offset, 1);
-	const int *textures = block_get(block_ofItem(drops->item.id))->textures;
-	float uv[2];
-	for (int f = 0; f < 6; f++) {
-		texture_blockUVoffset(textures[f], uv);
+
+	if (item_isCube(drops->item.id)) {
+		const int *textures = block_get(block_ofItem(drops->item.id))->textures;
+		float uv[2];
+		for (int f = 0; f < 6; f++) {
+			texture_blockUVoffset(textures[f], uv);
+			glUniform2f(g.res->shaders.basic_location.uv_offset, uv[0], uv[1]);
+			glDrawArrays(GL_TRIANGLES, f * g.res->meshes.cubeVAO_count / 6, g.res->meshes.cubeVAO_count / 6);
+		}
+	} else {
+		const int textureIndex = item_textureIndex(drops->item.id);
+		float uv[2];
+		texture_blockUVoffset(textureIndex, uv);
 		glUniform2f(g.res->shaders.basic_location.uv_offset, uv[0], uv[1]);
-		glDrawArrays(GL_TRIANGLES, f * g.res->meshes.cubeVAO_count / 6, g.res->meshes.cubeVAO_count / 6);
+		for (int f = 0; f < 2; f++) {
+			glDrawArrays(GL_TRIANGLES, f * g.res->meshes.cubeVAO_count / 6, g.res->meshes.cubeVAO_count / 6);
+		}
 	}
 
 	glUniform1i(g.res->shaders.basic_location.use_uv_offset, 0);
