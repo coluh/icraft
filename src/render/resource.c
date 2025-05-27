@@ -151,20 +151,6 @@ void resource_init() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
 
-	GLenum err;
-	while ((err = glGetError()) != GL_NO_ERROR)
-		if (err == GL_INVALID_ENUM) {
-			logw("OpenGL Error: Invalid Enum");
-		} else if (err == GL_INVALID_VALUE) {
-			logw("OpenGL Error: Invalid Value");
-		} else if (err == GL_INVALID_OPERATION) {
-			logw("OpenGL Error: Invalid Operation");
-		} else if (err == GL_INVALID_FRAMEBUFFER_OPERATION) {
-			logw("OpenGL Error: Invalid Framebuffer Operation");
-		} else {
-			logw("OpenGL Error: ...");
-		}
-
 	// init block icons renderer
 	unsigned int fbo, rbo;
 	glGenFramebuffers(1, &fbo);

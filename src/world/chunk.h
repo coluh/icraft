@@ -14,7 +14,7 @@ typedef struct Chunk {
 
 	// only stores block id
 	int blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
-	unsigned VAO, VBO;
+	unsigned int VAO, VBO;
 	int vertex_count;
 
 	// whether blocks data is generated

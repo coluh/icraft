@@ -54,6 +54,7 @@ static const int chunk_offsets[6][3] = {
 static Chunk *loadChunk(World *w, int x, int y, int z) {
 	Chunk *newly = newChunk(x, y, z);
 	generator_default(newly);
+	chunk_generateVertex(newly, (Chunk*[]){NULL, NULL, NULL, NULL, NULL, NULL});
 
 	// update nearby vertex, reducing some faces
 	for (int f = 0; f < 6; f++) {
@@ -75,22 +76,38 @@ static Chunk *loadChunk(World *w, int x, int y, int z) {
 	return newly;
 }
 
-// update vertex data;
+// update chunk blocks
 // update blockextra states;
-static void world_updateChunk(World *w, Chunk *chunk) {
+// update vertex data;
+static void world_updateChunk(World *w, Chunk *c) {
 
-	// vertex data
-	if (chunk->dirty) {
-		Chunk *nearbys[6];
-		for (int f = 0; f < 6; f++) {
-			nearbys[f] = findChunk(w, chunk->x+chunk_offsets[f][0],
-					chunk->y+chunk_offsets[f][1], chunk->z+chunk_offsets[f][2]);
+	for (int x = 0; x < CHUNK_SIZE; x++) {
+		for (int y = 0; y < CHUNK_SIZE; y++) {
+			for (int z = 0; z < CHUNK_SIZE; z++) {
+				if (block_isPlant(c->blocks[x][y][z])) {
+					// TODO: cross chunk update
+					if (y > 0 && !block_isOpaqueBlock(c->blocks[x][y-1][z])) {
+						block_destroy(w, c->x+x, c->y+y, c->z+z);
+						c->dirty = true;
+					}
+				}
+			}
 		}
-		chunk_generateVertex(chunk, nearbys);
-		chunk->dirty = false;
 	}
 
-	extralist_update(&chunk->extras);
+	extralist_update(&c->extras);
+
+	// update vertex data
+	if (c->dirty) {
+		Chunk *nearbys[6];
+		for (int f = 0; f < 6; f++) {
+			nearbys[f] = findChunk(w, c->x+chunk_offsets[f][0],
+					c->y+chunk_offsets[f][1], c->z+chunk_offsets[f][2]);
+		}
+		chunk_generateVertex(c, nearbys);
+		c->dirty = false;
+	}
+
 }
 
 void world_updateChunks(World *w, int x, int y, int z) {
@@ -105,19 +122,39 @@ void world_updateChunks(World *w, int x, int y, int z) {
 	// [][][][][]
 	//   [][][]
 
-	/* link 81 chunks */
-	// 27 chunks now in debug
+	for (int i = -1; i <= 1; i++) {
+		for (int j = -2; j <= 2; j += 4) {
+			for (int k = -1; k <= 1; k++) {
+				int cx = x + i * CHUNK_SIZE;
+				int cy = y + j * CHUNK_SIZE;
+				int cz = z + k * CHUNK_SIZE;
+				if (!findChunk(w, cx, cy, cz)) {
+					loadChunk(w, cx, cy, cz);
+				}
+			}
+		}
+	}
+	for (int i = -2; i <= 2; i++) {
+		for (int j = -1; j <= 1; j++) {
+			for (int k = -2; k <= 2; k++) {
+				int cx = x + i * CHUNK_SIZE;
+				int cy = y + j * CHUNK_SIZE;
+				int cz = z + k * CHUNK_SIZE;
+				if (!findChunk(w, cx, cy, cz)) {
+					loadChunk(w, cx, cy, cz);
+				}
+			}
+		}
+	}
+
+	// only update these chunks
 	for (int i = -1; i <= 1; i++) {
 		for (int j = -1; j <= 1; j++) {
 			for (int k = -1; k <= 1; k++) {
 				int cx = x + i * CHUNK_SIZE;
 				int cy = y + j * CHUNK_SIZE;
 				int cz = z + k * CHUNK_SIZE;
-				Chunk *c = findChunk(w, cx, cy, cz);
-				if (c == NULL) {
-					c = loadChunk(w, cx, cy, cz);
-				}
-				world_updateChunk(w, c);
+				world_updateChunk(w, findChunk(w, cx, cy, cz));
 			}
 		}
 	}

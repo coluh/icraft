@@ -31,6 +31,8 @@ void extralist_update(BlockExtraList *list) {
 	// blockextra states
 	for (BlockExtraNode *bp = *list; bp != NULL; bp = bp->next) {
 		BlockExtra *be = bp->extra;
+
+		// if not focus, cancel focus
 		if (be->type == BlockExtra_DESTROY) {
 			const Entity *player = entity_get(g.entities, g.player_ref);
 			if (!be->destroying.focus ||

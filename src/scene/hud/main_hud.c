@@ -14,7 +14,8 @@
 #include "../../render/font.h"
 #include "../../util/props.h"
 #include "../../physics/collision.h"
-#include "../../../third_party/cglm/include/cglm/cglm.h"
+#include "../../../third_party/cglm/include/cglm/quat.h"
+#include "../../../third_party/cglm/include/cglm/vec3.h"
 
 #define PLAYER_DROP_SPEED 5.0f
 

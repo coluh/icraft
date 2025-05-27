@@ -39,7 +39,7 @@ int item_textureIndex(ItemID id) {
 	case ITEM_CobbleStone:
 	case ITEM_GrassBlock:
 	case ITEM_Stone:
-		logw("you should not use this. if you are drawing icon you should use item_cubeIconTexture");
+		logw("you should not use plane block texture. if you are drawing icon you should use item_cubeIconTexture");
 		return 0;
 	case ITEM_Poppy:
 		return 6;

@@ -8,7 +8,7 @@
 extern Game g;
 
 #define LOG(level, ...) do { \
-	fprintf(g.logfile, "[%s] [%s] %s: ", time_get(), level, __FUNCTION__); \
+	fprintf(g.logfile, "[%s] [%s] %s line %d: ", time_get(), level, __FUNCTION__, __LINE__); \
 	fprintf(g.logfile, __VA_ARGS__); \
 	fprintf(g.logfile, "\n"); \
 	if (g.logfile == stdout) fflush(stdout); \

@@ -66,27 +66,27 @@ void game_loop() {
 		}
 
 		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_QUIT) { g.running = false; }
-			if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) {
+			if (event.type == SDL_QUIT) {
+				g.running = false;
+			} else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) {
 				window_setSize(event.window.data1, event.window.data2);
-			}
-			if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_F11) {
+			} else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_F11) {
 				window_toggleFullscreen();
 			}
-			// if this called update function, it will impact game logic
-			// so do not call logic-related functions in this function
+			// do not call logic-related functions in this function
 			sceneManager_handle(&event);
 		}
-		player_clearInput(entity_get(g.entities, g.player_ref));
+		// to make perspective change fluent
 		camera_updateRot(g.camera);
 
 		accumulator += frame_time;
 		while (accumulator >= g.update_delta) {
 
 			/* update game */
-			sceneManager_update();
+			player_clearInput(entity_get(g.entities, g.player_ref));
+			sceneManager_update(); // TODO: if scene is only gui, it should update every frame
 			entity_update(g.entities, g.world);
-			camera_updatePos(g.camera);
+			camera_updatePos(g.camera); // copy attached entity pos to camera pos
 			world_updateChunks(g.world, UNPACK_XYZ(entity_get(g.entities, g.player_ref)->position));
 			timer_update();
 

@@ -16,8 +16,6 @@ BlockExtra *newBlockExtra(World *world, int x, int y, int z, BlockExtraType type
 	return be;
 }
 
-// below are two use examples
-
 void block_destroy(World *world, int x, int y, int z) {
 
 	// block -> entity

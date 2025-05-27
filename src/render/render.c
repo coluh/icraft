@@ -40,5 +40,7 @@ void render(Camera *camera, const EntityList *entities, const World *world, floa
 	sceneManager_render();
 	glEnable(GL_DEPTH_TEST);
 
+	GL_CHECK();
+
 	SDL_GL_SwapWindow(g.window->window);
 }
