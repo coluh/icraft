@@ -7,7 +7,8 @@
 #include "../input/keymap.h"
 
 typedef enum SceneType {
-	Scene_GUI, Scene_HUD, Scene_TEXTS, Scene_CUSTOM,
+	Scene_GUI, Scene_HUD, Scene_CUI, Scene_TEXTS, Scene_CUSTOM,
+	// this seems useless...maybe delete this in the future
 } SceneType;
 
 // A scene represents one 2D scene, which

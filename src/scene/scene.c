@@ -55,6 +55,7 @@ void scene_handle(Scene *s, SDL_Event *ev) {
 		ui_updateElement(s->root, ev);
 		break;
 	case Scene_HUD:
+	case Scene_CUI:
 	case Scene_TEXTS:
 	case Scene_CUSTOM:
 	default:
@@ -66,22 +67,22 @@ void scene_handle(Scene *s, SDL_Event *ev) {
 		switch (km->type) {
 		case Action_KEYDOWN:
 			if (ev->type == SDL_KEYDOWN && strcmp(km->key, SDL_GetKeyName(ev->key.keysym.sym)) == EQUAL) {
-				km->callback(NULL);
+				km->callback(NULL, s);
 			}
 			break;
 		case Action_MOUSEDOWN:
 			if (ev->type == SDL_MOUSEBUTTONDOWN && ev->button.button == km->button) {
-				km->callback(NULL);
+				km->callback(NULL, s);
 			}
 			break;
 		case Action_MOUSEMOTION:
 			if (ev->type == SDL_MOUSEMOTION) {
-				km->callback(ev);
+				km->callback(ev, s);
 			}
 			break;
 		case Action_MOUSEWHEEL:
 			if (ev->type == SDL_MOUSEWHEEL) {
-				km->callback(ev);
+				km->callback(ev, s);
 			}
 			break;
 		default:
@@ -98,6 +99,7 @@ void scene_update(Scene *s, bool input) {
 	switch (s->type) {
 	case Scene_GUI:
 	case Scene_HUD:
+	case Scene_CUI:
 	case Scene_TEXTS:
 	case Scene_CUSTOM:
 	default:
@@ -115,14 +117,14 @@ void scene_update(Scene *s, bool input) {
 		switch (km->type) {
 		case Action_KEYPRESSED:
 			if (state[SDL_GetScancodeFromName(km->key)]) {
-				km->callback(NULL);
+				km->callback(NULL, s);
 			}
 			break;
 		case Action_MOUSEPRESSED:
 			if (((km->button == Mouse_LEFT) && (buttons & SDL_BUTTON(SDL_BUTTON_LEFT))) ||
 					((km->button == Mouse_MIDDLE) && (buttons & SDL_BUTTON(SDL_BUTTON_MIDDLE))) ||
 					((km->button == Mouse_RIGHT) && (buttons & SDL_BUTTON(SDL_BUTTON_RIGHT)))) {
-				km->callback(NULL);
+				km->callback(NULL, s);
 			}
 			break;
 		default:
@@ -144,6 +146,7 @@ void scene_render(Scene *s) {
 		ui_renderElement(s->root);
 		break;
 	case Scene_HUD:
+	case Scene_CUI:
 	case Scene_TEXTS:
 	case Scene_CUSTOM:
 	default:

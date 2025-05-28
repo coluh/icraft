@@ -22,12 +22,23 @@ typedef struct SceneManager {
 // register all scenes
 void sceneManager_init();
 
+// add scene to top
 void sceneManager_push(const char *name);
+
+// remove top scene
 void sceneManager_pop();
+
+// remove specified scene
+void sceneManager_remove(const char *name);
+
 // just pop and push
 void sceneManager_switchTo(const char *sceneName);
+
 // see top scene
 const char *sceneManager_peekName();
+
+// check whether scene is in stack
+bool sceneManager_inStack(const char *name);
 
 void sceneManager_handle(SDL_Event *event);
 void sceneManager_update();

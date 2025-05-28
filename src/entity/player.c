@@ -4,7 +4,6 @@
 #include "entity.h"
 #include <math.h>
 #include "../world/world.h"
-#include "../util/props.h"
 
 #include "../../third_party/cglm/include/cglm/vec3.h"
 #include "../../third_party/cglm/include/cglm/quat.h"

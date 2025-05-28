@@ -1,5 +1,7 @@
 #include "scenemanager.h"
+#include <stdbool.h>
 #include <string.h>
+#include "cui/cui.h"
 #include "scene.h"
 #include "../util/props.h"
 #include "../util/mem.h"
@@ -22,6 +24,7 @@ void sceneManager_init() {
 	registerScene(hud_ofMain());
 	registerScene(gui_ofEscape());
 	registerScene(di_ofMain());
+	registerScene(cui_ofBackpack());
 	window_setSize(0, 0);
 }
 
@@ -76,6 +79,23 @@ void sceneManager_pop() {
 	g.scene_manager->scene_count--;
 }
 
+void sceneManager_remove(const char *name) {
+	FORR(g.scene_manager->scene_count) {
+		Scene *s = g.scene_manager->scenes[i];
+		if (strcmp(name, s->name) == EQUAL) {
+			if (s->on_exit != NULL) {
+				s->on_exit(s);
+			}
+			for (int j = i; j < g.scene_manager->scene_count-1; j++) {
+				g.scene_manager[j] = g.scene_manager[j+1];
+			}
+			g.scene_manager->scene_count--;
+			return;
+		}
+	}
+	logw("remove a non-exist scene");
+}
+
 void sceneManager_switchTo(const char *name) {
 	sceneManager_pop();
 	sceneManager_push(name);
@@ -118,5 +138,12 @@ const char *sceneManager_peekName() {
 	}
 }
 
-
+bool sceneManager_inStack(const char *name) {
+	FORR(g.scene_manager->scene_count) {
+		if (strcmp(name, g.scene_manager->scenes[i]->name) == EQUAL) {
+			return true;
+		}
+	}
+	return false;
+}
 

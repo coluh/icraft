@@ -19,7 +19,7 @@ static inline void *rezalloc(void *ptr, int nmemb, int size) {
 	if (ptr == NULL) {
 		loge("fail to allocate memory");
 	}
-	memset(ptr + origin_size, 0, sizeof(ptr) - origin_size);
+	memset((char*)ptr + origin_size, 0, sizeof(ptr) - origin_size);
 	return ptr;
 }
 

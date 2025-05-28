@@ -25,7 +25,7 @@ typedef struct Keymap {
 		const char *key;
 		MouseName button;
 	};
-	void (*callback)(SDL_Event *ev);
+	void (*callback)(SDL_Event *ev, void *user_data);
 } Keymap;
 
 

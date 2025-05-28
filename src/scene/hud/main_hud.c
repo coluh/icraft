@@ -85,43 +85,45 @@ static void render(Scene *self) {
 }
 
 // void *a, SDL_Event *b
-static void pause() {
+static void pause(SDL_Event *ev, void *scene) {
 	sceneManager_push("Escape GUI");
 }
 
-static void toggleDebugInfor() {
-	static int show = 0;
-	if (!show) {
-		sceneManager_push("Main Debug Information");
-		show = 1;
+static void toggleDebugInfor(SDL_Event *ev, void *scene) {
+	const char *di = "Main Debug Information";
+	if (!sceneManager_inStack(di)) {
+		sceneManager_push(di);
 	} else {
-		sceneManager_pop();
-		show = 0;
+		sceneManager_remove(di);
 	}
 }
 
-static void forward(SDL_Event *ev) {
+static void backpack(SDL_Event *ev, void *scene) {
+	sceneManager_push("Backpack CUI");
+}
+
+static void forward(SDL_Event *ev, void *scene) {
 	entity_get(g.entities, g.player_ref)->player.input.forward = 1;
 }
-static void backward(SDL_Event *ev) {
+static void backward(SDL_Event *ev, void *scene) {
 	entity_get(g.entities, g.player_ref)->player.input.backward = 1;
 }
-static void left(SDL_Event *ev) {
+static void left(SDL_Event *ev, void *scene) {
 	entity_get(g.entities, g.player_ref)->player.input.left = 1;
 }
-static void right(SDL_Event *ev) {
+static void right(SDL_Event *ev, void *scene) {
 	entity_get(g.entities, g.player_ref)->player.input.right = 1;
 }
-static void up(SDL_Event *ev) {
+static void up(SDL_Event *ev, void *scene) {
 	entity_get(g.entities, g.player_ref)->player.input.jump = true;
 }
-static void down(SDL_Event *ev) {
+static void down(SDL_Event *ev, void *scene) {
 }
-static void rotate(SDL_Event *ev) {
+static void rotate(SDL_Event *ev, void *scene) {
 	player_rotate(entity_get(g.entities, g.player_ref), ev);
 }
 
-static void destroy(SDL_Event *ev) {
+static void destroy(SDL_Event *ev, void *scene) {
 	const Entity *player = entity_get(g.entities, g.player_ref);
 	float fx = player->player.facing_block.x;
 	float fy = player->player.facing_block.y;
@@ -133,7 +135,7 @@ static void destroy(SDL_Event *ev) {
 	// block_destroy(g.world, g.player->player.facing_block.x, g.player->player.facing_block.y, g.player->player.facing_block.z);
 }
 
-static void put(SDL_Event *ev) {
+static void put(SDL_Event *ev, void *scene) {
 	Entity *entity = entity_get(g.entities, g.player_ref);
 	PlayerData *player = &entity->player;
 	const IV3 *put_pos = &player->putable_block;
@@ -160,19 +162,19 @@ static void put(SDL_Event *ev) {
 	}
 }
 
-static void drop(SDL_Event *ev) {
-	Entity *self = entity_get(g.entities, g.player_ref);
-	Slot *slot = &self->player.inventory.hotbar[self->player.holding];
+static void drop(SDL_Event *ev, void *scene) {
+	Entity *player = entity_get(g.entities, g.player_ref);
+	Slot *slot = &player->player.inventory.hotbar[player->player.holding];
 	if (slot->count == 0) {
 		return;
 	}
 
 	Entity *drops = entity_get(g.entities, entity_create(Entity_DROPS, (V3){
-				self->position.x, self->position.y + PLAYER_EYE_OFFSET_Y, self->position.z}, g.entities));
+				player->position.x, player->position.y + PLAYER_EYE_OFFSET_Y, player->position.z}, g.entities));
 	drops->drops.item = slot->item;
 	slot->count--;
 	vec3 fr = {1, 0, 0};
-	glm_quat_rotatev(self->rotation, fr, fr);
+	glm_quat_rotatev(player->rotation, fr, fr);
 	glm_vec3_normalize(fr);
 	glm_vec3_scale(fr, PLAYER_DROP_SPEED, fr);
 	drops->velocity.x = fr[0];
@@ -181,7 +183,7 @@ static void drop(SDL_Event *ev) {
 	drops->drops.pickup_timer = 2.0f; // override
 }
 
-static void switch_holding(SDL_Event *ev) {
+static void switch_holding(SDL_Event *ev, void *scene) {
 	PlayerData *player = &entity_get(g.entities, g.player_ref)->player;
 	if (ev->wheel.y > 0) {
 		player->holding--;
@@ -199,6 +201,7 @@ Scene *hud_ofMain() {
 	Scene *s = newScene("Main HUD", Scene_HUD, (Keymap[]) {
 			{ Action_KEYDOWN, { "Escape" }, pause },
 			{ Action_KEYDOWN, { "F3" }, toggleDebugInfor },
+			{ Action_KEYDOWN, { "E" }, backpack },
 			{ Action_KEYPRESSED, { "W" }, forward },
 			{ Action_KEYPRESSED, { "S" }, backward },
 			{ Action_KEYPRESSED, { "A" }, left },
@@ -210,7 +213,7 @@ Scene *hud_ofMain() {
 			{ Action_MOUSEPRESSED, { .button = Mouse_LEFT }, destroy},
 			{ Action_MOUSEPRESSED, { .button = Mouse_RIGHT }, put},
 			{ Action_MOUSEWHEEL, { 0 }, switch_holding},
-			}, 13);
+			}, 14);
 	s->render = render;
 	return s;
 }
