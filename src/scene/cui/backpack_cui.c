@@ -229,11 +229,6 @@ static void leftpressed(SDL_Event *none, void *scene) {
 }
 
 static void leftup(SDL_Event *ev, void *scene) {
-	int id = slotidof(ev->button.x, ev->button.y);
-	if (id == -1) {
-		return;
-	}
-
 	BackpackCUIState *s = ((Scene*)scene)->data;
 	if (s->picking.count > 0 && s->splitting) {
 		// put down on average
@@ -288,7 +283,7 @@ static void rightdown(SDL_Event *ev, void *scene) {
 		for (int i = 0; i < 64; i++) {
 			s->splits[i] = -1;
 		}
-		addto_splits(id, s->splits);
+		addto_splits(id, s->splits); // FIXME: id=9 can't be added
 	}
 }
 
@@ -313,11 +308,6 @@ static void rightpressed(SDL_Event *none, void *scene) {
 }
 
 static void rightup(SDL_Event *ev, void *scene) {
-	int id = slotidof(ev->button.x, ev->button.y);
-	if (id == -1) {
-		return;
-	}
-
 	BackpackCUIState *s = ((Scene*)scene)->data;
 	if (s->picking.count > 0 && s->splitting) {
 		// put down one by one

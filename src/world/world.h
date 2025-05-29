@@ -1,7 +1,6 @@
 #ifndef _ICRAFT_world_world_h
 #define _ICRAFT_world_world_h
 
-#include "../util/types.h"
 #include <stdbool.h>
 #include "block/block.h"
 #include "chunk.h"

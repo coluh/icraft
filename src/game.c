@@ -78,13 +78,12 @@ void game_loop() {
 		}
 		// to make perspective change fluent
 		camera_updateRot(g.camera);
+		sceneManager_update(); // NOTE: do not update game logic here, mark flags instead
 
 		accumulator += frame_time;
 		while (accumulator >= g.update_delta) {
 
 			/* update game */
-			player_clearInput(entity_get(g.entities, g.player_ref));
-			sceneManager_update(); // TODO: if scene is only gui, it should update every frame
 			entity_update(g.entities, g.world);
 			camera_updatePos(g.camera); // copy attached entity pos to camera pos
 			world_updateChunks(g.world, UNPACK_XYZ(entity_get(g.entities, g.player_ref)->position));

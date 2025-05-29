@@ -7,13 +7,10 @@
 #include "../../entity/entity.h"
 #include "../../entity/player.h"
 #include "../../entity/bodies.h"
-#include "../../world/block/extra.h"
-#include "../../world/world.h"
 #include "../../render/window.h"
 #include "../../render/render_2d.h"
 #include "../../render/font.h"
 #include "../../util/props.h"
-#include "../../physics/collision.h"
 #include "../../../third_party/cglm/include/cglm/quat.h"
 #include "../../../third_party/cglm/include/cglm/vec3.h"
 
@@ -124,42 +121,11 @@ static void rotate(SDL_Event *ev, void *scene) {
 }
 
 static void destroy(SDL_Event *ev, void *scene) {
-	const Entity *player = entity_get(g.entities, g.player_ref);
-	float fx = player->player.facing_block.x;
-	float fy = player->player.facing_block.y;
-	float fz = player->player.facing_block.z;
-	if (world_block(g.world, fx, fy, fz) == BLOCK_Air) {
-		return;
-	}
-	block_destroyCallback(g.world, player->player.facing_block.x, player->player.facing_block.y, player->player.facing_block.z);
-	// block_destroy(g.world, g.player->player.facing_block.x, g.player->player.facing_block.y, g.player->player.facing_block.z);
+	entity_get(g.entities, g.player_ref)->player.input.destroy = true;
 }
 
 static void put(SDL_Event *ev, void *scene) {
-	Entity *entity = entity_get(g.entities, g.player_ref);
-	PlayerData *player = &entity->player;
-	const IV3 *put_pos = &player->putable_block;
-	Slot *slot = &player->inventory.hotbar[player->holding];
-	if (slot->count > 0) {
-		Item *item = &slot->item;
-		ItemID id = item->id;
-		// TODO: items that can not be put
-		if (!item_putable(id)) {
-			return;
-		}
-
-		BlockID block = block_ofItem(id);
-		if (world_block(g.world, put_pos->x, put_pos->y, put_pos->z) == BLOCK_Air) {
-			Body *block_body = &(Body){put_pos->x, put_pos->y, put_pos->z, 1.0f, 1.0f, 1.0f};
-			Body *player_body = BODYP(entity->position, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH);
-			if (collision_overlap(block_body, player_body)) {
-				return;
-			}
-			// item -> block
-			slot->count--;
-			world_modifyBlock(g.world, put_pos->x, put_pos->y, put_pos->z, block);
-		}
-	}
+	entity_get(g.entities, g.player_ref)->player.input.put = true;
 }
 
 static void drop(SDL_Event *ev, void *scene) {
@@ -208,7 +174,7 @@ Scene *hud_ofMain() {
 			{ Action_KEYPRESSED, { "D" }, right },
 			{ Action_KEYPRESSED, { "Space" }, up },
 			{ Action_KEYPRESSED, { "Left Shift" }, down },
-			{ Action_KEYPRESSED, { "Q" }, drop },
+			{ Action_KEYDOWN, { "Q" }, drop },
 			{ Action_MOUSEMOTION, { 0 }, rotate },
 			{ Action_MOUSEPRESSED, { .button = Mouse_LEFT }, destroy},
 			{ Action_MOUSEPRESSED, { .button = Mouse_RIGHT }, put},

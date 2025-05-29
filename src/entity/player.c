@@ -4,6 +4,7 @@
 #include "entity.h"
 #include <math.h>
 #include "../world/world.h"
+#include "../physics/collision.h"
 
 #include "../../third_party/cglm/include/cglm/vec3.h"
 #include "../../third_party/cglm/include/cglm/quat.h"
@@ -12,17 +13,11 @@
 #define PLAYER_MOVE_SPEED	4.3f
 #define PLAYER_JUMP_SPEED	10.0f
 
+
 void player_init(Entity *self) {
 	PlayerData *p = &self->player;
 	player_rotateHead(self, (float[]){0, 1, 0}, -0.1);
 	glm_quat_identity(p->body_rotation);
-}
-
-void player_clearInput(Entity *self) {
-	self->player.input.forward = 0;
-	self->player.input.backward = 0;
-	self->player.input.left = 0;
-	self->player.input.right = 0;
 }
 
 static void getv_upright(Entity *e, vec3 front, vec3 up, vec3 right) {
@@ -61,10 +56,36 @@ void player_update(Entity *self, World *w) {
 	self->velocity.z = hv[2] != 0 ? hv[2] * PLAYER_MOVE_SPEED : self->velocity.z;
 
 	if (p->input.jump) {
-		p->input.jump = false;
 		if (self->on_ground) {
 			self->velocity.y = PLAYER_JUMP_SPEED;
 			self->on_ground = false;
+		}
+	}
+	if (p->input.destroy) {
+		if (world_block(w, p->facing_block.x, p->facing_block.y, p->facing_block.z) != BLOCK_Air) {
+			block_destroyCallback(w, p->facing_block.x, p->facing_block.y, p->facing_block.z);
+		}
+	}
+	if (p->input.put) {
+		if (world_block(w, p->facing_block.x, p->facing_block.y, p->facing_block.z) != BLOCK_Air) { // no focus
+			Slot *slot = &p->inventory.hotbar[p->holding];
+			if (slot->count > 0) {
+				Item *item = &slot->item;
+				ItemID id = item->id;
+				// TODO: items that can not be put
+				if (item_putable(id)) {
+					BlockID block = block_ofItem(id);
+					if (world_block(w, p->putable_block.x, p->putable_block.y, p->putable_block.z) == BLOCK_Air) {
+						Body *block_body = &(Body){p->putable_block.x, p->putable_block.y, p->putable_block.z, 1.0f, 1.0f, 1.0f};
+						Body *player_body = BODYP(self->position, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH);
+						if (!collision_overlap(block_body, player_body)) {
+							// item -> block
+							slot->count--;
+							world_modifyBlock(w, p->putable_block.x, p->putable_block.y, p->putable_block.z, block);
+						}
+					}
+				}
+			}	
 		}
 	}
 
@@ -89,6 +110,14 @@ void player_update(Entity *self, World *w) {
 	p->putable_block = (IV3){floorf(eye[0]), floorf(eye[1]), floorf(eye[2])};
 
 	common_move_slide_gravity(self, w);
+
+	self->player.input.forward = 0;
+	self->player.input.backward = 0;
+	self->player.input.left = 0;
+	self->player.input.right = 0;
+	self->player.input.jump = false;
+	self->player.input.destroy = false;
+	self->player.input.put = false;
 }
 
 void player_rotateHead(Entity *self, vec3 axis, float rad) {
