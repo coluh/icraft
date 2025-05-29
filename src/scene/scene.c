@@ -72,7 +72,12 @@ void scene_handle(Scene *s, SDL_Event *ev) {
 			break;
 		case Action_MOUSEDOWN:
 			if (ev->type == SDL_MOUSEBUTTONDOWN && ev->button.button == km->button) {
-				km->callback(NULL, s);
+				km->callback(ev, s);
+			}
+			break;
+		case Action_MOUSEUP:
+			if (ev->type == SDL_MOUSEBUTTONUP && ev->button.button == km->button) {
+				km->callback(ev, s);
 			}
 			break;
 		case Action_MOUSEMOTION:

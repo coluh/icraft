@@ -12,6 +12,8 @@
 #define EQUAL 0
 
 #define IN_RECT(m, n, r) (((m)>=(r).x)&&((m)<((r).x+(r).w))&&((n)>=(r).y)&&((n)<((r).y+(r).h)))
+#define IN_SQUARE(x, y, bx, by, a) ((x) >= (bx) && (x) < (bx) + (a) && (y) >= (by) && (y) < (by) + (a))
+#define IN_RECTANGLE(x, y, bx, by, w, h) ((x) >= (bx) && (x) < (bx) + (w) && (y) >= (by) && (y) < (by) + (h))
 #define LEVEL_CHOOSE(level, l1, l2, l3, l4, l5, l6, l7) ((level) > 7 ? (l7) : (((float[]){0,l1,l2,l3,l4,l5,l6,l7})[level]))
 
 #define POSITIVE_REMAINDER(a, b) (((a)%(b)>=0)?((a)%(b)):((a)%(b)+(b)))

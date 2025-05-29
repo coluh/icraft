@@ -21,7 +21,7 @@ static inline void grayquad(int x, int y, int w, int h, float gray) {
 	twod_drawQuad(x, y, w, h);
 }
 
-static inline void slot(int x, int y, int w, int h, int shadow) {
+static inline void draw_slot(int x, int y, int w, int h, int shadow) {
 	grayquad(x, y, w, h, 0.5f);
 	twod_setColor(0.95, 0.95, 0.95, 1.0);
 	twod_drawQuad(x + w - shadow, y, shadow, h);
@@ -31,7 +31,7 @@ static inline void slot(int x, int y, int w, int h, int shadow) {
 	twod_drawQuad(x, y, shadow, h);
 }
 
-static inline void slot_item(const Slot *slot, int x, int y, int a, int zoom_level) {
+static inline void draw_item(const Slot *slot, int x, int y, int a, int zoom_level) {
 	if (slot->count > 0) {
 		const int t = zoom_level;
 		if (item_isCube(slot->item.id)) {
