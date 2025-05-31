@@ -16,6 +16,7 @@ typedef enum BlockID {
 	BLOCK_Poppy,
 	BLOCK_Dandelion,
 	BLOCK_Unknown,
+	// TODO: water source block
 } BlockID;
 
 typedef enum FaceIndex {

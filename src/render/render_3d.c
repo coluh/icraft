@@ -38,53 +38,71 @@ static void renderDestroyingTexture(float time, float total_time, int x, int y, 
 
 
 
-static void water_vertices(float heights[4], Vertex vertices[]) {
+static int water_vertices(float heights[4], Vertex vertices[], int has_face[]) {
 	V3 block[8] = {
 		{0, 0, 0}, {1, 0, 0}, {1, 0, 1}, {0, 0, 1},
 		{0, heights[0], 0}, {1, heights[1], 0}, {1, heights[2], 1}, {0, heights[3], 1},
 	};
-	int indices[6] = {0, 1, 2, 0, 2, 3};
 	V3 norms[6] = {{0, -1, 0}, {0, 0, -1}, {1, 0, 0}, {0, 0, 1}, {-1, 0, 0}, {0, 1, 0}}; // TODO: up face norm
 	V2 uvs[4] = {{0, 0}, {1/16.0f, 0}, {1/16.0f, 1/16.0f}, {0, 1/16.0f}};
-	for (int i = 0; i < 6; i++) {
-		vertices[i].pos = block[indices[i]];
-		vertices[i].norm = norms[0];
-		vertices[i].uv = uvs[indices[i]];
+
+	int idx = 0;
+
+	if (!has_face[0]) {
+		vertices[idx++] = (Vertex){ .pos = block[0], .norm = norms[0], .uv = uvs[0]};
+		vertices[idx++] = (Vertex){ .pos = block[1], .norm = norms[0], .uv = uvs[1]};
+		vertices[idx++] = (Vertex){ .pos = block[2], .norm = norms[0], .uv = uvs[2]};
+		vertices[idx++] = (Vertex){ .pos = block[0], .norm = norms[0], .uv = uvs[0]};
+		vertices[idx++] = (Vertex){ .pos = block[2], .norm = norms[0], .uv = uvs[2]};
+		vertices[idx++] = (Vertex){ .pos = block[3], .norm = norms[0], .uv = uvs[3]};
 	}
-	vertices[6] = (Vertex){ .pos = block[0], .norm = norms[1], .uv = uvs[0]};
-	vertices[7] = (Vertex){ .pos = block[1], .norm = norms[1], .uv = uvs[1]};
-	vertices[8] = (Vertex){ .pos = block[5], .norm = norms[1], .uv = uvs[2]};
-	vertices[9] = (Vertex){ .pos = block[0], .norm = norms[1], .uv = uvs[0]};
-	vertices[10] = (Vertex){ .pos = block[5], .norm = norms[1], .uv = uvs[2]};
-	vertices[11] = (Vertex){ .pos = block[4], .norm = norms[1], .uv = uvs[3]};
 
-	vertices[12] = (Vertex){ .pos = block[5], .norm = norms[2], .uv = uvs[0]};
-	vertices[13] = (Vertex){ .pos = block[2], .norm = norms[2], .uv = uvs[1]};
-	vertices[14] = (Vertex){ .pos = block[6], .norm = norms[2], .uv = uvs[2]};
-	vertices[15] = (Vertex){ .pos = block[5], .norm = norms[2], .uv = uvs[0]};
-	vertices[16] = (Vertex){ .pos = block[6], .norm = norms[2], .uv = uvs[2]};
-	vertices[17] = (Vertex){ .pos = block[1], .norm = norms[2], .uv = uvs[3]};
+	if (!has_face[1]) {
+		vertices[idx++] = (Vertex){ .pos = block[0], .norm = norms[1], .uv = uvs[0]};
+		vertices[idx++] = (Vertex){ .pos = block[1], .norm = norms[1], .uv = uvs[1]};
+		vertices[idx++] = (Vertex){ .pos = block[5], .norm = norms[1], .uv = uvs[2]};
+		vertices[idx++] = (Vertex){ .pos = block[0], .norm = norms[1], .uv = uvs[0]};
+		vertices[idx++] = (Vertex){ .pos = block[5], .norm = norms[1], .uv = uvs[2]};
+		vertices[idx++] = (Vertex){ .pos = block[4], .norm = norms[1], .uv = uvs[3]};
+	}
 
-	vertices[18] = (Vertex){ .pos = block[2], .norm = norms[3], .uv = uvs[0]};
-	vertices[19] = (Vertex){ .pos = block[3], .norm = norms[3], .uv = uvs[1]};
-	vertices[20] = (Vertex){ .pos = block[7], .norm = norms[3], .uv = uvs[2]};
-	vertices[21] = (Vertex){ .pos = block[2], .norm = norms[3], .uv = uvs[0]};
-	vertices[22] = (Vertex){ .pos = block[7], .norm = norms[3], .uv = uvs[2]};
-	vertices[23] = (Vertex){ .pos = block[6], .norm = norms[3], .uv = uvs[3]};
+	if (!has_face[2]) {
+		vertices[idx++] = (Vertex){ .pos = block[5], .norm = norms[2], .uv = uvs[0]};
+		vertices[idx++] = (Vertex){ .pos = block[2], .norm = norms[2], .uv = uvs[1]};
+		vertices[idx++] = (Vertex){ .pos = block[6], .norm = norms[2], .uv = uvs[2]};
+		vertices[idx++] = (Vertex){ .pos = block[5], .norm = norms[2], .uv = uvs[0]};
+		vertices[idx++] = (Vertex){ .pos = block[6], .norm = norms[2], .uv = uvs[2]};
+		vertices[idx++] = (Vertex){ .pos = block[1], .norm = norms[2], .uv = uvs[3]};
+	}
 
-	vertices[24] = (Vertex){ .pos = block[3], .norm = norms[4], .uv = uvs[0]};
-	vertices[25] = (Vertex){ .pos = block[0], .norm = norms[4], .uv = uvs[1]};
-	vertices[26] = (Vertex){ .pos = block[4], .norm = norms[4], .uv = uvs[2]};
-	vertices[27] = (Vertex){ .pos = block[3], .norm = norms[4], .uv = uvs[0]};
-	vertices[28] = (Vertex){ .pos = block[4], .norm = norms[4], .uv = uvs[2]};
-	vertices[29] = (Vertex){ .pos = block[7], .norm = norms[4], .uv = uvs[3]};
+	if (!has_face[3]) {
+		vertices[idx++] = (Vertex){ .pos = block[2], .norm = norms[3], .uv = uvs[0]};
+		vertices[idx++] = (Vertex){ .pos = block[3], .norm = norms[3], .uv = uvs[1]};
+		vertices[idx++] = (Vertex){ .pos = block[7], .norm = norms[3], .uv = uvs[2]};
+		vertices[idx++] = (Vertex){ .pos = block[2], .norm = norms[3], .uv = uvs[0]};
+		vertices[idx++] = (Vertex){ .pos = block[7], .norm = norms[3], .uv = uvs[2]};
+		vertices[idx++] = (Vertex){ .pos = block[6], .norm = norms[3], .uv = uvs[3]};
+	}
 
-	vertices[30] = (Vertex){ .pos = block[4], .norm = norms[5], .uv = uvs[0]};
-	vertices[31] = (Vertex){ .pos = block[5], .norm = norms[5], .uv = uvs[1]};
-	vertices[32] = (Vertex){ .pos = block[6], .norm = norms[5], .uv = uvs[2]};
-	vertices[33] = (Vertex){ .pos = block[4], .norm = norms[5], .uv = uvs[0]};
-	vertices[34] = (Vertex){ .pos = block[6], .norm = norms[5], .uv = uvs[2]};
-	vertices[35] = (Vertex){ .pos = block[7], .norm = norms[5], .uv = uvs[3]};
+	if (!has_face[4]) {
+		vertices[idx++] = (Vertex){ .pos = block[3], .norm = norms[4], .uv = uvs[0]};
+		vertices[idx++] = (Vertex){ .pos = block[0], .norm = norms[4], .uv = uvs[1]};
+		vertices[idx++] = (Vertex){ .pos = block[4], .norm = norms[4], .uv = uvs[2]};
+		vertices[idx++] = (Vertex){ .pos = block[3], .norm = norms[4], .uv = uvs[0]};
+		vertices[idx++] = (Vertex){ .pos = block[4], .norm = norms[4], .uv = uvs[2]};
+		vertices[idx++] = (Vertex){ .pos = block[7], .norm = norms[4], .uv = uvs[3]};
+	}
+
+	if (!has_face[5]) {
+		vertices[idx++] = (Vertex){ .pos = block[4], .norm = norms[5], .uv = uvs[0]};
+		vertices[idx++] = (Vertex){ .pos = block[5], .norm = norms[5], .uv = uvs[1]};
+		vertices[idx++] = (Vertex){ .pos = block[6], .norm = norms[5], .uv = uvs[2]};
+		vertices[idx++] = (Vertex){ .pos = block[4], .norm = norms[5], .uv = uvs[0]};
+		vertices[idx++] = (Vertex){ .pos = block[6], .norm = norms[5], .uv = uvs[2]};
+		vertices[idx++] = (Vertex){ .pos = block[7], .norm = norms[5], .uv = uvs[3]};
+	}
+
+	return idx;
 }
 
 static void renderWater(int x, int y, int z, int level, const World *w) {
@@ -107,14 +125,31 @@ static void renderWater(int x, int y, int z, int level, const World *w) {
 	}
 	// from x-z-, clockwise
 	float heights[4] = {levels[5]/7.0f, levels[7]/7.0f, levels[1]/7.0f, levels[3]/7.0f};
+	heights[0] = (level + levels[4] + levels[5] + levels[6]) / 4.0f / 7.0f;
+	heights[1] = (level + levels[6] + levels[7] + levels[0]) / 4.0f / 7.0f;
+	heights[2] = (level + levels[0] + levels[1] + levels[2]) / 4.0f / 7.0f;
+	heights[3] = (level + levels[2] + levels[3] + levels[4]) / 4.0f / 7.0f;
+	int has_face[6] = { 0 };
+	if (block_isOpaqueBlock(world_block(w, x, y - 1, z)))
+		has_face[0] = 1;
+	if (levels[6] > 0)
+		has_face[1] = 1;
+	if (levels[0] > 0)
+		has_face[2] = 1;
+	if (levels[2] > 0)
+		has_face[3] = 1;
+	if (levels[4] > 0)
+		has_face[4] = 1;
+	if (blockstate_getByType(w, x, y + 1, z, BlockState_WATER))
+		has_face[5] = 1;
 	Vertex block_vertices[36];
-	water_vertices(heights, block_vertices);
+	int vertex_count = water_vertices(heights, block_vertices, has_face);
 	unsigned int vao, vbo;
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(block_vertices), block_vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertex_count*sizeof(Vertex), block_vertices, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), NULL);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
