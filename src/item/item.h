@@ -28,6 +28,7 @@ typedef struct Slot {
 } Slot;
 
 // item is cube, can be put, show 3d texture in inventory
+// used in: entity render, UI render
 bool item_isCube(ItemID id);
 
 // return an opengl texture
@@ -39,7 +40,12 @@ unsigned int item_cubeIconTexture(ItemID id);
 // used in: inventory, container ui
 int item_textureIndex(ItemID id);
 
-// used in: block put
+// just put the corresponding block
+// used in: blockput
 bool item_putable(ItemID id);
+
+// should use BlockState
+// used in: blockput
+bool item_fluid(ItemID id);
 
 #endif

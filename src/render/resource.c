@@ -5,7 +5,7 @@
 #include <string.h>
 #include "shader.h"
 #include "texture.h"
-#include "../world/block/block.h"
+#include "../world/block.h"
 #include "../item/item.h"
 
 #include "../../third_party/cglm/include/cglm/cglm.h"

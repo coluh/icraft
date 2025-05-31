@@ -1,5 +1,5 @@
 #include "generator.h"
-#include "../block/block.h"
+#include "../block.h"
 #include "../../util/props.h"
 
 void generator_default(Chunk *chunk) {

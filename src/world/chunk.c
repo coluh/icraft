@@ -2,7 +2,7 @@
 #include <glad/glad.h>
 #include <string.h>
 #include "../../third_party/cglm/include/cglm/cglm.h"
-#include "block/block.h"
+#include "block.h"
 #include "../util/mem.h"
 #include "../render/texture.h"
 

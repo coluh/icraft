@@ -16,7 +16,7 @@ static bool inArray(ItemID id, const ItemID ids[], int len) {
 }
 
 bool item_isCube(ItemID id) {
-	const ItemID cubes[] = {
+	static const ItemID cubes[] = {
 		ITEM_Unknown,
 		ITEM_Dirt, ITEM_CobbleStone, ITEM_GrassBlock, ITEM_Stone,
 	};
@@ -54,5 +54,9 @@ int item_textureIndex(ItemID id) {
 }
 
 bool item_putable(ItemID id) {
-	return true;
+	static const ItemID putables[] = {
+		ITEM_Unknown, ITEM_Dirt, ITEM_CobbleStone, ITEM_GrassBlock, ITEM_Stone,
+		ITEM_Poppy, ITEM_Dandelion,
+	};
+	return inArray(id, putables, ARRLEN(putables));
 }

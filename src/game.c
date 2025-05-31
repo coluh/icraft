@@ -5,7 +5,7 @@
 #include "render/resource.h"
 #include "render/render.h"
 #include "util/props.h"
-#include "world/block/block.h"
+#include "world/block.h"
 #include "entity/entity.h"
 
 #include "scene/scenemanager.h"
@@ -86,9 +86,11 @@ void game_loop() {
 		while (accumulator >= g.update_delta) {
 
 			/* update game */
+			g.ticks++;
+			// NOTE: now entity and world update order matters, maybe it should not
 			entity_update(g.entities, g.world);
 			camera_updatePos(g.camera); // copy attached entity pos to camera pos
-			world_updateChunks(g.world, UNPACK_XYZ(entity_get(g.entities, g.player_ref)->position));
+			world_update(g.world, UNPACK_XYZ(entity_get(g.entities, g.player_ref)->position));
 			timer_update();
 
 			accumulator -= g.update_delta;

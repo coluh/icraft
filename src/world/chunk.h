@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 #include "../../third_party/cglm/include/cglm/types.h"
-#include "extralist.h"
+#include "blockstate/blockstatelist.h"
 
 #define CHUNK_SIZE	32
 #define CHUNK_VOLUME	(CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE)
@@ -22,7 +22,7 @@ typedef struct Chunk {
 	// whether blocks data is changed and need to modify vertex
 	bool dirty;
 
-	BlockExtraList extras;
+	BlockStateList block_states;
 } Chunk;
 
 Chunk *newChunk(int x, int y, int z);

@@ -30,7 +30,6 @@ void render(Camera *camera, const EntityList *entities, const World *world, floa
 	glUniformMatrix3fv(g.res->shaders.basic_location.normal_matrix, 1, GL_FALSE, (float*)(float[]){1.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,1.0f});
 	glBindTexture(GL_TEXTURE_2D, g.res->textures.blocks);
 	threed_renderChunks(world);
-	threed_renderExtras(world);
 	threed_renderFacing();
 	entity_render(entities, alpha);
 

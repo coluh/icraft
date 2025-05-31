@@ -1,8 +1,8 @@
 #include "block.h"
 #include <stdbool.h>
 #include <string.h>
-#include "../../util/log.h"
-#include "../../util/props.h"
+#include "../util/log.h"
+#include "../util/props.h"
 
 #define BLOCK_TYPE_COUNT 256
 

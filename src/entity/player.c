@@ -5,6 +5,9 @@
 #include <math.h>
 #include "../world/world.h"
 #include "../physics/collision.h"
+#include "../game.h"
+#include "../util/props.h"
+#include "../util/log.h"
 
 #include "../../third_party/cglm/include/cglm/vec3.h"
 #include "../../third_party/cglm/include/cglm/quat.h"
@@ -13,6 +16,7 @@
 #define PLAYER_MOVE_SPEED	4.3f
 #define PLAYER_JUMP_SPEED	10.0f
 
+extern Game g;
 
 void player_init(Entity *self) {
 	PlayerData *p = &self->player;
@@ -62,30 +66,78 @@ void player_update(Entity *self, World *w) {
 		}
 	}
 	if (p->input.destroy) {
-		if (world_block(w, p->facing_block.x, p->facing_block.y, p->facing_block.z) != BLOCK_Air) {
-			block_destroyCallback(w, p->facing_block.x, p->facing_block.y, p->facing_block.z);
+		int x = p->facing_block.x;
+		int y = p->facing_block.y;
+		int z = p->facing_block.z;
+		if (world_block(w, x, y, z) != BLOCK_Air) {
+			BlockState *state = blockstate_getByType(w, x, y, z, BlockState_DESTROY);
+			if (state == NULL) {
+				// start destroy
+				float total_time = block_get(world_block(w, x, y, z))->break_time;
+				BlockState s = { BlockState_DESTROY, .destroy = { .total = total_time } };
+				state = blockstate_add(&s, w, x, y, z);
+			}
+			state->destroy.time += g.update_delta;
+			state->destroy.focus = true;
+			if (state->destroy.time >= state->destroy.total) {
+				// destroyed
+				blockstate_removeByType(w, x, y, z, BlockState_DESTROY);
+
+				// FIXME: move these code to other place!!
+				BlockID origin = world_modifyBlock(w, x, y, z, BLOCK_Air);
+				Entity *drops = entity_get(g.entities, entity_create(Entity_DROPS, (V3){x+0.5f, y+0.5f, z+0.5f}, g.entities));
+				drops->drops.item.id = block_get(origin)->break_item;
+				drops->velocity.x = rand_float(-2.0f, 2.0f);
+				drops->velocity.y = rand_float(2.0f, 5.0f);
+				drops->velocity.z = rand_float(-2.0f, 2.0f);
+			}
 		}
 	}
 	if (p->input.put) {
-		if (world_block(w, p->facing_block.x, p->facing_block.y, p->facing_block.z) != BLOCK_Air) { // no focus
-			Slot *slot = &p->inventory.hotbar[p->holding];
-			if (slot->count > 0) {
-				Item *item = &slot->item;
-				ItemID id = item->id;
-				// TODO: items that can not be put
-				if (item_putable(id)) {
-					BlockID block = block_ofItem(id);
-					if (world_block(w, p->putable_block.x, p->putable_block.y, p->putable_block.z) == BLOCK_Air) {
-						Body *block_body = &(Body){p->putable_block.x, p->putable_block.y, p->putable_block.z, 1.0f, 1.0f, 1.0f};
-						Body *player_body = BODYP(self->position, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH);
-						if (!collision_overlap(block_body, player_body)) {
-							// item -> block
-							slot->count--;
-							world_modifyBlock(w, p->putable_block.x, p->putable_block.y, p->putable_block.z, block);
-						}
+		Slot *slot = &p->inventory.hotbar[p->holding];
+		if (slot->count > 0) { // no focus
+			Item *item = &slot->item;
+			ItemID id = item->id;
+			// FIXME: move these code to other place!!
+			if (item_putable(id)) {
+				BlockID block = block_ofItem(id);
+				if (world_block(w, p->facing_block.x, p->facing_block.y, p->facing_block.z) != BLOCK_Air &&
+						world_block(w, p->putable_block.x, p->putable_block.y, p->putable_block.z) == BLOCK_Air) {
+					Body *block_body = &(Body){p->putable_block.x, p->putable_block.y, p->putable_block.z, 1.0f, 1.0f, 1.0f};
+					Body *player_body = BODYP(self->position, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH);
+					if (!collision_overlap(block_body, player_body)) {
+						// item -> block
+						slot->count--;
+						world_modifyBlock(w, p->putable_block.x, p->putable_block.y, p->putable_block.z, block);
 					}
 				}
-			}	
+			} else {
+				// specific features
+				int x = p->putable_block.x;
+				int y = p->putable_block.y;
+				int z = p->putable_block.z;
+				switch (id) {
+				case ITEM_Bucket:
+					{
+						BlockState *state = blockstate_getByType(w, x, y, z, BlockState_WATER);
+						if (state && state->type == BlockState_WATER && state->water.level == 7) {
+							blockstate_removeByType(w, x, y, z, BlockState_WATER);
+						}
+					}
+					break;
+				case ITEM_WaterBucket:
+					{
+						if (blockstate_getByType(w, x, y, z, BlockState_WATER) == NULL) {
+							// pour water
+							BlockState s = { .type = BlockState_WATER, .water = { .level = 7 } };
+							blockstate_add(&s, w, x, y, z);
+						}
+					}
+					break;
+				default:
+					break;
+				}
+			}
 		}
 	}
 

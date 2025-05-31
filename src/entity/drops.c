@@ -7,7 +7,7 @@
 #include "../render/resource.h"
 #include "../render/gl.h"
 #include "../render/texture.h"
-#include "../world/block/block.h"
+#include "../world/block.h"
 #include "../util/props.h"
 
 #define DROPS_FLOAT_RANGE 0.1f

@@ -17,6 +17,7 @@ void timer_schedule_once(float delay, TimerCallback cb, void *user_data, int siz
 
 	TimerNode *n = zalloc(1, sizeof(TimerNode));
 	n->timer = (Timer) {
+		.type = Timer_DELAYED,
 		.trigger_time = delay,
 		.callback = cb,
 		.user_data = dupnalloc(user_data, size),
@@ -32,6 +33,7 @@ void timer_schedule_repeat(float interval, TimerCallbackR cb, void *user_data, i
 
 	TimerNode *n = zalloc(1, sizeof(TimerNode));
 	n->timer = (Timer) {
+		.type = Timer_REPEAT,
 		.trigger_time = interval,
 		.interval = interval,
 		.callbackr = cb,
@@ -40,16 +42,31 @@ void timer_schedule_repeat(float interval, TimerCallbackR cb, void *user_data, i
 	*tnp = n;
 }
 
+void timer_deferred(TimerCallback func, void *user_data, int size) {
+	TimerNode **tnp = &list;
+	while (*tnp != NULL) {
+		tnp = &(*tnp)->next;
+	}
+
+	TimerNode *n = zalloc(1, sizeof(TimerNode));
+	n->timer = (Timer) {
+		.type = Timer_DEFFERED,
+		.callback = func,
+		.user_data = dupnalloc(user_data, size),
+	};
+	*tnp = n;
+}
+
 void timer_update() {
 	for (TimerNode *tn = list; tn != NULL; tn = tn->next) {
 		Timer *timer = &tn->timer;
-		if (timer->interval == 0) {
+		if (timer->type == Timer_DELAYED) {
 			timer->trigger_time -= g.update_delta;
 			if (timer->trigger_time <= 0) {
 				timer->callback(timer->user_data);
 				timer->delete_me = true;
 			}
-		} else {
+		} else if (timer->type == Timer_REPEAT) {
 			timer->trigger_time -= g.update_delta;
 			while (timer->trigger_time <= 0) {
 				timer->delete_me = timer->callbackr(timer->user_data);
@@ -58,6 +75,14 @@ void timer_update() {
 				}
 				timer->trigger_time += timer->interval;
 			}
+		}
+	}
+	// as late as possible
+	for (TimerNode *tn = list; tn != NULL; tn = tn->next) {
+		Timer *timer = &tn->timer;
+		if (timer->type == Timer_DEFFERED) {
+			timer->callback(timer->user_data);
+			timer->delete_me = true;
 		}
 	}
 
@@ -73,4 +98,6 @@ void timer_update() {
 		}
 		tnp = &(*tnp)->next;
 	}
+
+	;
 }

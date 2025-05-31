@@ -2,7 +2,6 @@
 #include "../game.h"
 #include "resource.h"
 #include "texture.h"
-#include "../world/block/block.h"
 
 #include "../../third_party/cglm/include/cglm/affine.h"
 #include "../../third_party/cglm/include/cglm/mat4.h"

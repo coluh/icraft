@@ -8,7 +8,7 @@
 #include "../../render/render_2d.h"
 #include "../../render/font.h"
 #include "../../world/world.h"
-#include "../../world/block/block.h"
+#include "../../world/block.h"
 // #include "../../util/log.h"
 
 extern Game g;

@@ -2,7 +2,7 @@
 #define _ICRAFT_world_world_h
 
 #include <stdbool.h>
-#include "block/block.h"
+#include "block.h"
 #include "chunk.h"
 
 typedef struct ChunkNode {
@@ -21,6 +21,9 @@ World *newWorld();
 
 Chunk *world_chunkAtf(World *world, float x, float y, float z);
 Chunk *world_chunkAti(World *world, int x, int y, int z);
+
+// update world near given center
+void world_update(World *world, int x, int y, int z);
 // update nearby chunks
 void world_updateChunks(World *world, int x, int y, int z);
 

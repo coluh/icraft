@@ -1,12 +1,11 @@
 #include "world.h"
 #include <math.h>
 #include <stdbool.h>
-#include "block/block.h"
-#include "block/extra.h"
+#include "block.h"
+#include "blockstate/blockstatelist.h"
 #include "chunk.h"
 #include "../util/mem.h"
 #include "../util/props.h"
-#include "extralist.h"
 #include "generation/generator.h"
 #include <stddef.h>
 
@@ -87,7 +86,8 @@ static void world_updateChunk(World *w, Chunk *c) {
 				if (block_isPlant(c->blocks[x][y][z])) {
 					// TODO: cross chunk update
 					if (y > 0 && !block_isOpaqueBlock(c->blocks[x][y-1][z])) {
-						block_destroy(w, c->x+x, c->y+y, c->z+z);
+						// FIXME:
+						// block_destroy(w, c->x+x, c->y+y, c->z+z);
 						c->dirty = true;
 					}
 				}
@@ -95,7 +95,7 @@ static void world_updateChunk(World *w, Chunk *c) {
 		}
 	}
 
-	extralist_update(&c->extras);
+	blockstatelist_update(&c->block_states, c, w);
 
 	// update vertex data
 	if (c->dirty) {
@@ -158,6 +158,11 @@ void world_updateChunks(World *w, int x, int y, int z) {
 			}
 		}
 	}
+}
+
+// split update and load
+void world_update(World *w, int x, int y, int z) {
+	world_updateChunks(w, x, y, z);
 }
 
 BlockID world_modifyBlock(World *w, int x, int y, int z, BlockID block) {

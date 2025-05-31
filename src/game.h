@@ -17,6 +17,7 @@ typedef struct Game {
 	bool running;
 	int fps;
 	float update_delta;
+	int ticks; // this is for tasks that execute every fixed ticks, not time
 	int zoom_level; // = 1, 2, 3...
 	Window *window;
 	ResourceManager *res;

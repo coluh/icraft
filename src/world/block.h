@@ -2,7 +2,7 @@
 #define _ICRAFT_world_block_block_h
 
 #include <stdint.h>
-#include "../../item/item.h"
+#include "../item/item.h"
 
 /* block is not cube */
 /* block is the basic unit of the chunk */
