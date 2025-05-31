@@ -24,7 +24,7 @@ void sceneManager_init() {
 	registerScene(hud_ofMain());
 	registerScene(gui_ofEscape());
 	registerScene(di_ofMain());
-	registerScene(cui_ofBackpack());
+	registerScene(cui_ofInventory());
 	window_setSize(0, 0);
 }
 

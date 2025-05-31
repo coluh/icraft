@@ -5,6 +5,6 @@
 
 #include "../scene.h"
 
-Scene *cui_ofBackpack();
+Scene *cui_ofInventory();
 
 #endif

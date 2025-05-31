@@ -94,8 +94,8 @@ static void toggleDebugInfor(SDL_Event *ev, void *scene) {
 	}
 }
 
-static void backpack(SDL_Event *ev, void *scene) {
-	sceneManager_push("Backpack CUI");
+static void inventory(SDL_Event *ev, void *scene) {
+	sceneManager_push("Inventory CUI");
 }
 
 static void forward(SDL_Event *ev, void *scene) {
@@ -166,7 +166,7 @@ Scene *hud_ofMain() {
 	Scene *s = newScene("Main HUD", Scene_HUD, (Keymap[]) {
 			{ Action_KEYDOWN, { "Escape" }, pause },
 			{ Action_KEYDOWN, { "F3" }, toggleDebugInfor },
-			{ Action_KEYDOWN, { "E" }, backpack },
+			{ Action_KEYDOWN, { "E" }, inventory },
 			{ Action_KEYPRESSED, { "W" }, forward },
 			{ Action_KEYPRESSED, { "S" }, backward },
 			{ Action_KEYPRESSED, { "A" }, left },

@@ -10,7 +10,7 @@
 
 extern Game g;
 
-typedef struct BackpackCUIState {
+typedef struct InventoryCUIState {
 
 	Slot craft[2][2];
 	Slot craft_out;
@@ -18,7 +18,7 @@ typedef struct BackpackCUIState {
 	Slot picking;
 	int splits[64]; // well, how to expand
 	bool splitting;
-} BackpackCUIState;
+} InventoryCUIState;
 
 static void get_params(int *outer_w, int *outer_h, int *slot_a, int *padding) {
 	*outer_w = g.zoom_level*170;
@@ -85,7 +85,7 @@ static int slotidof(int mouse_x, int mouse_y) {
 	return -1;
 }
 
-static Slot *idslot(int id, BackpackCUIState *s) {
+static Slot *idslot(int id, InventoryCUIState *s) {
 	PlayerData *player = &entity_get(g.entities, g.player_ref)->player;
 	if (id >= 0 && id < 4) {
 		return &player->inventory.armor[id];
@@ -116,7 +116,7 @@ static void render(Scene *self) {
 	outline(x, y, outer_w, outer_h, g.zoom_level*2);
 	grayquad(x, y, outer_w, outer_h, 0.7);
 
-	BackpackCUIState *s = ((Scene*)self)->data;
+	InventoryCUIState *s = ((Scene*)self)->data;
 	for (int i = 0; i < 46; i++) {
 		slot_pos(i, &x, &y);
 		draw_slot(x, y, slot_a, slot_a, g.zoom_level);
@@ -167,7 +167,7 @@ static void leftdown(SDL_Event *ev, void *scene) {
 		return;
 	}
 
-	BackpackCUIState *s = ((Scene*)scene)->data;
+	InventoryCUIState *s = ((Scene*)scene)->data;
 	Slot *slot = idslot(id, s);
 	if (s->picking.count == 0) {
 		// pick up all
@@ -213,7 +213,7 @@ static void leftpressed(SDL_Event *none, void *scene) {
 		return;
 	}
 
-	BackpackCUIState *s = ((Scene*)scene)->data;
+	InventoryCUIState *s = ((Scene*)scene)->data;
 	Slot *slot = idslot(id, s);
 	if (s->picking.count > 0 && s->splitting) {
 		// TODO: item should be completely the same, not just id
@@ -229,7 +229,7 @@ static void leftpressed(SDL_Event *none, void *scene) {
 }
 
 static void leftup(SDL_Event *ev, void *scene) {
-	BackpackCUIState *s = ((Scene*)scene)->data;
+	InventoryCUIState *s = ((Scene*)scene)->data;
 	if (s->picking.count > 0 && s->splitting) {
 		// put down on average
 		int n = splits_len(s->splits);
@@ -268,7 +268,7 @@ static void rightdown(SDL_Event *ev, void *scene) {
 		return;
 	}
 
-	BackpackCUIState *s = ((Scene*)scene)->data;
+	InventoryCUIState *s = ((Scene*)scene)->data;
 	Slot *slot = idslot(id, s);
 	if (s->picking.count == 0) {
 		// pick up half
@@ -295,7 +295,7 @@ static void rightpressed(SDL_Event *none, void *scene) {
 		return;
 	}
 
-	BackpackCUIState *s = ((Scene*)scene)->data;
+	InventoryCUIState *s = ((Scene*)scene)->data;
 	Slot *slot = idslot(id, s);
 	if (s->picking.count > 0 && s->splitting) {
 		// TODO: item should be completely the same, not just id
@@ -308,7 +308,7 @@ static void rightpressed(SDL_Event *none, void *scene) {
 }
 
 static void rightup(SDL_Event *ev, void *scene) {
-	BackpackCUIState *s = ((Scene*)scene)->data;
+	InventoryCUIState *s = ((Scene*)scene)->data;
 	if (s->picking.count > 0 && s->splitting) {
 		// put down one by one
 		for (int i = 0; s->splits[i] != -1; i++) {
@@ -339,8 +339,8 @@ static void on_scene_exit(Scene *self) {
 	window_focus(true);
 }
 
-Scene *cui_ofBackpack() {
-	Scene *s = newScene("Backpack CUI", Scene_CUI, (Keymap[]) {
+Scene *cui_ofInventory() {
+	Scene *s = newScene("Inventory CUI", Scene_CUI, (Keymap[]) {
 			{ Action_KEYDOWN, { "E" }, close},
 			{ Action_KEYDOWN, { "Escape" }, close},
 			{ Action_MOUSEDOWN, { .button = Mouse_LEFT }, leftdown },
@@ -352,7 +352,7 @@ Scene *cui_ofBackpack() {
 			{ Action_MOUSEPRESSED, { .button = Mouse_RIGHT }, rightpressed },
 			{ Action_MOUSEUP, { .button = Mouse_RIGHT }, rightup },
 			}, 10);
-	s->data = zalloc(1, sizeof(BackpackCUIState));
+	s->data = zalloc(1, sizeof(InventoryCUIState));
 	s->render = render;
 	s->block_event = true;
 	s->on_enter = on_scene_enter;
