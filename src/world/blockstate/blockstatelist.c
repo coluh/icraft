@@ -36,7 +36,7 @@ BlockState *blockstatelist_getByType(BlockStateList *list, int x, int y, int z, 
 	return NULL;
 }
 
-void blockstatelist_add(BlockStateList *l, int x, int y, int z, BlockState *state) {
+BlockState *blockstatelist_add(BlockStateList *l, int x, int y, int z, BlockState *state) {
 	if (l->data == NULL) {
 		// init
 		l->capacity = 8;
@@ -54,6 +54,8 @@ void blockstatelist_add(BlockStateList *l, int x, int y, int z, BlockState *stat
 	if (l->length == l->capacity) {
 		expand(l);
 	}
+
+	return &p->state;
 }
 
 void blockstatelist_removeAll(BlockStateList *l, int x, int y, int z) {
@@ -133,14 +135,14 @@ void blockstatelist_update(BlockStateList *l, Chunk *c, World *w) {
 				for (int d = 0; d < 4; d++) {
 					int nx = x + dirs[d][0];
 					int nz = z + dirs[d][1];
-					BlockState *ns = blockstate_getByType(w, nx, y, nz, BlockState_WATER);
+					const BlockState *ns = blockstate_getByType(w, nx, y, nz, BlockState_WATER);
 					if (ns && ns->water.level > state->water.level) {
 						has_higher = true;
 					}
 				}
 				if (!has_higher) {
 					// try up block
-					BlockState *ns = blockstate_getByType(w, x, y + 1, z, BlockState_WATER);
+					const BlockState *ns = blockstate_getByType(w, x, y + 1, z, BlockState_WATER);
 					if (ns && ns->water.level > 0) {
 						has_higher = true;
 					}
@@ -177,34 +179,35 @@ void blockstatelist_update(BlockStateList *l, Chunk *c, World *w) {
 		if (self.level <= 1) {
 			continue;
 		}
+		const int dirs[][2] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
 		// collect new water positions
 		BlockState *bs = blockstate_getByType(w, x, y - 1, z, BlockState_WATER);
-		const int dirs[][2] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
-		for (int d = 0; d < 4; d++) {
-			int nx = x + dirs[d][0];
-			int nz = z + dirs[d][1];
-			BlockState *ns = blockstate_getByType(w, nx, y, nz, BlockState_WATER);
-			// TODO: not opaque, but solid
-			if (!ns && !block_isOpaqueBlock(world_block(w, nx, y, nz))) {
-				int level = bs ? 1 : self.level - 1;
-				dynarray_push(da, (int[]){nx, y, nz, level});
-			}
-		}
-		if (!bs && !block_isOpaqueBlock(world_block(w, x, y - 1, z))) {
+		if (bs == NULL && !block_isOpaqueBlock(world_block(w, x, y - 1, z))) {
 			dynarray_push(da, (int[]){x, y - 1, z, 7});
+		} else if (block_isOpaqueBlock(world_block(w, x, y - 1, z))){
+			for (int d = 0; d < 4; d++) {
+				int nx = x + dirs[d][0];
+				int nz = z + dirs[d][1];
+				BlockState *ns = blockstate_getByType(w, nx, y, nz, BlockState_WATER);
+				// TODO: not opaque, but solid
+				if (ns == NULL && !block_isOpaqueBlock(world_block(w, nx, y, nz))) {
+					dynarray_push(da, (int[]){nx, y, nz, self.level - 1});
+				}
+			}
 		}
 
 		// update water levels
-		if (bs) {
-			bs->water.level = 7;
+		BlockState *ns = blockstate_getByType(w, x, y + 1, z, BlockState_WATER);
+		if (ns && ns > 0) {
+			self.level = 7;
 		}
 		for (int d = 0; d < 4; d++) {
 			int nx = x + dirs[d][0];
 			int nz = z + dirs[d][1];
 			BlockState *ns = blockstate_getByType(w, nx, y, nz, BlockState_WATER);
-			if (ns && ns->water.level < self.level - 1) {
-				ns->water.level = self.level - 1;
+			if (ns && self.level < ns->water.level - 1) {
+				self.level = ns->water.level - 1;
 			}
 		}
 	}

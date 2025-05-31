@@ -20,7 +20,7 @@ typedef struct BlockStateList {
 
 BlockState *blockstatelist_get(BlockStateList *list, int x, int y, int z);
 BlockState *blockstatelist_getByType(BlockStateList *list, int x, int y, int z, BlockStateType type);
-void blockstatelist_add(BlockStateList *list, int x, int y, int z, BlockState *state);
+BlockState *blockstatelist_add(BlockStateList *list, int x, int y, int z, BlockState *state);
 typedef struct Chunk Chunk;
 void blockstatelist_update(BlockStateList *list, Chunk *chunk, World *world);
 

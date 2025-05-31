@@ -10,8 +10,7 @@ BlockState *blockstate_add(BlockState *state, World *w, int x, int y, int z) {
 	x -= chunk->x;
 	y -= chunk->y;
 	z -= chunk->z;
-	blockstatelist_add(&chunk->block_states, x, y, z, state);
-	return blockstatelist_get(&chunk->block_states, x, y, z);
+	return blockstatelist_add(&chunk->block_states, x, y, z, state);
 }
 
 BlockState *blockstate_get(World *w, int x, int y, int z) {
