@@ -15,6 +15,7 @@ typedef struct ResourceManager {
 			int light;
 			int use_uv_offset;
 			int uv_offset;
+			int gamma_correct;
 		} basic_location;
 		int ui;
 		struct {

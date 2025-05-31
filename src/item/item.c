@@ -45,6 +45,10 @@ int item_textureIndex(ItemID id) {
 		return 6;
 	case ITEM_Dandelion:
 		return 7;
+	case ITEM_Bucket:
+		return 8;
+	case ITEM_WaterBucket:
+		return 9;
 	}
 	return 0;
 }

@@ -14,8 +14,9 @@ void main() {
 	float alpha = texture(tex, uv).r;
 	if (useTextureAlpha)
 		FragColor = vec4(color.rgb, color.a * alpha);
-	else if (useTexture)
-		FragColor = texture(tex, uv);
-	else
+	else if (useTexture) {
+		vec4 result = texture(tex, uv);
+		FragColor = vec4(pow(result.rgb, vec3(1.0 / 2.2)), result.a);
+	} else
 		FragColor = color;
 }

@@ -11,6 +11,8 @@ typedef enum ItemID {
 	ITEM_Stone,
 	ITEM_Poppy,
 	ITEM_Dandelion,
+	ITEM_Bucket,
+	ITEM_WaterBucket,
 } ItemID;
 
 typedef struct Item {

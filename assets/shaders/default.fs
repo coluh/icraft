@@ -8,6 +8,7 @@ uniform sampler2D myTexture;
 uniform vec3 light;
 uniform vec2 uv_offset;
 uniform bool use_uv_offset;
+uniform bool gamma_correct;
 
 void main() {
 	vec3 lightColor = vec3(1.0);
@@ -23,7 +24,8 @@ void main() {
 	vec4 texColor = texture(myTexture, uv);
 	vec3 result = texColor.rgb * color;
 
-	result = pow(result, vec3(1.0 / 2.2));
+	if (gamma_correct)
+		result = pow(result, vec3(1.0 / 2.2));
 
 	if (texColor.a < 0.2)
 		discard;

@@ -38,9 +38,9 @@ static void render(Scene *self) {
 		const Slot *slot = &player->inventory.hotbar[i];
 		if (slot->count > 0) {
 			if (item_isCube(slot->item.id)) {
-				twod_drawTexture(x, y, a, a, item_cubeIconTexture(slot->item.id));
+				twod_drawTexture(x+t, y+t, a-2*t, a-2*t, item_cubeIconTexture(slot->item.id));
 			} else {
-				twod_drawIndexedTexture(x, y, a, a, item_textureIndex(slot->item.id));
+				twod_drawIndexedTexture(x+t, y+t, a-2*t, a-2*t, item_textureIndex(slot->item.id));
 			}
 		}
 		twod_setColor(0.7, 0.7, 0.7, 1.0);
@@ -57,7 +57,6 @@ static void render(Scene *self) {
 			twod_setColor(0.9, 0.9, 0.9, 1);
 			bar(x-t, y-t, a+2*t, a+2*t, 2*t);
 		}
-		// draw hotbar items
 		const Slot *slot = &player->inventory.hotbar[i];
 		if (slot->count > 1) {
 			if (slot->count < 10) {

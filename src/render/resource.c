@@ -27,6 +27,7 @@ void resource_init() {
 	res->shaders.basic_location.normal_matrix = glGetUniformLocation(res->shaders.basic, "normal_matrix");
 	res->shaders.basic_location.use_uv_offset = glGetUniformLocation(res->shaders.basic, "use_uv_offset");
 	res->shaders.basic_location.uv_offset = glGetUniformLocation(res->shaders.basic, "uv_offset");
+	res->shaders.basic_location.gamma_correct = glGetUniformLocation(res->shaders.basic, "gamma_correct");
 	res->shaders.ui = shader_get("assets/shaders/basic2d.vs", "assets/shaders/basic2d.fs");
 	res->shaders.ui_location.model = glGetUniformLocation(res->shaders.ui, "model");
 	res->shaders.ui_location.proj = glGetUniformLocation(res->shaders.ui, "proj");
@@ -145,6 +146,7 @@ void resource_init() {
 	glm_vec3_normalize(light);
 	glUniform3fv(res->shaders.basic_location.light, 1, (float*)light);
 	glUniform1i(res->shaders.basic_location.use_uv_offset, 0);
+	glUniform1i(res->shaders.basic_location.gamma_correct, 1);
 
 	// init gl
 	glEnable(GL_BLEND);
@@ -174,6 +176,7 @@ void resource_init() {
 	glUniformMatrix4fv(res->shaders.basic_location.view, 1, GL_FALSE, (float*)view);
 	glUniformMatrix3fv(res->shaders.basic_location.normal_matrix, 1, GL_FALSE, (float*)normal);
 	glUniform1i(res->shaders.basic_location.use_uv_offset, 1);
+	glUniform1i(res->shaders.basic_location.gamma_correct, 0);
 	vec3 item_light = {-0.1f, -2.0f, -0.8f};
 	glm_vec3_normalize(item_light);
 	glUniform3fv(res->shaders.basic_location.light, 1, (float*)item_light);
@@ -207,6 +210,7 @@ void resource_init() {
 
 		res->textures.cube_icons[i].texture = tex;
 	}
+	glUniform1i(res->shaders.basic_location.gamma_correct, 1);
 	glUniform1i(res->shaders.basic_location.use_uv_offset, 0);
 	glUniform3fv(res->shaders.basic_location.light, 1, (float*)light);
 	glBindTexture(GL_TEXTURE_2D, 0);

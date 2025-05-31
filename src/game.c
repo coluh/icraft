@@ -34,6 +34,8 @@ void game_init() {
 	g.player_ref = entity_create(Entity_PLAYER, (V3){-10, 24, -5}, g.entities);
 
 	entity_create(Entity_DROPS, (V3){0, 25, 0}, g.entities);
+	player_pickup(entity_get(g.entities, g.player_ref), (Item){ITEM_Bucket});
+	player_pickup(entity_get(g.entities, g.player_ref), (Item){ITEM_WaterBucket});
 }
 
 void game_loop() {
