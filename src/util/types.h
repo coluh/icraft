@@ -10,6 +10,11 @@ typedef struct V3 {
 	float z;
 } V3;
 
+typedef struct V2 {
+	float x;
+	float y;
+} V2;
+
 // block position
 typedef struct IV3 {
 	int x;
@@ -23,10 +28,15 @@ typedef struct Body {
 	float w, h, d;
 } Body;
 
-
 typedef struct PoolHandle {
 	unsigned int index;
 	unsigned int generation;
 } PoolHandle;
+
+typedef struct Vertex {
+	V3 pos;
+	V3 norm;
+	V2 uv;
+} Vertex;
 
 #endif

@@ -42,7 +42,7 @@ BlockState *blockstate_add(BlockState *state, World *w, int x, int y, int z);
 // get state at world coord x, y, z
 BlockState *blockstate_get(World *w, int x, int y, int z);
 // get state of type type at world coord x, y, z
-BlockState *blockstate_getByType(World *w, int x, int y, int z, BlockStateType type);
+BlockState *blockstate_getByType(const World *w, int x, int y, int z, BlockStateType type);
 
 // remove all states in block x, y, z
 void blockstate_removeAll(World *w, int x, int y, int z);

@@ -27,14 +27,14 @@ static Chunk *findChunk(const World *w, int x, int y, int z) {
 	return NULL;
 }
 
-Chunk *world_chunkAtf(World *world, float x, float y, float z) {
+Chunk *world_chunkAtf(const World *world, float x, float y, float z) {
 	int cx = ROUND_DOWN_BY((int)floorf(x), CHUNK_SIZE);
 	int cy = ROUND_DOWN_BY((int)floorf(y), CHUNK_SIZE);
 	int cz = ROUND_DOWN_BY((int)floorf(z), CHUNK_SIZE);
 	return findChunk(world, cx, cy, cz);
 }
 
-Chunk *world_chunkAti(World *world, int x, int y, int z) {
+Chunk *world_chunkAti(const World *world, int x, int y, int z) {
 	int cx = ROUND_DOWN_BY(x, CHUNK_SIZE);
 	int cy = ROUND_DOWN_BY(y, CHUNK_SIZE);
 	int cz = ROUND_DOWN_BY(z, CHUNK_SIZE);

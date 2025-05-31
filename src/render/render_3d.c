@@ -36,28 +36,120 @@ static void renderDestroyingTexture(float time, float total_time, int x, int y, 
 	glUniform1i(g.res->shaders.basic_location.use_uv_offset, 0);
 }
 
-static void renderWater(int x, int y, int z, int level) {
+
+
+static void water_vertices(float heights[4], Vertex vertices[]) {
+	V3 block[8] = {
+		{0, 0, 0}, {1, 0, 0}, {1, 0, 1}, {0, 0, 1},
+		{0, heights[0], 0}, {1, heights[1], 0}, {1, heights[2], 1}, {0, heights[3], 1},
+	};
+	int indices[6] = {0, 1, 2, 0, 2, 3};
+	V3 norms[6] = {{0, -1, 0}, {0, 0, -1}, {1, 0, 0}, {0, 0, 1}, {-1, 0, 0}, {0, 1, 0}}; // TODO: up face norm
+	V2 uvs[4] = {{0, 0}, {1/16.0f, 0}, {1/16.0f, 1/16.0f}, {0, 1/16.0f}};
+	for (int i = 0; i < 6; i++) {
+		vertices[i].pos = block[indices[i]];
+		vertices[i].norm = norms[0];
+		vertices[i].uv = uvs[indices[i]];
+	}
+	vertices[6] = (Vertex){ .pos = block[0], .norm = norms[1], .uv = uvs[0]};
+	vertices[7] = (Vertex){ .pos = block[1], .norm = norms[1], .uv = uvs[1]};
+	vertices[8] = (Vertex){ .pos = block[5], .norm = norms[1], .uv = uvs[2]};
+	vertices[9] = (Vertex){ .pos = block[0], .norm = norms[1], .uv = uvs[0]};
+	vertices[10] = (Vertex){ .pos = block[5], .norm = norms[1], .uv = uvs[2]};
+	vertices[11] = (Vertex){ .pos = block[4], .norm = norms[1], .uv = uvs[3]};
+
+	vertices[12] = (Vertex){ .pos = block[5], .norm = norms[2], .uv = uvs[0]};
+	vertices[13] = (Vertex){ .pos = block[2], .norm = norms[2], .uv = uvs[1]};
+	vertices[14] = (Vertex){ .pos = block[6], .norm = norms[2], .uv = uvs[2]};
+	vertices[15] = (Vertex){ .pos = block[5], .norm = norms[2], .uv = uvs[0]};
+	vertices[16] = (Vertex){ .pos = block[6], .norm = norms[2], .uv = uvs[2]};
+	vertices[17] = (Vertex){ .pos = block[1], .norm = norms[2], .uv = uvs[3]};
+
+	vertices[18] = (Vertex){ .pos = block[2], .norm = norms[3], .uv = uvs[0]};
+	vertices[19] = (Vertex){ .pos = block[3], .norm = norms[3], .uv = uvs[1]};
+	vertices[20] = (Vertex){ .pos = block[7], .norm = norms[3], .uv = uvs[2]};
+	vertices[21] = (Vertex){ .pos = block[2], .norm = norms[3], .uv = uvs[0]};
+	vertices[22] = (Vertex){ .pos = block[7], .norm = norms[3], .uv = uvs[2]};
+	vertices[23] = (Vertex){ .pos = block[6], .norm = norms[3], .uv = uvs[3]};
+
+	vertices[24] = (Vertex){ .pos = block[3], .norm = norms[4], .uv = uvs[0]};
+	vertices[25] = (Vertex){ .pos = block[0], .norm = norms[4], .uv = uvs[1]};
+	vertices[26] = (Vertex){ .pos = block[4], .norm = norms[4], .uv = uvs[2]};
+	vertices[27] = (Vertex){ .pos = block[3], .norm = norms[4], .uv = uvs[0]};
+	vertices[28] = (Vertex){ .pos = block[4], .norm = norms[4], .uv = uvs[2]};
+	vertices[29] = (Vertex){ .pos = block[7], .norm = norms[4], .uv = uvs[3]};
+
+	vertices[30] = (Vertex){ .pos = block[4], .norm = norms[5], .uv = uvs[0]};
+	vertices[31] = (Vertex){ .pos = block[5], .norm = norms[5], .uv = uvs[1]};
+	vertices[32] = (Vertex){ .pos = block[6], .norm = norms[5], .uv = uvs[2]};
+	vertices[33] = (Vertex){ .pos = block[4], .norm = norms[5], .uv = uvs[0]};
+	vertices[34] = (Vertex){ .pos = block[6], .norm = norms[5], .uv = uvs[2]};
+	vertices[35] = (Vertex){ .pos = block[7], .norm = norms[5], .uv = uvs[3]};
+}
+
+static void renderWater(int x, int y, int z, int level, const World *w) {
 	// TODO: render half-transparent correctly
 	glUniform1i(g.res->shaders.basic_location.use_uv_offset, 1);
 	float uv[2];
 	texture_blockUVoffset(10, uv);
 	glUniform2f(g.res->shaders.basic_location.uv_offset, uv[0], uv[1]);
 
-	float height = 1.0f * level / 7;
+	// surrounding levels
+	static const int dirs[8][2] = {{1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1}};
+	int levels[8] = { 0 };
+	for (int d = 0; d < 8; d++) {
+		int nx = x + dirs[d][0];
+		int nz = z + dirs[d][1];
+		BlockState *s = blockstate_getByType(w, nx, y, nz, BlockState_WATER);
+		if (s && s->type == BlockState_WATER) {
+			levels[d] = s->water.level;
+		}
+	}
+	// from x-z-, clockwise
+	float heights[4] = {levels[5]/7.0f, levels[7]/7.0f, levels[1]/7.0f, levels[3]/7.0f};
+	Vertex block_vertices[36];
+	water_vertices(heights, block_vertices);
+	unsigned int vao, vbo;
+	glGenVertexArrays(1, &vao);
+	glGenBuffers(1, &vbo);
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(block_vertices), block_vertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), NULL);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6*sizeof(float)));
+	glEnableVertexAttribArray(2);
+	
 	mat4 model;
 	glm_mat4_identity(model);
 	glm_translate(model, (vec3){x, y, z});
-	glm_translate(model, (vec3){0.5f, 0.5f, 0.5f});
-	glm_translate(model, (vec3){0.0f, (height-1.0f)/2, 0.0f});
-	glm_scale(model, (vec3){1.0f, height, 1.0f});
 	glUniformMatrix4fv(g.res->shaders.basic_location.model, 1, GL_FALSE, (float*)model);
 
-	glBindVertexArray(g.res->meshes.cubeVAO);
+	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, g.res->meshes.cubeVAO_count);
 
 	glUniform1i(g.res->shaders.basic_location.use_uv_offset, 0);
 }
 
+static void renderWorldWater(const World *w) {
+	for (const ChunkNode *p = w->chunks; p != NULL; p = p->next) {
+		const BlockStateList *list = &p->chunk->block_states;
+		for (int i = 0; i < list->length; i++) {
+			const BlockStateNode *n = &list->data[i];
+			if (n->state.type != BlockState_WATER) {
+				continue;
+			}
+			int x = p->chunk->x + n->x;
+			int y = p->chunk->y + n->y;
+			int z = p->chunk->z + n->z;
+			renderWater(x, y, z, n->state.water.level, w);
+		}
+	}
+}
+
+// things that do not need other chunks
 static void threed_renderChunk(const Chunk *chunk) {
 	glUniformMatrix4fv(g.res->shaders.basic_location.model, 1, GL_FALSE, (float*)chunk->model);
 	glBindVertexArray(chunk->VAO);
@@ -73,9 +165,6 @@ static void threed_renderChunk(const Chunk *chunk) {
 		case BlockState_DESTROY:
 			renderDestroyingTexture(n->state.destroy.time, n->state.destroy.total, x, y, z);
 			break;
-		case BlockState_WATER:
-			renderWater(x, y, z, n->state.water.level);
-			break;
 		default:
 			break;
 		}
@@ -90,6 +179,8 @@ void threed_renderChunks(const World *world) {
 	for (const ChunkNode *p = world->chunks; p != NULL; p = p->next) {
 		threed_renderChunk(p->chunk);
 	}
+
+	renderWorldWater(world);
 }
 
 void threed_renderFacing() {

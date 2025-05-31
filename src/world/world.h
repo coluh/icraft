@@ -19,8 +19,8 @@ typedef struct World {
 
 World *newWorld();
 
-Chunk *world_chunkAtf(World *world, float x, float y, float z);
-Chunk *world_chunkAti(World *world, int x, int y, int z);
+Chunk *world_chunkAtf(const World *world, float x, float y, float z);
+Chunk *world_chunkAti(const World *world, int x, int y, int z);
 
 // update world near given center
 void world_update(World *world, int x, int y, int z);

@@ -1,11 +1,11 @@
 #include "blockstate.h"
 #include "../world.h"
 #include "blockstatelist.h"
-#include "../../util/log.h"
+// #include "../../util/log.h"
 
 BlockState *blockstate_add(BlockState *state, World *w, int x, int y, int z) {
-	if (state->type == BlockState_WATER)
-		logd("Add block state at %d %d %d of water level %d", x, y, z, state->water.level);
+	// if (state->type == BlockState_WATER)
+	// 	logd("Add block state at %d %d %d of water level %d", x, y, z, state->water.level);
 	Chunk *chunk = world_chunkAti(w, x, y, z);
 	x -= chunk->x;
 	y -= chunk->y;
@@ -21,7 +21,7 @@ BlockState *blockstate_get(World *w, int x, int y, int z) {
 	return blockstatelist_get(&chunk->block_states, x, y, z);
 }
 
-BlockState *blockstate_getByType(World *w, int x, int y, int z, BlockStateType type) {
+BlockState *blockstate_getByType(const World *w, int x, int y, int z, BlockStateType type) {
 	Chunk *chunk = world_chunkAti(w, x, y, z);
 	x -= chunk->x;
 	y -= chunk->y;
