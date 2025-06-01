@@ -109,24 +109,44 @@ void player_update(Entity *self, World *w) {
 						// item -> block
 						slot->count--;
 						world_modifyBlock(w, p->putable_block.x, p->putable_block.y, p->putable_block.z, block);
+						BlockState *s = blockstate_getByType(w, p->putable_block.x, p->putable_block.y, p->putable_block.z, BlockState_WATER);
+						if (s && block_isCompleteSolid(block)) {
+							blockstate_removeByType(w, p->putable_block.x, p->putable_block.y, p->putable_block.z, BlockState_WATER);
+						}
 					}
 				}
 			} else {
 				// specific features
-				int x = p->putable_block.x;
-				int y = p->putable_block.y;
-				int z = p->putable_block.z;
 				switch (id) {
 				case ITEM_Bucket:
 					{
-						BlockState *state = blockstate_getByType(w, x, y, z, BlockState_WATER);
-						if (state && state->type == BlockState_WATER && state->water.level == WATER_SOURCE) {
-							blockstate_removeByType(w, x, y, z, BlockState_WATER);
+						vec3 eye = {self->position.x, self->position.y + PLAYER_EYE_OFFSET_Y, self->position.z};
+						vec3 fr = {1, 0, 0};
+						glm_quat_rotatev(self->rotation, fr, fr);
+						glm_vec3_normalize(fr);
+						const float u = 0.1f;
+						vec3 uoff;
+						glm_vec3_scale(fr, u, uoff);
+						float d = 0.0f;
+						while (true) {
+							const BlockState *state = blockstate_getByType(w, floorf(eye[0]), floorf(eye[1]), floorf(eye[2]), BlockState_WATER);
+							if (state && state->water.level == WATER_SOURCE) {
+								blockstate_removeByType(w, floorf(eye[0]), floorf(eye[1]), floorf(eye[2]), BlockState_WATER);
+								break;
+							}
+							glm_vec3_add(eye, uoff, eye);
+							d += u;
+							if (d >= 5.0f) {
+								break;
+							}
 						}
 					}
 					break;
 				case ITEM_WaterBucket:
 					{
+						int x = p->putable_block.x;
+						int y = p->putable_block.y;
+						int z = p->putable_block.z;
 						if (blockstate_getByType(w, x, y, z, BlockState_WATER) == NULL) {
 							// pour water
 							BlockState s = { .type = BlockState_WATER, .water = { .level = WATER_SOURCE } };

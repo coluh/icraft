@@ -19,6 +19,7 @@ bool item_isCube(ItemID id) {
 	static const ItemID cubes[] = {
 		ITEM_Unknown,
 		ITEM_Dirt, ITEM_CobbleStone, ITEM_GrassBlock, ITEM_Stone,
+		ITEM_OakLog, ITEM_OakPlank, ITEM_OakLeave,
 	};
 	return inArray(id, cubes, ARRLEN(cubes));
 }
@@ -39,6 +40,9 @@ int item_textureIndex(ItemID id) {
 	case ITEM_CobbleStone:
 	case ITEM_GrassBlock:
 	case ITEM_Stone:
+	case ITEM_OakLog:
+	case ITEM_OakPlank:
+	case ITEM_OakLeave:
 		logw("you should not use plane block texture. if you are drawing icon you should use item_cubeIconTexture");
 		return 0;
 	case ITEM_Poppy:
@@ -56,7 +60,7 @@ int item_textureIndex(ItemID id) {
 bool item_putable(ItemID id) {
 	static const ItemID putables[] = {
 		ITEM_Unknown, ITEM_Dirt, ITEM_CobbleStone, ITEM_GrassBlock, ITEM_Stone,
-		ITEM_Poppy, ITEM_Dandelion,
+		ITEM_Poppy, ITEM_Dandelion, ITEM_OakLog, ITEM_OakPlank, ITEM_OakLeave,
 	};
 	return inArray(id, putables, ARRLEN(putables));
 }

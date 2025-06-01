@@ -22,6 +22,9 @@ typedef struct PlayerData {
 	IV3 facing_block;
 	IV3 putable_block; // before the facing_block
 
+	// TODO: Add Survival/Creative Gamemode!!
+
+
 	struct {
 		Slot hotbar[PLAYER_INVENTORY_COLOMN];
 		Slot storage[3][PLAYER_INVENTORY_COLOMN];

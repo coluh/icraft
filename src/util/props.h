@@ -12,6 +12,7 @@
 #define ALL_POS2(a, b) ((a) > 0 && (b) > 0)
 #define ALL_POS4(a, b, c, d) (ALL_POS2(a, b) && ALL_POS2(c, d))
 #define POS_AVG4(a, b, c, d) ((float)((a)+(b)+(c)+(d))/(((a)>0?1:0)+((b)>0?1:0)+((c)>0?1:0)+((d)>0?1:0)))
+#define AVG4(a, b, c, d) (((a)+(b)+(c)+(d))/4.0f)
 
 #define EQUAL 0
 

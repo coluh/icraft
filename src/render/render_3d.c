@@ -110,9 +110,10 @@ static void renderWater(int x, int y, int z, int level, const World *w) {
 	// TODO: render half-transparent correctly
 	glUniform1i(g.res->shaders.basic_location.use_uv_offset, 1);
 	float uv[2];
-	texture_blockUVoffset(10, uv);
+	texture_blockUVoffset(WATER_TEXTURE_INDEX, uv);
 	glUniform2f(g.res->shaders.basic_location.uv_offset, uv[0], uv[1]);
 
+	// TODO: water flowing down and water near source are all of level 7, but they have different height
 	// surrounding levels
 	static const int dirs[8][2] = {{1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1}};
 	int levels[8] = { 0 };
@@ -137,10 +138,10 @@ static void renderWater(int x, int y, int z, int level, const World *w) {
 		heights[0] = heights[1] = heights[2] = heights[3] = 1.0f;
 	} else {
 		// from x-z-, clockwise
-		heights[0] = POS_AVG4(level, levels[4], levels[5], levels[6]) / 7.0f;
-		heights[1] = POS_AVG4(level, levels[6], levels[7], levels[0]) / 7.0f;
-		heights[2] = POS_AVG4(level, levels[0], levels[1], levels[2]) / 7.0f;
-		heights[3] = POS_AVG4(level, levels[2], levels[3], levels[4]) / 7.0f;
+		heights[0] = AVG4(level, levels[4], levels[5], levels[6]) / 7.0f;
+		heights[1] = AVG4(level, levels[6], levels[7], levels[0]) / 7.0f;
+		heights[2] = AVG4(level, levels[0], levels[1], levels[2]) / 7.0f;
+		heights[3] = AVG4(level, levels[2], levels[3], levels[4]) / 7.0f;
 		if (blocks[4] && blocks[1])
 			heights[0] = level/1.0f/7;
 		if (!blocks[4] && blocks[1])
@@ -281,7 +282,7 @@ void threed_renderFacing() {
 	glm_translate(model, (vec3){b->x, b->y, b->z});
 	glUniformMatrix4fv(g.res->shaders.basic_location.model, 1, GL_FALSE, (float*)model);
 
-	glLineWidth(1.0f);
+	glLineWidth(5.0f);
 	glEnable(GL_POLYGON_OFFSET_LINE);
 	glPolygonOffset(-1.0f, -1.0f);
 	glBindVertexArray(g.res->meshes.frameVAO);

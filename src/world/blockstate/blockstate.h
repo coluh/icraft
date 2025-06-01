@@ -31,7 +31,7 @@ typedef struct BlockState {
 		} destroy;
 		struct BlockStateWater {
 			int level; // in 1 ~ 7, 8 means source
-			FluidDirection dir;
+			// FluidDirection dir; // not used now
 		} water;
 	};
 } BlockState;

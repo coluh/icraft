@@ -123,7 +123,7 @@ void chunk_generateVertex(Chunk *chunk, Chunk *nearbys[6]) {
 			for (int z = 0; z < CHUNK_SIZE; z++) {
 				BlockID id = chunk->blocks[x][y][z];
 				if (id == BLOCK_Air) { continue; }
-				if (block_isOpaqueBlock(id)) {
+				if (!block_isPlant(id)) {
 					for (int f = 0; f < 6; f++) {
 						// Face Culling
 						if ((f == 0 && z > 0 && block_isOpaqueBlock(chunk->blocks[x][y][z-1])) ||
