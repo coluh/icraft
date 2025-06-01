@@ -9,6 +9,10 @@
 #define ABS(x) ((x) > 0 ? (x) : -(x))
 #define SIGN(x) ((x) > 0 ? 1 : -1)
 
+#define ALL_POS2(a, b) ((a) > 0 && (b) > 0)
+#define ALL_POS4(a, b, c, d) (ALL_POS2(a, b) && ALL_POS2(c, d))
+#define POS_AVG4(a, b, c, d) ((float)((a)+(b)+(c)+(d))/(((a)>0?1:0)+((b)>0?1:0)+((c)>0?1:0)+((d)>0?1:0)))
+
 #define EQUAL 0
 
 #define IN_RECT(m, n, r) (((m)>=(r).x)&&((m)<((r).x+(r).w))&&((n)>=(r).y)&&((n)<((r).y+(r).h)))

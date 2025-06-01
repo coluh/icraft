@@ -16,7 +16,6 @@ typedef enum BlockID {
 	BLOCK_Poppy,
 	BLOCK_Dandelion,
 	BLOCK_Unknown,
-	// TODO: water source block
 } BlockID;
 
 typedef enum FaceIndex {
@@ -48,9 +47,12 @@ BlockID block_idOf(const char *name);
 // used in: put block, drops render
 BlockID block_ofItem(ItemID item);
 
-// used in: chunk vertex generation
+// used in: chunk vertex generation, water render
 bool block_isOpaqueBlock(BlockID id);
 // used in: chunk vertex generation
 bool block_isPlant(BlockID id);
+// complete solid cannot contain water
+// used in: water expand
+bool block_isCompleteSolid(BlockID id);
 
 #endif

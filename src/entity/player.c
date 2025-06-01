@@ -120,7 +120,7 @@ void player_update(Entity *self, World *w) {
 				case ITEM_Bucket:
 					{
 						BlockState *state = blockstate_getByType(w, x, y, z, BlockState_WATER);
-						if (state && state->type == BlockState_WATER && state->water.level == 7) {
+						if (state && state->type == BlockState_WATER && state->water.level == WATER_SOURCE) {
 							blockstate_removeByType(w, x, y, z, BlockState_WATER);
 						}
 					}
@@ -129,7 +129,7 @@ void player_update(Entity *self, World *w) {
 					{
 						if (blockstate_getByType(w, x, y, z, BlockState_WATER) == NULL) {
 							// pour water
-							BlockState s = { .type = BlockState_WATER, .water = { .level = 7 } };
+							BlockState s = { .type = BlockState_WATER, .water = { .level = WATER_SOURCE } };
 							blockstate_add(&s, w, x, y, z);
 						}
 					}

@@ -5,6 +5,7 @@
 #include "gl.h"
 #include "../entity/entity.h"
 #include "../util/log.h"
+#include "../util/props.h"
 // #include "../../third_party/cglm/include/cglm/affine-pre.h"
 #include "../../third_party/cglm/include/cglm/cglm.h"
 #include "texture.h"
@@ -38,7 +39,7 @@ static void renderDestroyingTexture(float time, float total_time, int x, int y, 
 
 
 
-static int water_vertices(float heights[4], Vertex vertices[], int has_face[]) {
+static int water_vertices(const float heights[4], Vertex vertices[], const int no_face[]) {
 	V3 block[8] = {
 		{0, 0, 0}, {1, 0, 0}, {1, 0, 1}, {0, 0, 1},
 		{0, heights[0], 0}, {1, heights[1], 0}, {1, heights[2], 1}, {0, heights[3], 1},
@@ -48,7 +49,7 @@ static int water_vertices(float heights[4], Vertex vertices[], int has_face[]) {
 
 	int idx = 0;
 
-	if (!has_face[0]) {
+	if (!no_face[0]) {
 		vertices[idx++] = (Vertex){ .pos = block[0], .norm = norms[0], .uv = uvs[0]};
 		vertices[idx++] = (Vertex){ .pos = block[1], .norm = norms[0], .uv = uvs[1]};
 		vertices[idx++] = (Vertex){ .pos = block[2], .norm = norms[0], .uv = uvs[2]};
@@ -57,7 +58,7 @@ static int water_vertices(float heights[4], Vertex vertices[], int has_face[]) {
 		vertices[idx++] = (Vertex){ .pos = block[3], .norm = norms[0], .uv = uvs[3]};
 	}
 
-	if (!has_face[1]) {
+	if (!no_face[1]) {
 		vertices[idx++] = (Vertex){ .pos = block[0], .norm = norms[1], .uv = uvs[0]};
 		vertices[idx++] = (Vertex){ .pos = block[1], .norm = norms[1], .uv = uvs[1]};
 		vertices[idx++] = (Vertex){ .pos = block[5], .norm = norms[1], .uv = uvs[2]};
@@ -66,16 +67,16 @@ static int water_vertices(float heights[4], Vertex vertices[], int has_face[]) {
 		vertices[idx++] = (Vertex){ .pos = block[4], .norm = norms[1], .uv = uvs[3]};
 	}
 
-	if (!has_face[2]) {
-		vertices[idx++] = (Vertex){ .pos = block[5], .norm = norms[2], .uv = uvs[0]};
+	if (!no_face[2]) {
+		vertices[idx++] = (Vertex){ .pos = block[1], .norm = norms[2], .uv = uvs[0]};
 		vertices[idx++] = (Vertex){ .pos = block[2], .norm = norms[2], .uv = uvs[1]};
 		vertices[idx++] = (Vertex){ .pos = block[6], .norm = norms[2], .uv = uvs[2]};
-		vertices[idx++] = (Vertex){ .pos = block[5], .norm = norms[2], .uv = uvs[0]};
+		vertices[idx++] = (Vertex){ .pos = block[1], .norm = norms[2], .uv = uvs[0]};
 		vertices[idx++] = (Vertex){ .pos = block[6], .norm = norms[2], .uv = uvs[2]};
-		vertices[idx++] = (Vertex){ .pos = block[1], .norm = norms[2], .uv = uvs[3]};
+		vertices[idx++] = (Vertex){ .pos = block[5], .norm = norms[2], .uv = uvs[3]};
 	}
 
-	if (!has_face[3]) {
+	if (!no_face[3]) {
 		vertices[idx++] = (Vertex){ .pos = block[2], .norm = norms[3], .uv = uvs[0]};
 		vertices[idx++] = (Vertex){ .pos = block[3], .norm = norms[3], .uv = uvs[1]};
 		vertices[idx++] = (Vertex){ .pos = block[7], .norm = norms[3], .uv = uvs[2]};
@@ -84,7 +85,7 @@ static int water_vertices(float heights[4], Vertex vertices[], int has_face[]) {
 		vertices[idx++] = (Vertex){ .pos = block[6], .norm = norms[3], .uv = uvs[3]};
 	}
 
-	if (!has_face[4]) {
+	if (!no_face[4]) {
 		vertices[idx++] = (Vertex){ .pos = block[3], .norm = norms[4], .uv = uvs[0]};
 		vertices[idx++] = (Vertex){ .pos = block[0], .norm = norms[4], .uv = uvs[1]};
 		vertices[idx++] = (Vertex){ .pos = block[4], .norm = norms[4], .uv = uvs[2]};
@@ -93,7 +94,7 @@ static int water_vertices(float heights[4], Vertex vertices[], int has_face[]) {
 		vertices[idx++] = (Vertex){ .pos = block[7], .norm = norms[4], .uv = uvs[3]};
 	}
 
-	if (!has_face[5]) {
+	if (!no_face[5]) {
 		vertices[idx++] = (Vertex){ .pos = block[4], .norm = norms[5], .uv = uvs[0]};
 		vertices[idx++] = (Vertex){ .pos = block[5], .norm = norms[5], .uv = uvs[1]};
 		vertices[idx++] = (Vertex){ .pos = block[6], .norm = norms[5], .uv = uvs[2]};
@@ -123,27 +124,79 @@ static void renderWater(int x, int y, int z, int level, const World *w) {
 			levels[d] = s->water.level;
 		}
 	}
-	// from x-z-, clockwise
-	float heights[4] = {levels[5]/7.0f, levels[7]/7.0f, levels[1]/7.0f, levels[3]/7.0f};
-	heights[0] = (level + levels[4] + levels[5] + levels[6]) / 4.0f / 7.0f;
-	heights[1] = (level + levels[6] + levels[7] + levels[0]) / 4.0f / 7.0f;
-	heights[2] = (level + levels[0] + levels[1] + levels[2]) / 4.0f / 7.0f;
-	heights[3] = (level + levels[2] + levels[3] + levels[4]) / 4.0f / 7.0f;
-	int has_face[6] = { 0 };
-	if (block_isOpaqueBlock(world_block(w, x, y - 1, z)))
-		has_face[0] = 1;
-	if (levels[6] > 0)
-		has_face[1] = 1;
-	if (levels[0] > 0)
-		has_face[2] = 1;
-	if (levels[2] > 0)
-		has_face[3] = 1;
-	if (levels[4] > 0)
-		has_face[4] = 1;
-	if (blockstate_getByType(w, x, y + 1, z, BlockState_WATER))
-		has_face[5] = 1;
+	const int blocks[6] = {
+		block_isOpaqueBlock(world_block(w, x, y - 1, z)),
+		block_isOpaqueBlock(world_block(w, x, y, z - 1)),
+		block_isOpaqueBlock(world_block(w, x + 1, y, z)),
+		block_isOpaqueBlock(world_block(w, x, y, z + 1)),
+		block_isOpaqueBlock(world_block(w, x - 1, y, z)),
+		block_isOpaqueBlock(world_block(w, x, y + 1, z)),
+	};
+	float heights[4];
+	if (level >= 7 || blockstate_getByType(w, x, y + 1, z, BlockState_WATER)) {
+		heights[0] = heights[1] = heights[2] = heights[3] = 1.0f;
+	} else {
+		// from x-z-, clockwise
+		heights[0] = POS_AVG4(level, levels[4], levels[5], levels[6]) / 7.0f;
+		heights[1] = POS_AVG4(level, levels[6], levels[7], levels[0]) / 7.0f;
+		heights[2] = POS_AVG4(level, levels[0], levels[1], levels[2]) / 7.0f;
+		heights[3] = POS_AVG4(level, levels[2], levels[3], levels[4]) / 7.0f;
+		if (blocks[4] && blocks[1])
+			heights[0] = level/1.0f/7;
+		if (!blocks[4] && blocks[1])
+			heights[0] = (level + levels[4])/2.0f/7;
+		if (blocks[4] && !blocks[1])
+			heights[0] = (level + levels[6])/2.0f/7;
+		if (blocks[1] && blocks[2])
+			heights[1] = level/1.0f/7;
+		if (!blocks[1] && blocks[2])
+			heights[1] = (level + levels[6])/2.0f/7;
+		if (blocks[1] && !blocks[2])
+			heights[1] = (level + levels[0])/2.0f/7;
+		if (blocks[2] && blocks[3])
+			heights[2] = level/1.0f/7;
+		if (!blocks[2] && blocks[3])
+			heights[2] = (level + levels[0])/2.0f/7;
+		if (blocks[2] && !blocks[3])
+			heights[2] = (level + levels[2])/2.0f/7;
+		if (blocks[3] && blocks[4])
+			heights[3] = level/1.0f/7;
+		if (!blocks[3] && blocks[4])
+			heights[3] = (level + levels[2])/2.0f/7;
+		if (blocks[3] && !blocks[4])
+			heights[3] = (level + levels[4])/2.0f/7;
+
+		if (levels[0] >= 7)
+			heights[1] = heights[2] = 1.0f;
+		if (levels[2] >= 7)
+			heights[2] = heights[3] = 1.0f;
+		if (levels[4] >= 7)
+			heights[3] = heights[0] = 1.0f;
+		if (levels[6] >= 7)
+			heights[0] = heights[1] = 1.0f;
+		if (levels[1] >= 7)
+			heights[2] = 1.0f;
+		if (levels[3] >= 7)
+			heights[3] = 1.0f;
+		if (levels[5] >= 7)
+			heights[0] = 1.0f;
+		if (levels[7] >= 7)
+			heights[1] = 1.0f;
+	}
+	BlockState *bs = blockstate_getByType(w, x, y - 1, z, BlockState_WATER);
+	const int no_face[6] = {
+		(bs && bs->water.level >= 7) || blocks[0],
+		levels[6] > 0 || blocks[1],
+		levels[0] > 0 || blocks[2],
+		levels[2] > 0 || blocks[3],
+		levels[4] > 0 || blocks[4],
+		blockstate_getByType(w, x, y + 1, z, BlockState_WATER) || blocks[5],
+	};
 	Vertex block_vertices[36];
-	int vertex_count = water_vertices(heights, block_vertices, has_face);
+	int vertex_count = water_vertices(heights, block_vertices, no_face);
+	if (vertex_count == 0) {
+		return;
+	}
 	unsigned int vao, vbo;
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
@@ -163,7 +216,7 @@ static void renderWater(int x, int y, int z, int level, const World *w) {
 	glUniformMatrix4fv(g.res->shaders.basic_location.model, 1, GL_FALSE, (float*)model);
 
 	glBindVertexArray(vao);
-	glDrawArrays(GL_TRIANGLES, 0, g.res->meshes.cubeVAO_count);
+	glDrawArrays(GL_TRIANGLES, 0, vertex_count);
 
 	glUniform1i(g.res->shaders.basic_location.use_uv_offset, 0);
 }

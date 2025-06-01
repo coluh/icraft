@@ -81,3 +81,11 @@ bool block_isPlant(BlockID id) {
 	};
 	return inArray(id, plants, ARRLEN(plants));
 }
+
+bool block_isCompleteSolid(BlockID id) {
+	BlockID blocks[] = {
+		BLOCK_Unknown,
+		BLOCK_GrassBlock, BLOCK_Dirt, BLOCK_Stone, BLOCK_CobbleStone,
+	};
+	return inArray(id, blocks, ARRLEN(blocks));
+}

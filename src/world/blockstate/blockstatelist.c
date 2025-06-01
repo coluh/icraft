@@ -147,7 +147,7 @@ void blockstatelist_update(BlockStateList *l, Chunk *c, World *w) {
 						has_higher = true;
 					}
 				}
-				if (!has_higher && state->water.level < 7) {
+				if (!has_higher && state->water.level != WATER_SOURCE) {
 					state->water.level--;
 				}
 				if (state->water.level <= 0) {
@@ -176,16 +176,13 @@ void blockstatelist_update(BlockStateList *l, Chunk *c, World *w) {
 		int y = c->y + n->y;
 		int z = c->z + n->z;
 		struct BlockStateWater self = n->state.water;
-		if (self.level <= 1) {
-			continue;
-		}
 		const int dirs[][2] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
 		// collect new water positions
 		BlockState *bs = blockstate_getByType(w, x, y - 1, z, BlockState_WATER);
-		if (bs == NULL && !block_isOpaqueBlock(world_block(w, x, y - 1, z))) {
+		if (bs == NULL && !block_isCompleteSolid(world_block(w, x, y - 1, z))) {
 			dynarray_push(da, (int[]){x, y - 1, z, 7});
-		} else if (block_isOpaqueBlock(world_block(w, x, y - 1, z))){
+		} else if (n->state.water.level > 1 && block_isCompleteSolid(world_block(w, x, y - 1, z))){
 			for (int d = 0; d < 4; d++) {
 				int nx = x + dirs[d][0];
 				int nz = z + dirs[d][1];
@@ -198,16 +195,17 @@ void blockstatelist_update(BlockStateList *l, Chunk *c, World *w) {
 		}
 
 		// update water levels
-		BlockState *ns = blockstate_getByType(w, x, y + 1, z, BlockState_WATER);
-		if (ns && ns > 0) {
+		BlockState *ups = blockstate_getByType(w, x, y + 1, z, BlockState_WATER);
+		if (ups) {
 			self.level = 7;
-		}
-		for (int d = 0; d < 4; d++) {
-			int nx = x + dirs[d][0];
-			int nz = z + dirs[d][1];
-			BlockState *ns = blockstate_getByType(w, nx, y, nz, BlockState_WATER);
-			if (ns && self.level < ns->water.level - 1) {
-				self.level = ns->water.level - 1;
+		} else {
+			for (int d = 0; d < 4; d++) {
+				int nx = x + dirs[d][0];
+				int nz = z + dirs[d][1];
+				BlockState *ns = blockstate_getByType(w, nx, y, nz, BlockState_WATER);
+				if (ns && self.level < ns->water.level - 1) {
+					self.level = ns->water.level - 1;
+				}
 			}
 		}
 	}

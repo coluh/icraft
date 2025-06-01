@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 
+#define WATER_SOURCE 8
+
 typedef enum BlockStateType {
 	BlockState_DESTROY,
 	BlockState_WATER,
@@ -28,7 +30,7 @@ typedef struct BlockState {
 			bool focus;
 		} destroy;
 		struct BlockStateWater {
-			int level; // 0 ~ 7
+			int level; // in 1 ~ 7, 8 means source
 			FluidDirection dir;
 		} water;
 	};
