@@ -27,6 +27,14 @@ typedef struct ResourceManager {
 			int use_uv_offset;
 			int uv_offset;
 		} ui_location;
+		int particle;
+		struct {
+			int particlePos;
+			int view;
+			int proj;
+			int size;
+			int uv_offset;
+		} particle_location;
 	} shaders;
 	struct TextureManager {
 		unsigned int blocks;
@@ -43,6 +51,8 @@ typedef struct ResourceManager {
 		unsigned int cubeVAO_count;
 		unsigned int frameVAO;
 		unsigned int frameVAO_count;
+		unsigned int particleVAO;
+		unsigned int particleVAO_count;
 	} meshes;
 } ResourceManager;
 

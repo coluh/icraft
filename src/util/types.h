@@ -10,6 +10,7 @@ typedef struct V3 {
 	float z;
 } V3;
 
+// uv
 typedef struct V2 {
 	float x;
 	float y;
@@ -28,15 +29,24 @@ typedef struct Body {
 	float w, h, d;
 } Body;
 
+// reference to pool entity
 typedef struct PoolHandle {
 	unsigned int index;
 	unsigned int generation;
 } PoolHandle;
 
+// standard vertex
 typedef struct Vertex {
 	V3 pos;
 	V3 norm;
 	V2 uv;
 } Vertex;
+
+// index to faces
+typedef enum FaceIndex {
+	// -z, z, -y, y, -x, x
+	Face_BACK, Face_FRONT, Face_BOTTOM, Face_TOP, Face_LEFT, Face_RIGHT,
+} FaceIndex;
+
 
 #endif

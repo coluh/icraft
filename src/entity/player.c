@@ -6,6 +6,7 @@
 #include "../world/world.h"
 #include "../physics/collision.h"
 #include "../game.h"
+#include "../effects/particle.h"
 #include "../util/props.h"
 #include "../util/log.h"
 
@@ -79,6 +80,21 @@ void player_update(Entity *self, World *w) {
 			}
 			state->destroy.time += g.update_delta;
 			state->destroy.focus = true;
+			float minx, miny, minz, maxx, maxy, maxz;
+			minx = floorf(p->facing_point.x);
+			maxx = ceilf(p->facing_point.x);
+			miny = floorf(p->facing_point.y);
+			maxy = ceilf(p->facing_point.y);
+			minz = floorf(p->facing_point.z);
+			maxz = ceilf(p->facing_point.z);
+			if (p->facing_block_face == Face_BACK || p->facing_block_face == Face_FRONT) {
+				minz = maxz = floorf(p->facing_point.z + 0.5f);
+			} else if (p->facing_block_face == Face_BOTTOM || p->facing_block_face == Face_TOP) {
+				miny = maxy = floorf(p->facing_point.y + 0.5f);
+			} else {
+				minx = maxx = floorf(p->facing_point.x + 0.5f);
+			}
+			particle_spawn(rand_float(minx, maxx), rand_float(miny, maxy), rand_float(minz, maxz), block_get(world_block(w, x, y, z))->textures[p->facing_block_face]);
 			if (state->destroy.time >= state->destroy.total) {
 				// destroyed
 				blockstate_removeByType(w, x, y, z, BlockState_DESTROY);
@@ -164,6 +180,7 @@ void player_update(Entity *self, World *w) {
 	vec3 eye = {self->position.x, self->position.y + PLAYER_EYE_OFFSET_Y, self->position.z};
 	float d = 0.0f;
 
+	// TODO: for irregular surface
 	vec3 fr = {1, 0, 0};
 	glm_quat_rotatev(self->rotation, fr, fr);
 	glm_vec3_normalize(fr);
@@ -178,8 +195,24 @@ void player_update(Entity *self, World *w) {
 		}
 	}
 	p->facing_block = (IV3){floorf(eye[0]), floorf(eye[1]), floorf(eye[2])};
+	vec3 ey;
+	glm_vec3_copy(eye, ey);
 	glm_vec3_sub(eye, uoff, eye);
 	p->putable_block = (IV3){floorf(eye[0]), floorf(eye[1]), floorf(eye[2])};
+	glm_vec3_lerp(eye, ey, 0.5, (float*)&p->facing_point); // TODO: be more precise
+	if (p->putable_block.z < p->facing_block.z) {
+		p->facing_block_face = Face_BACK;
+	} else if (p->putable_block.z > p->facing_block.z) {
+		p->facing_block_face = Face_FRONT;
+	} else if (p->putable_block.y < p->facing_block.y) {
+		p->facing_block_face = Face_BOTTOM;
+	} else if (p->putable_block.y > p->facing_block.y) {
+		p->facing_block_face = Face_TOP;
+	} else if (p->putable_block.x < p->facing_block.x) {
+		p->facing_block_face = Face_LEFT;
+	} else if (p->putable_block.x > p->facing_block.x) {
+		p->facing_block_face = Face_RIGHT;
+	}
 
 	common_move_slide_gravity(self, w);
 

@@ -36,6 +36,12 @@ void resource_init() {
 	res->shaders.ui_location.useTextureAlpha = glGetUniformLocation(res->shaders.ui, "useTextureAlpha");
 	res->shaders.ui_location.use_uv_offset = glGetUniformLocation(res->shaders.ui, "use_uv_offset");
 	res->shaders.ui_location.uv_offset = glGetUniformLocation(res->shaders.ui, "uv_offset");
+	res->shaders.particle = shader_get("assets/shaders/particle.vs", "assets/shaders/particle.fs");
+	res->shaders.particle_location.particlePos = glGetUniformLocation(res->shaders.particle, "particlePos");
+	res->shaders.particle_location.view = glGetUniformLocation(res->shaders.particle, "view");
+	res->shaders.particle_location.proj = glGetUniformLocation(res->shaders.particle, "proj");
+	res->shaders.particle_location.size = glGetUniformLocation(res->shaders.particle, "size");
+	res->shaders.particle_location.uv_offset = glGetUniformLocation(res->shaders.particle, "uv_offset");
 
 	// load texture
 	res->textures.blocks = texture_load("assets/textures/texture.png");
@@ -132,6 +138,35 @@ void resource_init() {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(frame_vertices), frame_vertices, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), NULL);
 	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	// particle quad mesh
+	float quad_vertices[][4] = {
+		{ -0.5f, -0.5f, 0.0f, 0.0f },
+		{ 0.5f, -0.5f, 1.0f, 0.0f },
+		{ -0.5f, 0.5f, 0.0f, 1.0f },
+		{ -0.5f, 0.5f, 0.0f, 1.0f },
+		{ 0.5f, -0.5f, 1.0f, 0.0f },
+		{ 0.5f, 0.5f, 1.0f, 1.0f },
+	};
+	glGenVertexArrays(1, &VAO);
+	res->meshes.particleVAO = VAO;
+	res->meshes.particleVAO_count = sizeof(quad_vertices) / sizeof(quad_vertices[0]);
+	for (int i = 0; i < res->meshes.particleVAO_count; i++) {
+		quad_vertices[i][2] /= BLOCK_TEXTURE_ROW_COUNT * 8;
+		quad_vertices[i][3] /= BLOCK_TEXTURE_ROW_COUNT * 8;
+	}
+	glGenBuffers(1, &VBO);
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), NULL);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2*sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);

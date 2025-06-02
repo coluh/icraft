@@ -20,6 +20,8 @@ typedef struct PlayerData {
 	} input;
 	versor body_rotation;
 	IV3 facing_block;
+	FaceIndex facing_block_face;
+	V3 facing_point;
 	IV3 putable_block; // before the facing_block
 
 	// TODO: Add Survival/Creative Gamemode!!

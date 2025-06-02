@@ -6,8 +6,9 @@
 #include "../game.h"
 #include "resource.h"
 #include "window.h"
-#include <SDL2/SDL.h>
 #include "../util/log.h"
+#include "../effects/particle.h"
+#include <SDL2/SDL.h>
 
 extern Game g;
 
@@ -32,6 +33,7 @@ void render(Camera *camera, const EntityList *entities, const World *world, floa
 	threed_renderChunks(world);
 	threed_renderFacing();
 	entity_render(entities, alpha);
+	particle_render(camera, alpha);
 
 	// 2D content
 	glUseProgram(g.res->shaders.ui);

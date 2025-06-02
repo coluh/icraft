@@ -1,4 +1,5 @@
 #include "game.h"
+#include "effects/particle.h"
 #include "util/log.h"
 #include "render/window.h"
 #include "render/font.h"
@@ -91,6 +92,7 @@ void game_loop() {
 			camera_updatePos(g.camera); // copy attached entity pos to camera pos
 			world_update(g.world, UNPACK_XYZ(entity_get(g.entities, g.player_ref)->position));
 			timer_update();
+			particle_update();
 
 			accumulator -= g.update_delta;
 		}
