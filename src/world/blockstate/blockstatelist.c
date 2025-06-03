@@ -211,6 +211,7 @@ void blockstatelist_update(BlockStateList *l, Chunk *c, World *w) {
 	}
 
 	// create new waters
+	// TODO: generate new water source near two water source
 	for (int i = 0; i < da->size; i++) {
 		int *xyzl = da->data + i*da->elem_size;
 		int x = xyzl[0];

@@ -20,6 +20,7 @@ void block_init() {
 	block_types[BLOCK_OakLog] = (BlockType) { "oak_log", { 13, 13, 12, 12, 13, 13 }, NULL, 3.0f, ITEM_OakLog };
 	block_types[BLOCK_OakPlank] = (BlockType) { "oak_planks", { 14, 14, 14, 14, 14, 14 }, NULL, 3.0f, ITEM_OakPlank };
 	block_types[BLOCK_OakLeave] = (BlockType) { "oak_leaves", { 15, 15, 15, 15, 15, 15 }, NULL, 0.0f, ITEM_OakLeave }; // TODO: no item
+	block_types[BLOCK_CraftingTable] = (BlockType) { "crafting_table", { 18, 17, 14, 16, 17, 17 }, NULL, 3.0f, ITEM_CraftingTable }; // TODO: no item
 
 	block_types[BLOCK_Unknown] = (BlockType) { "unknown", { 0, 0, 0, 0, 0, 0 }, NULL, 0.0f, ITEM_Unknown };
 	// now break item is hardcoded, change it later
@@ -59,6 +60,8 @@ BlockID block_ofItem(ItemID item) {
 		return BLOCK_OakPlank;
 	case ITEM_OakLeave:
 		return BLOCK_OakLeave;
+	case ITEM_CraftingTable:
+		return BLOCK_CraftingTable;
 	case ITEM_Unknown:
 		return BLOCK_Unknown;
 	default:
@@ -80,7 +83,7 @@ bool block_isOpaqueBlock(BlockID id) {
 	BlockID blocks[] = {
 		BLOCK_Unknown, // yes, and we even have a texture for it
 		BLOCK_GrassBlock, BLOCK_Dirt, BLOCK_Stone, BLOCK_CobbleStone,
-		BLOCK_OakLog, BLOCK_OakPlank,
+		BLOCK_OakLog, BLOCK_OakPlank, BLOCK_CraftingTable,
 	};
 	return inArray(id, blocks, ARRLEN(blocks));
 }
@@ -96,7 +99,7 @@ bool block_isCompleteSolid(BlockID id) {
 	BlockID blocks[] = {
 		BLOCK_Unknown,
 		BLOCK_GrassBlock, BLOCK_Dirt, BLOCK_Stone, BLOCK_CobbleStone,
-		BLOCK_OakLog, BLOCK_OakPlank,
+		BLOCK_OakLog, BLOCK_OakPlank, BLOCK_CraftingTable,
 	};
 	return inArray(id, blocks, ARRLEN(blocks));
 }

@@ -163,10 +163,13 @@ void player_update(Entity *self, World *w) {
 						int x = p->putable_block.x;
 						int y = p->putable_block.y;
 						int z = p->putable_block.z;
-						if (blockstate_getByType(w, x, y, z, BlockState_WATER) == NULL) {
+						BlockState *s = blockstate_getByType(w, x, y, z, BlockState_WATER);
+						if (s == NULL) {
 							// pour water
 							BlockState s = { .type = BlockState_WATER, .water = { .level = WATER_SOURCE } };
 							blockstate_add(&s, w, x, y, z);
+						} else {
+							s->water.level = WATER_SOURCE;
 						}
 					}
 					break;

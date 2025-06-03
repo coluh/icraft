@@ -16,6 +16,7 @@ typedef enum ItemID {
 	ITEM_OakLog,
 	ITEM_OakPlank,
 	ITEM_OakLeave,
+	ITEM_CraftingTable,
 } ItemID;
 
 typedef struct Item {

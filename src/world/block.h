@@ -18,6 +18,7 @@ typedef enum BlockID {
 	BLOCK_OakLog,
 	BLOCK_OakPlank,
 	BLOCK_OakLeave,
+	BLOCK_CraftingTable,
 	BLOCK_Unknown,
 } BlockID;
 

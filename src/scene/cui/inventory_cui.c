@@ -152,6 +152,40 @@ static void render(Scene *self) {
 	// player model
 }
 
+static void craft(Scene *scene) {
+	InventoryCUIState *s = scene->data;
+	// TODO: expand in out item count, placement requirements...
+	static ItemID table[][3][2] = {
+		{ { ITEM_OakLog, ITEM_Unknown }, { ITEM_Unknown, ITEM_Unknown }, { ITEM_OakPlank, 4} },
+		{ { ITEM_Unknown, ITEM_OakLog }, { ITEM_Unknown, ITEM_Unknown }, { ITEM_OakPlank, 4 } },
+		{ { ITEM_Unknown, ITEM_Unknown }, { ITEM_OakLog, ITEM_Unknown }, { ITEM_OakPlank, 4 } },
+		{ { ITEM_Unknown, ITEM_Unknown }, { ITEM_Unknown, ITEM_OakLog }, { ITEM_OakPlank, 4 } },
+		{ { ITEM_OakPlank, ITEM_OakPlank }, { ITEM_OakPlank, ITEM_OakPlank }, { ITEM_CraftingTable, 1 } },
+	};
+	for (int i = 0; i < ARRLEN(table); i++) {
+		bool crafted = true;
+		for (int j = 0; j < 2; j++) {
+			for (int k = 0; k < 2; k++) {
+				if (table[i][j][k] == ITEM_Unknown) {
+					if (s->craft[j][k].count == 0) {
+						continue;
+					}
+				} else {
+					if (s->craft[j][k].count > 0 && s->craft[j][k].item.id == table[i][j][k]) {
+						continue;
+					}
+				}
+				crafted = false;
+				break;
+			}
+		}
+		if (crafted) {
+			s->craft_out.item.id = table[i][2][0];
+			s->craft_out.count = table[i][2][1];
+		}
+	}
+}
+
 static void addto_splits(int id, int splits[]) {
 	int i = 0;
 	// WARNING: not extendable
@@ -169,20 +203,26 @@ static void leftdown(SDL_Event *ev, void *scene) {
 
 	InventoryCUIState *s = ((Scene*)scene)->data;
 	Slot *slot = idslot(id, s);
-	if (s->picking.count == 0) {
+	if (s->picking.count == 0) { // pick up
 		// pick up all
 		if (slot->count > 0) {
 			s->picking.item = slot->item;
 			s->picking.count = slot->count;
 			slot->count -= s->picking.count;
+			if (id == 9) {
+				s->craft[0][0].count = MAX(s->craft[0][0].count - 1, 0);
+				s->craft[0][1].count = MAX(s->craft[0][1].count - 1, 0);
+				s->craft[1][0].count = MAX(s->craft[1][0].count - 1, 0);
+				s->craft[1][1].count = MAX(s->craft[1][1].count - 1, 0);
+			}
 		}
-	} else {
+	} else { // place
 		// start splitting
 		s->splitting = true;
 		for (int i = 0; i < 64; i++) {
 			s->splits[i] = -1;
 		}
-		addto_splits(id, s->splits);
+		addto_splits(id, s->splits); // FIXME: except slot 9
 	}
 }
 
@@ -252,6 +292,7 @@ static void leftup(SDL_Event *ev, void *scene) {
 		// end splits
 		s->splitting = false;
 	}
+	craft(scene);
 }
 
 static void middledown(SDL_Event *ev, void *scene) {
@@ -325,6 +366,7 @@ static void rightup(SDL_Event *ev, void *scene) {
 		}
 		s->splitting = false;
 	}
+	craft(scene);
 }
 
 static void close(SDL_Event *ev, void *scene) {
