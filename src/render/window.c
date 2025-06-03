@@ -54,14 +54,10 @@ void window_focus(bool focus) {
 	if (focus) {
 		SDL_SetWindowGrab(g.window->window, true);
 		SDL_SetRelativeMouseMode(true);
+		SDL_WarpMouseInWindow(g.window->window, g.window->width/2, g.window->height/2);
 	} else {
 		SDL_SetWindowGrab(g.window->window, false);
 		SDL_SetRelativeMouseMode(false);
-		SDL_WarpMouseInWindow(g.window->window, g.window->width/2, g.window->height/2);
-		// Wayland don't allow any mouse warp so not work
-		// int x, y;
-		// SDL_GetMouseState(&x, &y);
-		// logd("Mouse in %d %d", x, y);
 	}
 }
 
