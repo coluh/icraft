@@ -126,12 +126,12 @@ static void renderWater(int x, int y, int z, int level, const World *w) {
 		}
 	}
 	const int blocks[6] = {
-		block_isOpaqueBlock(world_block(w, x, y - 1, z)),
-		block_isOpaqueBlock(world_block(w, x, y, z - 1)),
-		block_isOpaqueBlock(world_block(w, x + 1, y, z)),
-		block_isOpaqueBlock(world_block(w, x, y, z + 1)),
-		block_isOpaqueBlock(world_block(w, x - 1, y, z)),
-		block_isOpaqueBlock(world_block(w, x, y + 1, z)),
+		!BLOCK_ISTRANSPARENT(world_block(w, x, y - 1, z)),
+		!BLOCK_ISTRANSPARENT(world_block(w, x, y, z - 1)),
+		!BLOCK_ISTRANSPARENT(world_block(w, x + 1, y, z)),
+		!BLOCK_ISTRANSPARENT(world_block(w, x, y, z + 1)),
+		!BLOCK_ISTRANSPARENT(world_block(w, x - 1, y, z)),
+		!BLOCK_ISTRANSPARENT(world_block(w, x, y + 1, z)),
 	};
 	float heights[4];
 	if (level >= 7 || blockstate_getByType(w, x, y + 1, z, BlockState_WATER)) {

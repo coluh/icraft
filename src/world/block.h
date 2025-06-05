@@ -22,6 +22,16 @@ typedef enum BlockID {
 	BLOCK_Unknown,
 } BlockID;
 
+// used in: chunk water vertex generation face culling
+#define BLOCK_TRANSPARENT (1 << 0)
+#define BLOCK_ISTRANSPARENT(block) (block_get(block)->properties & BLOCK_TRANSPARENT)
+// used in: chunk vertex generation
+#define BLOCK_PLANT (1 << 1)
+#define BLOCK_ISPLANT(block) (block_get(block)->properties & BLOCK_PLANT)
+// used in: water placement and expand, plant destroy update(just now)
+#define BLOCK_WATERABLE (1 << 2)
+#define BLOCK_ISWATERABLE(block) (block_get(block)->properties & BLOCK_WATERABLE)
+
 typedef struct BlockType {
 
 	const char *name;
@@ -32,6 +42,8 @@ typedef struct BlockType {
 	const char *break_sound;
 	float break_time;
 	ItemID break_item;
+
+	unsigned int properties;
 } BlockType;
 
 void block_init();
@@ -45,13 +57,5 @@ BlockID block_idOf(const char *name);
 // itemID -> BlockID
 // used in: put block, drops render
 BlockID block_ofItem(ItemID item);
-
-// used in: chunk vertex generation, water render
-bool block_isOpaqueBlock(BlockID id);
-// used in: chunk vertex generation
-bool block_isPlant(BlockID id);
-// complete solid cannot contain water
-// used in: water expand
-bool block_isCompleteSolid(BlockID id);
 
 #endif

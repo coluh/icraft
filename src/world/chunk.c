@@ -123,24 +123,24 @@ void chunk_generateVertex(Chunk *chunk, Chunk *nearbys[6]) {
 			for (int z = 0; z < CHUNK_SIZE; z++) {
 				BlockID id = chunk->blocks[x][y][z];
 				if (id == BLOCK_Air) { continue; }
-				if (!block_isPlant(id)) {
+				if (!BLOCK_ISPLANT(id)) {
 					for (int f = 0; f < 6; f++) {
 						// Face Culling
-						if ((f == 0 && z > 0 && block_isOpaqueBlock(chunk->blocks[x][y][z-1])) ||
-								(f == 1 && z < CHUNK_SIZE-1 && block_isOpaqueBlock(chunk->blocks[x][y][z+1])) ||
-								(f == 2 && y > 0 && block_isOpaqueBlock(chunk->blocks[x][y-1][z])) ||
-								(f == 3 && y < CHUNK_SIZE-1 && block_isOpaqueBlock(chunk->blocks[x][y+1][z])) ||
-								(f == 4 && x > 0 && block_isOpaqueBlock(chunk->blocks[x-1][y][z])) ||
-								(f == 5 && x < CHUNK_SIZE-1 && block_isOpaqueBlock(chunk->blocks[x+1][y][z]))) {
+						if ((f == 0 && z > 0 && !BLOCK_ISTRANSPARENT(chunk->blocks[x][y][z-1])) ||
+								(f == 1 && z < CHUNK_SIZE-1 && !BLOCK_ISTRANSPARENT(chunk->blocks[x][y][z+1])) ||
+								(f == 2 && y > 0 && !BLOCK_ISTRANSPARENT(chunk->blocks[x][y-1][z])) ||
+								(f == 3 && y < CHUNK_SIZE-1 && !BLOCK_ISTRANSPARENT(chunk->blocks[x][y+1][z])) ||
+								(f == 4 && x > 0 && !BLOCK_ISTRANSPARENT(chunk->blocks[x-1][y][z])) ||
+								(f == 5 && x < CHUNK_SIZE-1 && !BLOCK_ISTRANSPARENT(chunk->blocks[x+1][y][z]))) {
 							continue;
 						}
 						if (nearbys[f]) {
-							if ((f == 0 && z == 0 && block_isOpaqueBlock(nearbys[f]->blocks[x][y][CHUNK_SIZE-1])) ||
-									(f == 1 && z == CHUNK_SIZE-1 && block_isOpaqueBlock(nearbys[f]->blocks[x][y][0])) ||
-									(f == 2 && y == 0 && block_isOpaqueBlock(nearbys[f]->blocks[x][CHUNK_SIZE-1][z])) ||
-									(f == 3 && y == CHUNK_SIZE-1 && block_isOpaqueBlock(nearbys[f]->blocks[x][0][z])) ||
-									(f == 4 && x == 0 && block_isOpaqueBlock(nearbys[f]->blocks[CHUNK_SIZE-1][y][z])) ||
-									(f == 5 && x == CHUNK_SIZE-1 && block_isOpaqueBlock(nearbys[f]->blocks[0][y][z]))) {
+							if ((f == 0 && z == 0 && !BLOCK_ISTRANSPARENT(nearbys[f]->blocks[x][y][CHUNK_SIZE-1])) ||
+									(f == 1 && z == CHUNK_SIZE-1 && !BLOCK_ISTRANSPARENT(nearbys[f]->blocks[x][y][0])) ||
+									(f == 2 && y == 0 && !BLOCK_ISTRANSPARENT(nearbys[f]->blocks[x][CHUNK_SIZE-1][z])) ||
+									(f == 3 && y == CHUNK_SIZE-1 && !BLOCK_ISTRANSPARENT(nearbys[f]->blocks[x][0][z])) ||
+									(f == 4 && x == 0 && !BLOCK_ISTRANSPARENT(nearbys[f]->blocks[CHUNK_SIZE-1][y][z])) ||
+									(f == 5 && x == CHUNK_SIZE-1 && !BLOCK_ISTRANSPARENT(nearbys[f]->blocks[0][y][z]))) {
 								continue;
 							}
 						}
@@ -149,7 +149,7 @@ void chunk_generateVertex(Chunk *chunk, Chunk *nearbys[6]) {
 						memcpy(vertices+vertex_idx, face, sizeof(face));
 						vertex_idx += 6;
 					}
-				} else if (block_isPlant(id)) {
+				} else {
 					struct vertex points[12];
 					generate_cross_face(points, x, y, z, block_get(id)->textures[0]);
 					memcpy(vertices + vertex_idx, points, sizeof(points));

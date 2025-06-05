@@ -126,7 +126,7 @@ void player_update(Entity *self, World *w) {
 						slot->count--;
 						world_modifyBlock(w, p->putable_block.x, p->putable_block.y, p->putable_block.z, block);
 						BlockState *s = blockstate_getByType(w, p->putable_block.x, p->putable_block.y, p->putable_block.z, BlockState_WATER);
-						if (s && block_isCompleteSolid(block)) {
+						if (s && !BLOCK_ISWATERABLE(block)) {
 							blockstate_removeByType(w, p->putable_block.x, p->putable_block.y, p->putable_block.z, BlockState_WATER);
 						}
 					}

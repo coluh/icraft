@@ -4,6 +4,7 @@ out
 .*
 */**/*.o
 build/
+gprof_reports/
 
 *~
 

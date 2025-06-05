@@ -2,7 +2,6 @@
 #include <stdbool.h>
 #include <string.h>
 #include "../util/log.h"
-#include "../util/props.h"
 
 #define BLOCK_TYPE_COUNT 256
 
@@ -10,17 +9,17 @@ static BlockType block_types[BLOCK_TYPE_COUNT];
 
 // load all blocks
 void block_init() {
-	block_types[BLOCK_Air] = (BlockType){ "air", { 0, 0, 0, 0, 0, 0 }, NULL, 0.0f };
+	block_types[BLOCK_Air] = (BlockType){ "air", { 0, 0, 0, 0, 0, 0 }, NULL, 0, 0, BLOCK_TRANSPARENT|BLOCK_WATERABLE };
 	block_types[BLOCK_GrassBlock] = (BlockType){ "grass_block", { 2, 2, 3, 1, 2, 2 }, NULL, 0.9f, ITEM_Dirt };
 	block_types[BLOCK_Dirt] = (BlockType){ "dirt", { 3, 3, 3, 3, 3, 3 }, NULL, 0.75f, ITEM_Dirt };
 	block_types[BLOCK_Stone] = (BlockType){ "stone", { 4, 4, 4, 4, 4, 4 }, NULL, 7.5f, ITEM_CobbleStone };
 	block_types[BLOCK_CobbleStone] = (BlockType) { "cobblestone", { 5, 5, 5, 5, 5, 5 }, NULL, 10.0f, ITEM_CobbleStone };
-	block_types[BLOCK_Poppy] = (BlockType) { "poppy", { 6, 0, 0, 0, 0, 0 }, NULL, 0.0f, ITEM_Poppy };
-	block_types[BLOCK_Dandelion] = (BlockType) { "dandelion", { 7, 0, 0, 0, 0, 0 }, NULL, 0.0f, ITEM_Dandelion };
+	block_types[BLOCK_Poppy] = (BlockType) { "poppy", { 6, 0, 0, 0, 0, 0 }, NULL, 0.0f, ITEM_Poppy, BLOCK_TRANSPARENT|BLOCK_PLANT|BLOCK_WATERABLE };
+	block_types[BLOCK_Dandelion] = (BlockType) { "dandelion", { 7, 0, 0, 0, 0, 0 }, NULL, 0.0f, ITEM_Dandelion, BLOCK_TRANSPARENT|BLOCK_PLANT|BLOCK_WATERABLE };
 	block_types[BLOCK_OakLog] = (BlockType) { "oak_log", { 13, 13, 12, 12, 13, 13 }, NULL, 3.0f, ITEM_OakLog };
 	block_types[BLOCK_OakPlank] = (BlockType) { "oak_planks", { 14, 14, 14, 14, 14, 14 }, NULL, 3.0f, ITEM_OakPlank };
-	block_types[BLOCK_OakLeave] = (BlockType) { "oak_leaves", { 15, 15, 15, 15, 15, 15 }, NULL, 0.0f, ITEM_OakLeave }; // TODO: no item
-	block_types[BLOCK_CraftingTable] = (BlockType) { "crafting_table", { 18, 17, 14, 16, 17, 17 }, NULL, 3.0f, ITEM_CraftingTable }; // TODO: no item
+	block_types[BLOCK_OakLeave] = (BlockType) { "oak_leaves", { 15, 15, 15, 15, 15, 15 }, NULL, 0.0f, ITEM_OakLeave, BLOCK_TRANSPARENT|BLOCK_WATERABLE }; // TODO: no item
+	block_types[BLOCK_CraftingTable] = (BlockType) { "crafting_table", { 18, 17, 14, 16, 17, 17 }, NULL, 3.0f, ITEM_CraftingTable };
 
 	block_types[BLOCK_Unknown] = (BlockType) { "unknown", { 0, 0, 0, 0, 0, 0 }, NULL, 0.0f, ITEM_Unknown };
 	// now break item is hardcoded, change it later
@@ -70,36 +69,3 @@ BlockID block_ofItem(ItemID item) {
 	return BLOCK_Unknown;
 }
 
-static bool inArray(BlockID id, const BlockID ids[], int len) {
-	for (int i = 0; i < len; i++) {
-		if (id == ids[i]) {
-			return true;
-		}
-	}
-	return false;
-}
-
-bool block_isOpaqueBlock(BlockID id) {
-	BlockID blocks[] = {
-		BLOCK_Unknown, // yes, and we even have a texture for it
-		BLOCK_GrassBlock, BLOCK_Dirt, BLOCK_Stone, BLOCK_CobbleStone,
-		BLOCK_OakLog, BLOCK_OakPlank, BLOCK_CraftingTable,
-	};
-	return inArray(id, blocks, ARRLEN(blocks));
-}
-
-bool block_isPlant(BlockID id) {
-	BlockID plants[] = {
-		BLOCK_Poppy, BLOCK_Dandelion,
-	};
-	return inArray(id, plants, ARRLEN(plants));
-}
-
-bool block_isCompleteSolid(BlockID id) {
-	BlockID blocks[] = {
-		BLOCK_Unknown,
-		BLOCK_GrassBlock, BLOCK_Dirt, BLOCK_Stone, BLOCK_CobbleStone,
-		BLOCK_OakLog, BLOCK_OakPlank, BLOCK_CraftingTable,
-	};
-	return inArray(id, blocks, ARRLEN(blocks));
-}

@@ -83,12 +83,12 @@ static void world_updateChunk(World *w, Chunk *c) {
 	for (int x = 0; x < CHUNK_SIZE; x++) {
 		for (int y = 0; y < CHUNK_SIZE; y++) {
 			for (int z = 0; z < CHUNK_SIZE; z++) {
-				if (block_isPlant(c->blocks[x][y][z])) {
+				if (BLOCK_ISPLANT(c->blocks[x][y][z])) {
 					// TODO: cross chunk update
-					if (y > 0 && !block_isOpaqueBlock(c->blocks[x][y-1][z])) {
+					if (y > 0 && BLOCK_ISWATERABLE(c->blocks[x][y-1][z])) {
 						// FIXME:
 						// block_destroy(w, c->x+x, c->y+y, c->z+z);
-						c->dirty = true;
+						// c->dirty = true;
 					}
 				}
 			}

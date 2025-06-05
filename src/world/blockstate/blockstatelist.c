@@ -180,15 +180,14 @@ void blockstatelist_update(BlockStateList *l, Chunk *c, World *w) {
 
 		// collect new water positions
 		BlockState *bs = blockstate_getByType(w, x, y - 1, z, BlockState_WATER);
-		if (bs == NULL && !block_isCompleteSolid(world_block(w, x, y - 1, z))) {
+		if (bs == NULL && BLOCK_ISWATERABLE(world_block(w, x, y - 1, z))) {
 			dynarray_push(da, (int[]){x, y - 1, z, 7});
-		} else if (n->state.water.level > 1 && block_isCompleteSolid(world_block(w, x, y - 1, z))){
+		} else if (n->state.water.level > 1 && !BLOCK_ISWATERABLE(world_block(w, x, y - 1, z))){
 			for (int d = 0; d < 4; d++) {
 				int nx = x + dirs[d][0];
 				int nz = z + dirs[d][1];
 				BlockState *ns = blockstate_getByType(w, nx, y, nz, BlockState_WATER);
-				// TODO: not opaque, but solid
-				if (ns == NULL && !block_isOpaqueBlock(world_block(w, nx, y, nz))) {
+				if (ns == NULL && BLOCK_ISWATERABLE(world_block(w, nx, y, nz))) {
 					dynarray_push(da, (int[]){nx, y, nz, self.level - 1});
 				}
 			}
