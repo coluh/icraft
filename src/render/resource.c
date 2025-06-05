@@ -218,7 +218,7 @@ void resource_init() {
 	glViewport(0, 0, BLOCK_ICON_SIZE, BLOCK_ICON_SIZE);
 	glBindVertexArray(res->meshes.cubeVAO);
 	for (int i = 0; i < ITEM_BLOCK_MAX; i++) {
-		if (!item_isCube((ItemID)i)) {
+		if (!item_is3d((ItemID)i)) {
 			continue;
 		}
 

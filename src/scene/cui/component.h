@@ -34,8 +34,8 @@ static inline void draw_slot(int x, int y, int w, int h, int shadow) {
 static inline void draw_item(const Slot *slot, int x, int y, int a, int zoom_level) {
 	if (slot->count > 0) {
 		const int t = zoom_level;
-		if (item_isCube(slot->item.id)) {
-			twod_drawTexture(x, y, a, a, item_cubeIconTexture(slot->item.id));
+		if (item_is3d(slot->item.id)) {
+			twod_drawTexture(x, y, a, a, item_3dIconTexture(slot->item.id));
 		} else {
 			twod_drawIndexedTexture(x + t, y + t, a - 2*t, a - 2*t, item_textureIndex(slot->item.id));
 		}

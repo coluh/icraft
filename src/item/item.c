@@ -6,6 +6,46 @@
 
 extern Game g;
 
+const char *item_name(Item *item) {
+	if (item->name) {
+		return item->name;
+	}
+
+	switch (item->id) {
+	case ITEM_Unknown:
+		return "unknown";
+	case ITEM_Dirt:
+		return "dirt";
+	case ITEM_CobbleStone:
+		return "cobblestone";
+	case ITEM_GrassBlock:
+		return "grass_block";
+	case ITEM_Stone:
+		return "stone";
+	case ITEM_Poppy:
+		return "poppy";
+	case ITEM_Dandelion:
+		return "dandelion";
+	case ITEM_Bucket:
+		return "bucket";
+	case ITEM_WaterBucket:
+		return "water_bucket";
+	case ITEM_OakLog:
+		return "oak_log";
+	case ITEM_OakPlank:
+		return "oak_plank";
+	case ITEM_OakLeave:
+		return "oak_leave";
+	case ITEM_CraftingTable:
+		return "crafting_table";
+	default:
+		return "anonymous";
+	}
+
+	loge("impossible");
+	return NULL;
+}
+
 static bool inArray(ItemID id, const ItemID ids[], int len) {
 	for (int i = 0; i < len; i++) {
 		if (id == ids[i]) {
@@ -15,7 +55,7 @@ static bool inArray(ItemID id, const ItemID ids[], int len) {
 	return false;
 }
 
-bool item_isCube(ItemID id) {
+bool item_is3d(ItemID id) {
 	static const ItemID cubes[] = {
 		ITEM_Unknown,
 		ITEM_Dirt, ITEM_CobbleStone, ITEM_GrassBlock, ITEM_Stone,
@@ -24,11 +64,11 @@ bool item_isCube(ItemID id) {
 	return inArray(id, cubes, ARRLEN(cubes));
 }
 
-unsigned int item_cubeIconTexture(ItemID id) {
-	if (item_isCube(id)) {
+unsigned int item_3dIconTexture(ItemID id) {
+	if (item_is3d(id)) {
 		return g.res->textures.cube_icons[id].texture;
 	}
-	logw("No corresponding cube texture for itemid: %d", id);
+	logw("No corresponding 3d texture for itemid: %d", id);
 	return g.res->textures.cube_icons[ITEM_Unknown].texture;
 }
 

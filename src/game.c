@@ -12,7 +12,7 @@
 #include "scene/scenemanager.h"
 #include "world/world.h"
 #include "camera/camera.h"
-#include "entity/player.h"
+#include "entity/player_operation.h"
 #include "timer/timer.h"
 
 #include <SDL2/SDL.h>
@@ -34,8 +34,8 @@ void game_init() {
 	g.camera = newCamera((float[]){0, 0, 0}, (float)g.window->width/g.window->height, CameraType_FPS);
 	g.player_ref = entity_create(Entity_PLAYER, (V3){-10, 24, -5}, g.entities);
 
-	player_pickup(entity_get(g.entities, g.player_ref), (Item){ITEM_Bucket});
-	player_pickup(entity_get(g.entities, g.player_ref), (Item){ITEM_WaterBucket});
+	player_pickup(entity_get(g.entities, g.player_ref), &(Item){ITEM_Bucket});
+	player_pickup(entity_get(g.entities, g.player_ref), &(Item){ITEM_WaterBucket});
 }
 
 void game_loop() {

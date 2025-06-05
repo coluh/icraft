@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 typedef enum ItemID {
-	ITEM_Unknown,
+	ITEM_Unknown, // TODO: ITEM_Empty
 	ITEM_Dirt,
 	ITEM_CobbleStone,
 	ITEM_GrassBlock,
@@ -31,15 +31,17 @@ typedef struct Slot {
 	int count;
 } Slot;
 
+const char *item_name(Item *item);
+
 // item is cube, can be put, show 3d texture in inventory
-// used in: entity render, UI render
-bool item_isCube(ItemID id);
+// used in: inventory item render, drops entity render
+bool item_is3d(ItemID id);
 
 // return an opengl texture
 // used in: inventory, container ui
-unsigned int item_cubeIconTexture(ItemID id);
+unsigned int item_3dIconTexture(ItemID id);
 
-// return index in the g.res->textures.blocks texture
+// return index in the g.res->textures.blocks texture atlas
 // keep the same with block_types.textures
 // used in: inventory, container ui
 int item_textureIndex(ItemID id);
@@ -47,9 +49,5 @@ int item_textureIndex(ItemID id);
 // just put the corresponding block
 // used in: blockput
 bool item_putable(ItemID id);
-
-// should use BlockState
-// used in: blockput
-bool item_fluid(ItemID id);
 
 #endif

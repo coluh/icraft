@@ -5,6 +5,7 @@
 #include "bodies.h"
 #include "drops.h"
 #include "player.h"
+#include "player_operation.h"
 #include "../timer/timer.h"
 
 #define ENTITY_LIST_INIT_CAP 32
@@ -147,7 +148,7 @@ void entity_update(EntityList *l, World *w) {
 				}
 				// player get the drops immediately, while there is an animation of drops flying to player
 				a->only_render = true;
-				player_pickup(b, a->drops.item);
+				player_pickup(b, &a->drops.item);
 				timer_schedule_repeat(g.update_delta, moveEntityCallback, &(struct EntityMove){
 						a, {b->position.x, b->position.y+PLAYER_EYE_OFFSET_Y, b->position.z}
 				}, sizeof(struct EntityMove));

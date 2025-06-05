@@ -46,6 +46,4 @@ void player_rotateHead(Entity *self, vec3 axis, float rad);
 // callbacks
 void player_rotate(void *p, SDL_Event *ev);
 
-void player_pickup(Entity *self, Item item);
-
 #endif

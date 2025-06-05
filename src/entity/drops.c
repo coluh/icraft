@@ -46,7 +46,7 @@ void drops_update(Entity *self, World *w) {
 	topre(drops);
 
 	drops->render_position[0] = self->position.x;
-	const float scale = item_isCube(drops->item.id) ? DROPS_SCALE_BLOCK : DROPS_SCALE_NONBLOCK;
+	const float scale = item_is3d(drops->item.id) ? DROPS_SCALE_BLOCK : DROPS_SCALE_NONBLOCK;
 	drops->render_position[1] = self->position.y + (sinf(drops->float_timer) + 1.0f) * DROPS_FLOAT_RANGE + scale/2;
 	drops->render_position[2] = self->position.z;
 	vec3 up = {0, 1, 0};
@@ -77,7 +77,7 @@ void drops_render(Entity *entity, float alpha) {
 	mat4 rot;
 	glm_quat_mat4(rotation, rot);
 	glm_mat4_mul(model, rot, model);
-	if (item_isCube(drops->item.id)) {
+	if (item_is3d(drops->item.id)) {
 		glm_scale_uni(model, DROPS_SCALE_BLOCK);
 	} else {
 		glm_scale(model, (vec3){DROPS_SCALE_NONBLOCK, DROPS_SCALE_NONBLOCK, 1.0f/16});
@@ -93,7 +93,7 @@ void drops_render(Entity *entity, float alpha) {
 	glBindVertexArray(g.res->meshes.cubeVAO);
 	glUniform1i(g.res->shaders.basic_location.use_uv_offset, 1);
 
-	if (item_isCube(drops->item.id)) {
+	if (item_is3d(drops->item.id)) {
 		const int *textures = block_get(block_ofItem(drops->item.id))->textures;
 		float uv[2];
 		for (int f = 0; f < 6; f++) {

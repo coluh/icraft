@@ -6,15 +6,11 @@
 #include "../../game.h"
 #include "../../entity/entity.h"
 #include "../../entity/player.h"
-#include "../../entity/bodies.h"
+#include "../../entity/player_operation.h"
 #include "../../render/window.h"
 #include "../../render/render_2d.h"
 #include "../../render/font.h"
 #include "../../util/props.h"
-#include "../../../third_party/cglm/include/cglm/quat.h"
-#include "../../../third_party/cglm/include/cglm/vec3.h"
-
-#define PLAYER_DROP_SPEED 5.0f
 
 extern Game g;
 
@@ -37,8 +33,8 @@ static void render(Scene *self) {
 		x = (g.window->width - w) / 2 + i * a;
 		const Slot *slot = &player->inventory.hotbar[i];
 		if (slot->count > 0) {
-			if (item_isCube(slot->item.id)) {
-				twod_drawTexture(x+t, y+t, a-2*t, a-2*t, item_cubeIconTexture(slot->item.id));
+			if (item_is3d(slot->item.id)) {
+				twod_drawTexture(x+t, y+t, a-2*t, a-2*t, item_3dIconTexture(slot->item.id));
 			} else {
 				twod_drawIndexedTexture(x+t, y+t, a-2*t, a-2*t, item_textureIndex(slot->item.id));
 			}
@@ -128,24 +124,7 @@ static void put(SDL_Event *ev, void *scene) {
 }
 
 static void drop(SDL_Event *ev, void *scene) {
-	Entity *player = entity_get(g.entities, g.player_ref);
-	Slot *slot = &player->player.inventory.hotbar[player->player.holding];
-	if (slot->count == 0) {
-		return;
-	}
-
-	Entity *drops = entity_get(g.entities, entity_create(Entity_DROPS, (V3){
-				player->position.x, player->position.y + PLAYER_EYE_OFFSET_Y, player->position.z}, g.entities));
-	drops->drops.item = slot->item;
-	slot->count--;
-	vec3 fr = {1, 0, 0};
-	glm_quat_rotatev(player->rotation, fr, fr);
-	glm_vec3_normalize(fr);
-	glm_vec3_scale(fr, PLAYER_DROP_SPEED, fr);
-	drops->velocity.x = fr[0];
-	drops->velocity.y = fr[1];
-	drops->velocity.z = fr[2];
-	drops->drops.pickup_timer = 2.0f; // override
+	player_drop(entity_get(g.entities, g.player_ref));
 }
 
 static void switch_holding(SDL_Event *ev, void *scene) {

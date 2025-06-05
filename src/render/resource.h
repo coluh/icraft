@@ -42,7 +42,7 @@ typedef struct ResourceManager {
 			// unsigned int fbo, rbo;
 			// mat4 proj, view;
 			unsigned int texture;
-		} cube_icons[ITEM_BLOCK_MAX];
+		} cube_icons[ITEM_BLOCK_MAX]; // 3d icons, not just cube
 	} textures;
 	struct MeshManager {
 		unsigned int rectangleVAO;
