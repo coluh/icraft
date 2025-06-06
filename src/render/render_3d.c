@@ -60,47 +60,47 @@ static int water_vertices(const float heights[4], Vertex vertices[], const int n
 
 	if (!no_face[1]) {
 		vertices[idx++] = (Vertex){ .pos = block[0], .norm = norms[1], .uv = uvs[0]};
-		vertices[idx++] = (Vertex){ .pos = block[1], .norm = norms[1], .uv = uvs[1]};
+		vertices[idx++] = (Vertex){ .pos = block[4], .norm = norms[1], .uv = uvs[1]};
 		vertices[idx++] = (Vertex){ .pos = block[5], .norm = norms[1], .uv = uvs[2]};
 		vertices[idx++] = (Vertex){ .pos = block[0], .norm = norms[1], .uv = uvs[0]};
 		vertices[idx++] = (Vertex){ .pos = block[5], .norm = norms[1], .uv = uvs[2]};
-		vertices[idx++] = (Vertex){ .pos = block[4], .norm = norms[1], .uv = uvs[3]};
+		vertices[idx++] = (Vertex){ .pos = block[1], .norm = norms[1], .uv = uvs[3]};
 	}
 
 	if (!no_face[2]) {
 		vertices[idx++] = (Vertex){ .pos = block[1], .norm = norms[2], .uv = uvs[0]};
-		vertices[idx++] = (Vertex){ .pos = block[2], .norm = norms[2], .uv = uvs[1]};
+		vertices[idx++] = (Vertex){ .pos = block[5], .norm = norms[2], .uv = uvs[1]};
 		vertices[idx++] = (Vertex){ .pos = block[6], .norm = norms[2], .uv = uvs[2]};
 		vertices[idx++] = (Vertex){ .pos = block[1], .norm = norms[2], .uv = uvs[0]};
 		vertices[idx++] = (Vertex){ .pos = block[6], .norm = norms[2], .uv = uvs[2]};
-		vertices[idx++] = (Vertex){ .pos = block[5], .norm = norms[2], .uv = uvs[3]};
+		vertices[idx++] = (Vertex){ .pos = block[2], .norm = norms[2], .uv = uvs[3]};
 	}
 
 	if (!no_face[3]) {
 		vertices[idx++] = (Vertex){ .pos = block[2], .norm = norms[3], .uv = uvs[0]};
-		vertices[idx++] = (Vertex){ .pos = block[3], .norm = norms[3], .uv = uvs[1]};
+		vertices[idx++] = (Vertex){ .pos = block[6], .norm = norms[3], .uv = uvs[1]};
 		vertices[idx++] = (Vertex){ .pos = block[7], .norm = norms[3], .uv = uvs[2]};
 		vertices[idx++] = (Vertex){ .pos = block[2], .norm = norms[3], .uv = uvs[0]};
 		vertices[idx++] = (Vertex){ .pos = block[7], .norm = norms[3], .uv = uvs[2]};
-		vertices[idx++] = (Vertex){ .pos = block[6], .norm = norms[3], .uv = uvs[3]};
+		vertices[idx++] = (Vertex){ .pos = block[3], .norm = norms[3], .uv = uvs[3]};
 	}
 
 	if (!no_face[4]) {
 		vertices[idx++] = (Vertex){ .pos = block[3], .norm = norms[4], .uv = uvs[0]};
-		vertices[idx++] = (Vertex){ .pos = block[0], .norm = norms[4], .uv = uvs[1]};
+		vertices[idx++] = (Vertex){ .pos = block[7], .norm = norms[4], .uv = uvs[1]};
 		vertices[idx++] = (Vertex){ .pos = block[4], .norm = norms[4], .uv = uvs[2]};
 		vertices[idx++] = (Vertex){ .pos = block[3], .norm = norms[4], .uv = uvs[0]};
 		vertices[idx++] = (Vertex){ .pos = block[4], .norm = norms[4], .uv = uvs[2]};
-		vertices[idx++] = (Vertex){ .pos = block[7], .norm = norms[4], .uv = uvs[3]};
+		vertices[idx++] = (Vertex){ .pos = block[0], .norm = norms[4], .uv = uvs[3]};
 	}
 
 	if (!no_face[5]) {
 		vertices[idx++] = (Vertex){ .pos = block[4], .norm = norms[5], .uv = uvs[0]};
-		vertices[idx++] = (Vertex){ .pos = block[5], .norm = norms[5], .uv = uvs[1]};
+		vertices[idx++] = (Vertex){ .pos = block[7], .norm = norms[5], .uv = uvs[1]};
 		vertices[idx++] = (Vertex){ .pos = block[6], .norm = norms[5], .uv = uvs[2]};
 		vertices[idx++] = (Vertex){ .pos = block[4], .norm = norms[5], .uv = uvs[0]};
 		vertices[idx++] = (Vertex){ .pos = block[6], .norm = norms[5], .uv = uvs[2]};
-		vertices[idx++] = (Vertex){ .pos = block[7], .norm = norms[5], .uv = uvs[3]};
+		vertices[idx++] = (Vertex){ .pos = block[5], .norm = norms[5], .uv = uvs[3]};
 	}
 
 	return idx;
@@ -242,7 +242,14 @@ static void renderWorldWater(const World *w) {
 static void threed_renderChunk(const Chunk *chunk) {
 	glUniformMatrix4fv(g.res->shaders.basic_location.model, 1, GL_FALSE, (float*)chunk->model);
 	glBindVertexArray(chunk->VAO);
-	glDrawArrays(GL_TRIANGLES, 0, chunk->vertex_count);
+
+	glEnable(GL_CULL_FACE);
+	glDrawArrays(GL_TRIANGLES, 0, chunk->opaque_vertex_count);
+	glDisable(GL_CULL_FACE);
+
+	glDepthMask(GL_FALSE);
+	glDrawArrays(GL_TRIANGLES, chunk->opaque_vertex_count, chunk->vertex_count - chunk->opaque_vertex_count);
+	glDepthMask(GL_TRUE);
 
 	const BlockStateList *list = &chunk->block_states;
 	for (int i = 0; i < list->length; i++) {

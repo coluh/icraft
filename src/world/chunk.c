@@ -158,6 +158,22 @@ void chunk_generateVertex(Chunk *chunk, Chunk *nearbys[6]) {
 			}
 		}
 	}
+	chunk->opaque_vertex_count = vertex_idx;
+	for (int x = 0; x < CHUNK_SIZE; x++) {
+		for (int y = 0; y < CHUNK_SIZE; y++) {
+			for (int z = 0; z < CHUNK_SIZE; z++) {
+				BlockID id = chunk->blocks[x][y][z];
+				if (id == BLOCK_Air) { continue; }
+				if (BLOCK_ISPLANT(id)) {
+					struct vertex points[12];
+					generate_cross_face(points, x, y, z, block_get(id)->textures[0]);
+					memcpy(vertices + vertex_idx, points, sizeof(points));
+					vertex_idx += 12;
+				}
+			}
+		}
+	}
+	chunk->vertex_count = vertex_idx;
 
 	if (chunk->VAO == 0) {
 		glGenVertexArrays(1, &chunk->VAO);
@@ -173,6 +189,5 @@ void chunk_generateVertex(Chunk *chunk, Chunk *nearbys[6]) {
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, chunk->VBO);
-	glBufferData(GL_ARRAY_BUFFER, vertex_idx*sizeof(struct vertex), vertices, GL_STATIC_DRAW);
-	chunk->vertex_count = vertex_idx;
+	glBufferData(GL_ARRAY_BUFFER, chunk->vertex_count*sizeof(struct vertex), vertices, GL_STATIC_DRAW);
 }
