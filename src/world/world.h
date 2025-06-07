@@ -11,8 +11,14 @@ typedef struct ChunkNode {
 } ChunkNode;
 
 typedef struct World {
+	// TODO: use more effective data structure to store this
 	// chunk list
 	ChunkNode *chunks;
+
+	struct {
+		Chunk **chunks;
+		int size;
+	} render_list;
 
 	float g;
 } World;

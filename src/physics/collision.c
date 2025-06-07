@@ -75,38 +75,3 @@ CollisionType collision_test(const Body *stati, const Body *moving, V3 velocity,
 	return Collision_NONE;
 }
 
-/*
-bool world_collide(World *world, const Body *body, float *collide_boundary, int *collide_direction) {
-	float x = body->x;
-	float y = body->y;
-	float z = body->z;
-	float w = body->w;
-	float h = body->h;
-	float d = body->d;
-	if (w == 0 && h == 0 && d == 0) {
-		return false;
-	}
-	for (int i = floorf(x); i < ceilf(x + w); i++) {
-		for (int j = floorf(y); j < ceilf(y + h); j++) {
-			for (int k = floorf(z); k < ceilf(z + d); k++) {
-				BlockID block = world_block(world, i, j, k);
-				if (block == BLOCK_Air) {
-					continue;
-				}
-				if (((x + w > i) && (x < i + 1.0f)) &&
-					((y + h > j) && (y < j + 1.0f)) &&
-					((z + d > k) && (z < k + 1.0f))) {
-					collide_boundary[0] = x < i ? i : i + 1.0f;
-					collide_boundary[1] = y < j ? j : j + 1.0f;
-					collide_boundary[2] = z < k ? k : k + 1.0f;
-					collide_direction[0] = x < i ? 1 : -1;
-					collide_direction[1] = y < j ? 1 : -1;
-					collide_direction[2] = z < k ? 1 : -1;
-					return true;
-				}
-			}
-		}
-	}
-	return false;
-}
-*/

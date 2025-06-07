@@ -44,6 +44,8 @@ void game_loop() {
 	// input_setCallbacks(g.player, DEFAULT_PLAYER_KEYMAPS, 7);
 
 	sceneManager_push("Main HUD");
+	// build render chunks list
+	world_update(g.world, UNPACK_XYZ(entity_get(g.entities, g.player_ref)->position));
 
 	g.running = true;
 	SDL_Event event;

@@ -126,7 +126,7 @@ void common_move_slide(Entity *self, World *world) {
 
 		if (nearest_collide_time < 0) { // instant collision
 			if (nearest_collided == Collision_X) {
-				self->position.x += self->velocity.x*nearest_collide_time;
+				self->position.x += self->velocity.x*nearest_collide_time; // TODO: when do this happen?
 			} else if (nearest_collided == Collision_Y) {
 				self->position.y += self->velocity.y*nearest_collide_time;
 			} else if (nearest_collided == Collision_Z) {

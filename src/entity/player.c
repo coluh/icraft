@@ -4,18 +4,14 @@
 #include "entity.h"
 #include <math.h>
 #include "../world/world.h"
-#include "../physics/collision.h"
 #include "../game.h"
-#include "../effects/particle.h"
-#include "../util/props.h"
-#include "../util/log.h"
 
 #include "../../third_party/cglm/include/cglm/vec3.h"
 #include "../../third_party/cglm/include/cglm/quat.h"
 #include "player_operation.h"
 
 #define PLAYER_ROTATE_SENSI	0.003f
-#define PLAYER_MOVE_SPEED	4.3f
+#define PLAYER_MOVE_SPEED	40.3f
 #define PLAYER_JUMP_SPEED	10.0f
 
 extern Game g;

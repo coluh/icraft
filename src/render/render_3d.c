@@ -223,16 +223,17 @@ static void renderWater(int x, int y, int z, int level, const World *w) {
 }
 
 static void renderWorldWater(const World *w) {
-	for (const ChunkNode *p = w->chunks; p != NULL; p = p->next) {
-		const BlockStateList *list = &p->chunk->block_states;
+	for (int i = 0; i < w->render_list.size; i++) {
+		Chunk *c = w->render_list.chunks[i];
+		const BlockStateList *list = &c->block_states;
 		for (int i = 0; i < list->length; i++) {
 			const BlockStateNode *n = &list->data[i];
 			if (n->state.type != BlockState_WATER) {
 				continue;
 			}
-			int x = p->chunk->x + n->x;
-			int y = p->chunk->y + n->y;
-			int z = p->chunk->z + n->z;
+			int x = c->x + n->x;
+			int y = c->y + n->y;
+			int z = c->z + n->z;
 			renderWater(x, y, z, n->state.water.level, w);
 		}
 	}
@@ -272,8 +273,8 @@ void threed_renderChunks(const World *world) {
 	glActiveTexture(GL_TEXTURE0);  // no need, because tex0 is activated by default
 	glBindTexture(GL_TEXTURE_2D, g.res->textures.blocks);
 
-	for (const ChunkNode *p = world->chunks; p != NULL; p = p->next) {
-		threed_renderChunk(p->chunk);
+	for (int i = 0; i < world->render_list.size; i++) {
+		threed_renderChunk(world->render_list.chunks[i]);
 	}
 
 	renderWorldWater(world);

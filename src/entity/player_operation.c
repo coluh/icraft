@@ -77,7 +77,7 @@ void player_place(Entity *self, World *w) {
 		return; // TODO: right click operations
 	}
 
-	Item *item = &slot->item;
+	// Item *item = &slot->item;
 	ItemID id = slot->item.id;
 	bool has_place = world_block(w, p->facing_block.x, p->facing_block.y, p->facing_block.z) != BLOCK_Air &&
 				world_block(w, p->putable_block.x, p->putable_block.y, p->putable_block.z) == BLOCK_Air;
@@ -141,7 +141,7 @@ void player_place(Entity *self, World *w) {
 		}
 		break;
 	default:
-		logi("bro try to use %s", item_name(item));
+		// logi("bro try to use %s", item_name(item));
 		break;
 	}
 }

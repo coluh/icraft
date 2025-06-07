@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include "block.h"
 #include "blockstate/blockstatelist.h"
+#include "../entity/entity.h"
 #include "chunk.h"
 #include "../util/mem.h"
 #include "../util/props.h"
@@ -13,6 +14,8 @@ extern Game g;
 
 World *newWorld() {
 	World *w = zalloc(1, sizeof(World));
+	w->render_list.size = 27+9*6;
+	w->render_list.chunks = zalloc(w->render_list.size, sizeof(Chunk*));
 	w->g = -32.0f;
 	return w;
 }
@@ -86,9 +89,13 @@ static void world_updateChunk(World *w, Chunk *c) {
 				if (BLOCK_ISPLANT(c->blocks[x][y][z])) {
 					// TODO: cross chunk update
 					if (y > 0 && BLOCK_ISWATERABLE(c->blocks[x][y-1][z])) {
-						// FIXME:
-						// block_destroy(w, c->x+x, c->y+y, c->z+z);
-						// c->dirty = true;
+						BlockID origin = world_modifyBlock(w, c->x+x, c->y+y, c->z+z, BLOCK_Air);
+						Entity *drops = entity_get(g.entities, entity_create(Entity_DROPS, (V3){c->x+x+0.5f, c->y+y+0.5f, c->z+z+0.5f}, g.entities));
+						drops->drops.item.id = block_get(origin)->break_item;
+						drops->velocity.x = rand_float(-2.0f, 2.0f);
+						drops->velocity.y = rand_float(2.0f, 5.0f);
+						drops->velocity.z = rand_float(-2.0f, 2.0f);
+						c->dirty = true;
 					}
 				}
 			}
@@ -122,27 +129,46 @@ void world_updateChunks(World *w, int x, int y, int z) {
 	// [][][][][]
 	//   [][][]
 
+	int i_render_chunks = 0;
 	for (int i = -1; i <= 1; i++) {
 		for (int j = -2; j <= 2; j += 4) {
 			for (int k = -1; k <= 1; k++) {
 				int cx = x + i * CHUNK_SIZE;
 				int cy = y + j * CHUNK_SIZE;
 				int cz = z + k * CHUNK_SIZE;
-				if (!findChunk(w, cx, cy, cz)) {
-					loadChunk(w, cx, cy, cz);
+				Chunk *c = findChunk(w, cx, cy, cz);
+				if (!c) {
+					c = loadChunk(w, cx, cy, cz);
 				}
+				w->render_list.chunks[i_render_chunks++] = c;
 			}
 		}
 	}
 	for (int i = -2; i <= 2; i++) {
 		for (int j = -1; j <= 1; j++) {
-			for (int k = -2; k <= 2; k++) {
+			for (int k = -1; k <= 1; k++) {
 				int cx = x + i * CHUNK_SIZE;
 				int cy = y + j * CHUNK_SIZE;
 				int cz = z + k * CHUNK_SIZE;
-				if (!findChunk(w, cx, cy, cz)) {
-					loadChunk(w, cx, cy, cz);
+				Chunk *c = findChunk(w, cx, cy, cz);
+				if (!c) {
+					c = loadChunk(w, cx, cy, cz);
 				}
+				w->render_list.chunks[i_render_chunks++] = c;
+			}
+		}
+	}
+	for (int i = -1; i <= 1; i++) {
+		for (int j = -1; j <= 1; j++) {
+			for (int k = -2; k <= 2; k += 4) {
+				int cx = x + i * CHUNK_SIZE;
+				int cy = y + j * CHUNK_SIZE;
+				int cz = z + k * CHUNK_SIZE;
+				Chunk *c = findChunk(w, cx, cy, cz);
+				if (!c) {
+					c = loadChunk(w, cx, cy, cz);
+				}
+				w->render_list.chunks[i_render_chunks++] = c;
 			}
 		}
 	}
