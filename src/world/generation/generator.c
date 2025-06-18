@@ -19,7 +19,7 @@ void generator_fill(Generator *gen, Chunk *c) {
 		for (int dz = 0; dz < CHUNK_SIZE; dz++) {
 			int x = c->x + dx;
 			int z = c->z + dz;
-			int top = 200 + 200*stb_perlin_noise3(x/1000.0f, 0, z/1000.0f, 0, 0, 0);
+			int top = 200 + 200*stb_perlin_noise3(x/400.0f, 0, z/400.0f, 0, 0, 0);
 			// int top = stb_perlin_noise3_seed(x, 0, z, 0, 0, 0, gen->seed);
 			for (int dy = 0; dy < CHUNK_SIZE; dy++) {
 				int y = c->y + dy;

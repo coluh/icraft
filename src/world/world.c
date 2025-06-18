@@ -17,7 +17,7 @@
 extern Game g;
 
 // this is debug implementaion
-#define LOAD_DISTANCE 5
+#define LOAD_DISTANCE 6
 
 World *newWorld() {
 	World *w = zalloc(1, sizeof(World));
@@ -91,7 +91,6 @@ static void world_updateChunk(World *w, Chunk *c) {
 					c->y+chunk_offsets[f][1], c->z+chunk_offsets[f][2]);
 		}
 		chunk_generateVertex(c, nearbys);
-		c->dirty = false;
 	}
 }
 
@@ -108,60 +107,29 @@ void world_updateChunks(World *w, int x, int y, int z) {
 	//   [][][]
 
 	int i_render_chunks = 0;
-	// for (int i = -1; i <= 1; i++) {
-	// 	for (int j = -2; j <= 2; j += 4) {
-	// 		for (int k = -1; k <= 1; k++) {
-	// 			int cx = x + i * CHUNK_SIZE;
-	// 			int cy = y + j * CHUNK_SIZE;
-	// 			int cz = z + k * CHUNK_SIZE;
-	// 			Chunk *c = findChunk(w, cx, cy, cz);
-	// 			if (!c) {
-	// 				c = loadChunk(w, cx, cy, cz);
-	// 			}
-	// 			w->render_list.chunks[i_render_chunks++] = c;
-	// 		}
-	// 	}
-	// }
-	// for (int i = -2; i <= 2; i++) {
-	// 	for (int j = -1; j <= 1; j++) {
-	// 		for (int k = -1; k <= 1; k++) {
-	// 			int cx = x + i * CHUNK_SIZE;
-	// 			int cy = y + j * CHUNK_SIZE;
-	// 			int cz = z + k * CHUNK_SIZE;
-	// 			Chunk *c = findChunk(w, cx, cy, cz);
-	// 			if (!c) {
-	// 				c = loadChunk(w, cx, cy, cz);
-	// 			}
-	// 			w->render_list.chunks[i_render_chunks++] = c;
-	// 		}
-	// 	}
-	// }
-	// for (int i = -1; i <= 1; i++) {
-	// 	for (int j = -1; j <= 1; j++) {
-	// 		for (int k = -2; k <= 2; k += 4) {
-	// 			int cx = x + i * CHUNK_SIZE;
-	// 			int cy = y + j * CHUNK_SIZE;
-	// 			int cz = z + k * CHUNK_SIZE;
-	// 			Chunk *c = findChunk(w, cx, cy, cz);
-	// 			if (!c) {
-	// 				c = loadChunk(w, cx, cy, cz);
-	// 			}
-	// 			w->render_list.chunks[i_render_chunks++] = c;
-	// 		}
-	// 	}
-	// }
-
 	for (int i = -LOAD_DISTANCE; i < LOAD_DISTANCE; i++) {
 		for (int j = -LOAD_DISTANCE; j < LOAD_DISTANCE; j++) {
 			for (int k = -LOAD_DISTANCE; k < LOAD_DISTANCE; k++) {
 				int cx = x + i * CHUNK_SIZE;
 				int cy = y + j * CHUNK_SIZE;
 				int cz = z + k * CHUNK_SIZE;
-				// FIXME: generated but vertex not built
 				Chunk *c = chunk_getLoad(&w->chunks, cx, cy, cz, w->generator, true);
 				w->render_list.chunks[i_render_chunks++] = c;
 			}
 		}
+	}
+
+	// this is for chunks that is generated but have no chance to build vertex
+	int build_count = 4;
+	while (build_count > 0) {
+		for (int i = 0; i < w->render_list.size; i++) {
+			Chunk *c = w->render_list.chunks[i];
+			if (c->generated && c->dirty) {
+				chunk_generateVertex(c, (const Chunk *[]){NULL, NULL, NULL, NULL, NULL, NULL});
+				break;
+			}
+		}
+		build_count--;
 	}
 
 	// only update these chunks
@@ -171,7 +139,7 @@ void world_updateChunks(World *w, int x, int y, int z) {
 				int cx = x + i * CHUNK_SIZE;
 				int cy = y + j * CHUNK_SIZE;
 				int cz = z + k * CHUNK_SIZE;
-				world_updateChunk(w, chunk_getLoad(&w->chunks, cx, cy, cz, w->generator, true));
+				world_updateChunk(w, chunk_getLoad(&w->chunks, cx, cy, cz, w->generator, false));
 			}
 		}
 	}

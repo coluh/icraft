@@ -191,4 +191,6 @@ void chunk_generateVertex(Chunk *chunk, const Chunk *nearbys[6]) {
 
 	glBindBuffer(GL_ARRAY_BUFFER, chunk->VBO);
 	glBufferData(GL_ARRAY_BUFFER, chunk->vertex_count*sizeof(struct vertex), vertices, GL_STATIC_DRAW);
+
+	chunk->dirty = false;
 }

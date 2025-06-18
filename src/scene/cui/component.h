@@ -40,8 +40,12 @@ static inline void draw_item(const Slot *slot, int x, int y, int a, int zoom_lev
 			twod_drawIndexedTexture(x + t, y + t, a - 2*t, a - 2*t, item_textureIndex(slot->item.id));
 		}
 		if (slot->count > 1) {
-			char count[3];
-			snprintf(count, 3, "%2d", slot->count);
+			char count[4];
+			if (slot->count < 100) {
+				snprintf(count, 3, "%2d", slot->count);
+			} else {
+				snprintf(count, 4, "99+");
+			}
 			twod_setColor(0.0f, 0.0f, 0.0f, 1.0f);
 			font_drawTextCentered(count, x+a*0.7+2, y+a*0.8+2, LEVEL_CHOOSE(zoom_level, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0));
 			twod_setColor(1.0f, 1.0f, 1.0f, 1.0f);

@@ -96,9 +96,9 @@ void font_queryText(const char *utf8str, float scale, int *width, int *height) {
 	*height = 0;
 
 	uint32_t ch;
-	int b;
-	int w;
-	int a;
+	int b = 0;
+	int w = 0;
+	int a = 0;
 	int ymin = 999999;
 	int ymax = -1;
 	int first = 1;

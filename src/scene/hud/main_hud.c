@@ -23,13 +23,12 @@ static void render(Scene *self) {
 
 	int y = g.window->height - a - t;
 	int x = (g.window->width - w) / 2;
-	char count[3];
 	// big outer border
 	twod_setColor(0, 0, 0, 1);
 	bar(x-t, y-t, w+2*t, a+2*t, t);
 	twod_setColor(0, 0, 0, 0.5);
 	twod_drawQuad(x, y, w, a);
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < PLAYER_INVENTORY_COLOMN; i++) {
 		x = (g.window->width - w) / 2 + i * a;
 		const Slot *slot = &player->inventory.hotbar[i];
 		if (slot->count > 0) {
@@ -45,7 +44,8 @@ static void render(Scene *self) {
 		bar(x+t, y+t, a-2*t, a-2*t, t);
 	}
 	x = (g.window->width - w) / 2;
-	for (int i = 0; i < 10; i++) {
+	char count[4];
+	for (int i = 0; i < PLAYER_INVENTORY_COLOMN; i++) {
 		x = (g.window->width - w) / 2 + i * a;
 		if (i == player->holding) {
 			twod_setColor(0, 0, 0, 1);
@@ -57,8 +57,10 @@ static void render(Scene *self) {
 		if (slot->count > 1) {
 			if (slot->count < 10) {
 				snprintf(count, 2, "%1d", slot->count);
-			} else {
+			} else if (slot->count < 100) {
 				snprintf(count, 3, "%2d", slot->count);
+			} else {
+				snprintf(count, 4, "99+");
 			}
 			twod_setColor(0.0f, 0.0f, 0.0f, 1.0f);
 			font_drawTextCentered(count, x+a*0.7+2, y+a*0.8+2, LEVEL_CHOOSE(g.zoom_level, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0));
