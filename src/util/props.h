@@ -48,4 +48,7 @@ float rand_float(float min, float max);
 int max_field_int_p(void *strp_arr[], int field_offset, int count);
 int sum_field_int_p(void *strp_arr[], int field_offset, int count);
 
+// map non-negative integers to all interger points in 3d space
+void np_z(int n, int *x, int *y, int *z);
+
 #endif

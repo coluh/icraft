@@ -225,6 +225,9 @@ static void renderWater(int x, int y, int z, int level, const World *w) {
 static void renderWorldWater(const World *w) {
 	for (int i = 0; i < w->render_list.size; i++) {
 		Chunk *c = w->render_list.chunks[i];
+		if (!c->generated) {
+			continue;
+		}
 		const BlockStateList *list = &c->block_states;
 		for (int i = 0; i < list->length; i++) {
 			const BlockStateNode *n = &list->data[i];
@@ -241,6 +244,7 @@ static void renderWorldWater(const World *w) {
 
 // things that do not need other chunks
 static void threed_renderChunk(const Chunk *chunk) {
+
 	glUniformMatrix4fv(g.res->shaders.basic_location.model, 1, GL_FALSE, (float*)chunk->model);
 	glBindVertexArray(chunk->VAO);
 
@@ -274,6 +278,11 @@ void threed_renderChunks(const World *world) {
 	glBindTexture(GL_TEXTURE_2D, g.res->textures.blocks);
 
 	for (int i = 0; i < world->render_list.size; i++) {
+		const Chunk *chunk = world->render_list.chunks[i];
+		if (!chunk->generated || chunk->VAO == 0) {
+			// not generated; generated but vertex never built
+			continue;
+		}
 		threed_renderChunk(world->render_list.chunks[i]);
 	}
 

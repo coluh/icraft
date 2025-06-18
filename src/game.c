@@ -32,7 +32,7 @@ void game_init() {
 	g.entities = newEntityList();
 	g.world = newWorld();
 	g.camera = newCamera((float[]){0, 0, 0}, (float)g.window->width/g.window->height, CameraType_FPS);
-	g.player_ref = entity_create(Entity_PLAYER, (V3){-10, 24, -5}, g.entities);
+	g.player_ref = entity_create(Entity_PLAYER, (V3){-10, 0, -5}, g.entities);
 
 	player_pickup(entity_get(g.entities, g.player_ref), &(Item){ITEM_Bucket});
 	player_pickup(entity_get(g.entities, g.player_ref), &(Item){ITEM_WaterBucket});
@@ -45,6 +45,11 @@ void game_loop() {
 
 	sceneManager_push("Main HUD");
 	// build render chunks list
+	// world_update(g.world, UNPACK_XYZ(entity_get(g.entities, g.player_ref)->position));
+
+	Entity *p = entity_get(g.entities, g.player_ref);
+	p->position.y = world_topY(g.world, p->position.x, p->position.z) + 1;
+	// p->position.y = 300;
 	world_update(g.world, UNPACK_XYZ(entity_get(g.entities, g.player_ref)->position));
 
 	g.running = true;

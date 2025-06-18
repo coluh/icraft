@@ -35,6 +35,8 @@ void window_init(const char *window_name) {
 		loge("Fail to load OpenGL function pointers");
 	}
 
+	SDL_GL_SetSwapInterval(0);
+
 	window_focus(true);
 }
 

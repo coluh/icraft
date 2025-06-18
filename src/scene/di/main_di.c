@@ -23,7 +23,7 @@ static void render(Scene *self) {
 	char buf[32];
 
 	memset(buf, 0, 32);
-	snprintf(buf, 8, "FPS: %d", g.fps);
+	snprintf(buf, 12, "FPS: %d", g.fps);
 	font_drawText(buf, 2, 2, 1);
 
 	memset(buf, 0, 32);

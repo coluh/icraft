@@ -29,6 +29,6 @@ typedef struct Chunk {
 Chunk *newChunk(int x, int y, int z);
 
 // generate vertex data for the renderer
-void chunk_generateVertex(Chunk *chunk, Chunk *nearbys[6]);
+void chunk_generateVertex(Chunk *chunk, const Chunk *nearbys[6]);
 
 #endif

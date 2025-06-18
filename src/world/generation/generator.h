@@ -3,9 +3,19 @@
 
 #include "../chunk.h"
 
-// generate terrain
-// fill the blocks field, with grass*1 dirt*3 and stone*28
-// fill Chunk->blocks
+typedef struct Generator {
+	int seed;
+} Generator;
+
+Generator *generator_create(int seed);
+
+// main terrain generation
+void generator_generate(Generator *generator);
+
+// fill chunk using generator
+void generator_fill(Generator *generator, Chunk *chunk);
+
+// debug generation
 void generator_default(Chunk *chunk);
 
 #endif

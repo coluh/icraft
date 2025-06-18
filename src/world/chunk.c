@@ -114,7 +114,7 @@ static void generate_cross_face(struct vertex face[], int x, int y, int z, int t
 	}
 }
 
-void chunk_generateVertex(Chunk *chunk, Chunk *nearbys[6]) {
+void chunk_generateVertex(Chunk *chunk, const Chunk *nearbys[6]) {
 
 	// generate vertex data
 	int vertex_idx = 0;
@@ -159,6 +159,7 @@ void chunk_generateVertex(Chunk *chunk, Chunk *nearbys[6]) {
 		}
 	}
 	chunk->opaque_vertex_count = vertex_idx;
+
 	for (int x = 0; x < CHUNK_SIZE; x++) {
 		for (int y = 0; y < CHUNK_SIZE; y++) {
 			for (int z = 0; z < CHUNK_SIZE; z++) {
