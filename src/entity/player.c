@@ -11,7 +11,7 @@
 #include "player_operation.h"
 
 #define PLAYER_ROTATE_SENSI	0.003f
-#define PLAYER_MOVE_SPEED	40.3f
+#define PLAYER_MOVE_SPEED	4.3f
 #define PLAYER_JUMP_SPEED	10.0f
 
 extern Game g;

@@ -71,6 +71,7 @@ void camera_updateMatrix(Camera *camera, float alpha) {
 	glm_quat_rotatev(camera->rotation, up, up);
 
 	vec3 position;
+	// TODO: doesn't this cause a delay?
 	glm_vec3_lerp(camera->prev_position, camera->position, alpha, position);
 
 	// view

@@ -58,7 +58,7 @@ Chunk *chunk_getLoad(ChunkTable *table, int x, int y, int z, Generator *gen, boo
 	}
 
 	c = newChunk(x, y, z);
-	async = false;
+	// async = false;
 	if (!async) {
 		generator_fill(gen, c);
 	} else {

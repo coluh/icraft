@@ -15,6 +15,8 @@ Generator *generator_create(int seed) {
 void generator_generate(Generator *generator) {}
 
 void generator_fill(Generator *gen, Chunk *c) {
+	generator_default(c);
+	return;
 	for (int dx = 0; dx < CHUNK_SIZE; dx++) {
 		for (int dz = 0; dz < CHUNK_SIZE; dz++) {
 			int x = c->x + dx;
