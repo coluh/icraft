@@ -29,6 +29,13 @@ static struct vertex {
 	vec2 uv;
 } vertices[CHUNK_MAX_VERTICE_COUNT];
 
+struct VertexNew {
+	vec3 position;  // 12 bytes
+	unsigned short tex_id;  // uv
+	unsigned char face_dir;  // normal
+	unsigned char ao;
+};
+
 // -z, z, -y, y, -x, x
 static void generate_face(int f, struct vertex face[], int x, int y, int z, BlockID id) {
 	static const int indices[6][6][3] = {
